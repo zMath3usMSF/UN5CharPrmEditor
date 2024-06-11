@@ -15,7 +15,7 @@ namespace UN5CharPrmEditor
         public static List<List<CharAnm>> CharAnmPrm = new List<List<CharAnm>>();
         public static List<List<CharAnm>> CharAnmPrmBkp = new List<List<CharAnm>>();
 
-        #region Atk Attributes
+        #region Anm Attributes
 
         public float AnmCharXDistance, AnmCharYDistance, AnmHitBoxScale, AnmHitBoxXPosition, AnmHitBoxYPosition, AnmHitBoxScale2, AnmHitBoxXPosition2, AnmHitBoxYPosition2;
 
@@ -398,6 +398,10 @@ namespace UN5CharPrmEditor
             {
                 anmBlockBytes.AddRange(ninjaCharsAnm.AnmObjAtk2);
             }
+            anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtAnmHitBoxXPos2.Text)));
+            ninjaCharsAnm.AnmHitBoxXPosition2 = Convert.ToSingle(movForm.txtAnmHitBoxXPos2.Text);
+            anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtAnmHitBoxYPos2.Text)));
+            ninjaCharsAnm.AnmHitBoxYPosition2 = Convert.ToSingle(movForm.txtAnmHitBoxYPos2.Text);
 
             byte[] resultBytes = anmBlockBytes.ToArray();
             return resultBytes;
@@ -405,76 +409,37 @@ namespace UN5CharPrmEditor
 
         public static byte[] UpdateAllCharAnmPrm(MovesetParameters movForm, int charID)
         {
-            int anmBlockID = int.Parse(movForm.listBox1.SelectedItem.ToString().Split(':')[0]);
-
             List<byte> anmBlockBytes = new List<byte>();
 
             for(int i = 0; i < CharGen.CharGenPrm[charID].AnmCount; i++)
             {
-                var ninjaCharsAnm = CharAnmPrm[charID][anmBlockID];
-                int anmID = movForm.cmbPlayAnmID.SelectedIndex;
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(anmID)));
-                ninjaCharsAnm.AnmID = Convert.ToInt16(anmID);
+                var ninjaCharsAnm = CharAnmPrm[charID][i];
+
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(ninjaCharsAnm.AnmID)));
                 anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(ninjaCharsAnm.AnmUnk)));
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16((short)movForm.numAnmUnk1.Value)));
-                ninjaCharsAnm.AnmUnk1 = (short)movForm.numAnmUnk1.Value;
-                float anmSpeed = Convert.ToSingle(movForm.txtAnmSpeed.Text.Replace(",", ".")) * 256;
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToUInt16((ushort)anmSpeed)));
-                ninjaCharsAnm.AnmSpeed = Convert.ToUInt16((ushort)anmSpeed);
-                anmBlockBytes.Add((byte)movForm.numAnmUnk2.Value);
-                ninjaCharsAnm.AnmUnk2 = (byte)movForm.numAnmUnk2.Value;
-                anmBlockBytes.Add((byte)movForm.numAnmUnk3.Value);
-                ninjaCharsAnm.AnmUnk3 = (byte)movForm.numAnmUnk3.Value;
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16((short)movForm.numAnmUnk4.Value)));
-                ninjaCharsAnm.AnmUnk4 = (short)movForm.numAnmUnk4.Value;
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtCharXDistance.Text)));
-                ninjaCharsAnm.AnmCharXDistance = Convert.ToSingle(movForm.txtCharXDistance.Text);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtCharYDistance.Text)));
-                ninjaCharsAnm.AnmCharYDistance = Convert.ToSingle(movForm.txtCharYDistance.Text);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtAnmUnk5.Text)));
-                ninjaCharsAnm.AnmUnk5 = Convert.ToSingle(movForm.txtAnmUnk5.Text);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtAnmUnk6.Text)));
-                ninjaCharsAnm.AnmUnk6 = Convert.ToSingle(movForm.txtAnmUnk6.Text);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt32(movForm.numAnmUnk7.Value)));
-                ninjaCharsAnm.AnmUnk7 = Convert.ToInt32(movForm.numAnmUnk7.Value);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(movForm.numAnmStartHitFrame.Value)));
-                ninjaCharsAnm.AnmStartHitFrame = Convert.ToInt16(movForm.numAnmStartHitFrame.Value);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(movForm.numAnmEndHitFrame.Value)));
-                ninjaCharsAnm.AnmEndHitFrame = Convert.ToInt16(movForm.numAnmEndHitFrame.Value);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtHitBoxScale.Text)));
-                ninjaCharsAnm.AnmHitBoxScale = Convert.ToSingle(movForm.txtHitBoxScale.Text);
-                int selectedIndexcmbAnmObjectAtk = movForm.cmbAnmObjectAtk.SelectedIndex;
-                if (ninjaCharsAnm.CommonBonnesList.TryGetValue(movForm.cmbAnmObjectAtk.Items[selectedIndexcmbAnmObjectAtk].ToString(), out byte[] anmObjAtkPointerBytes))
-                {
-                    anmBlockBytes.AddRange(anmObjAtkPointerBytes);
-                    ninjaCharsAnm.AnmObjAtk = anmObjAtkPointerBytes;
-                }
-                else
-                {
-                    anmBlockBytes.AddRange(ninjaCharsAnm.AnmObjAtk);
-                }
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtHitBoxXPos.Text)));
-                ninjaCharsAnm.AnmHitBoxXPosition = Convert.ToSingle(movForm.txtHitBoxXPos.Text);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtHitBoxYPos.Text)));
-                ninjaCharsAnm.AnmHitBoxYPosition = Convert.ToSingle(movForm.txtHitBoxYPos.Text);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt32(movForm.numAnmUnk8.Value)));
-                ninjaCharsAnm.AnmUnk8 = Convert.ToInt32(movForm.numAnmUnk8.Value);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(movForm.numAnmStartHitFrame2.Value)));
-                ninjaCharsAnm.AnmStartHitFrame2 = Convert.ToInt16(movForm.numAnmStartHitFrame2.Value);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(movForm.numAnmEndHitFrame2.Value)));
-                ninjaCharsAnm.AnmEndHitFrame2 = Convert.ToInt16(movForm.numAnmEndHitFrame2.Value);
-                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtAnmHitBoxScale2.Text)));
-                ninjaCharsAnm.AnmHitBoxScale2 = Convert.ToSingle(movForm.txtAnmHitBoxScale2.Text);
-                int selectedIndexCmbAnmObjectAtk2 = movForm.cmbAnmObjectAtk2.SelectedIndex;
-                if (ninjaCharsAnm.CommonBonnesList.TryGetValue(movForm.cmbAnmObjectAtk2.Items[selectedIndexCmbAnmObjectAtk2].ToString(), out byte[] anmObjAtkPointerBytes2))
-                {
-                    anmBlockBytes.AddRange(anmObjAtkPointerBytes2);
-                    ninjaCharsAnm.AnmObjAtk2 = anmObjAtkPointerBytes2;
-                }
-                else
-                {
-                    anmBlockBytes.AddRange(ninjaCharsAnm.AnmObjAtk2);
-                }
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16((short)ninjaCharsAnm.AnmUnk1)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToUInt16((ushort)ninjaCharsAnm.AnmSpeed)));
+                anmBlockBytes.Add((byte)ninjaCharsAnm.AnmUnk2);
+                anmBlockBytes.Add((byte)ninjaCharsAnm.AnmUnk3);
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16((short)ninjaCharsAnm.AnmUnk4)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmCharXDistance)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmCharYDistance)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmUnk5)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmUnk6)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt32(ninjaCharsAnm.AnmUnk7)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(ninjaCharsAnm.AnmStartHitFrame)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(ninjaCharsAnm.AnmEndHitFrame)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmHitBoxScale)));
+                anmBlockBytes.AddRange(ninjaCharsAnm.AnmObjAtk);
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmHitBoxXPosition)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmHitBoxYPosition)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt32(ninjaCharsAnm.AnmUnk8)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(ninjaCharsAnm.AnmStartHitFrame2)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(ninjaCharsAnm.AnmEndHitFrame2)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmHitBoxScale2)));
+                anmBlockBytes.AddRange(ninjaCharsAnm.AnmObjAtk2);
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmHitBoxXPosition2)));
+                anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(ninjaCharsAnm.AnmHitBoxYPosition2)));
             }
             byte[] resultBytes = anmBlockBytes.ToArray();
             return resultBytes;
@@ -489,9 +454,11 @@ namespace UN5CharPrmEditor
             {
                 using (FileStream fs = new FileStream(Main.caminhoELF, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
-                    int charAtkAreaOffset = BitConverter.ToInt32(CharGen.CharGenPrm[charID].AnmListOffset, 0) - 0xFFE80;
+                    byte[] charAnmAreaOffsetBytes = CharGen.CharGenPrm[charID].AnmListOffset;
+                    charAnmAreaOffsetBytes[3] = 0x0;
+                    int charAnmAreaOffset = BitConverter.ToInt32(charAnmAreaOffsetBytes, 0) - 0xFFE80;
 
-                    fs.Seek(charAtkAreaOffset, SeekOrigin.Begin);
+                    fs.Seek(charAnmAreaOffset, SeekOrigin.Begin);
 
                     fs.Write(resultBytes, 0, resultBytes.Length);
 

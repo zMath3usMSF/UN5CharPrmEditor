@@ -118,7 +118,7 @@ namespace UN5CharPrmEditor
                 Main.CloseHandle(processHandle);
             }
         }
-        public static void WriteELFCharPrm(byte[] resultBytes, int currentID)
+        public static void WriteELFCharPrm(byte[] resultBytes, int charID)
         {
             if (!File.Exists(Main.caminhoELF))
             {
@@ -128,32 +128,15 @@ namespace UN5CharPrmEditor
             {
                 using (FileStream fs = new FileStream(Main.caminhoELF, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
-                    fs.Seek(0x317E80, SeekOrigin.Begin);
+                    int skipChars = charID * 0x8 + 0x4;
+                    fs.Seek(0x317E80 + skipChars, SeekOrigin.Begin);
 
-                    for (int i = 0; i < currentID; i++)
-                    {
-                        byte[] buffer = new byte[8];
-                        fs.Read(buffer, 0, buffer.Length);
-                    }
+                    byte[] charMainPointer = new byte[4];
+                    fs.Read(charMainPointer, 0, charMainPointer.Length);
+                    int charMainOffset = BitConverter.ToInt32(charMainPointer, 0);
+                    charMainOffset = charMainOffset - 0xFFE80 + 0x58;
 
-                    fs.Seek(4, SeekOrigin.Current);
-
-                    byte[] buffer2 = new byte[4];
-                    fs.Read(buffer2, 0, buffer2.Length);
-
-                    byte[] subtractionValue = { 0x80, 0xFE, 0x10, 0x00 };
-                    byte[] charOffsetBytes = new byte[buffer2.Length];
-
-                    for (int i = 0; i < buffer2.Length; i++)
-                    {
-                        charOffsetBytes[i]= (byte)(buffer2[i] - subtractionValue[i]);
-                    }
-                    charOffsetBytes[0] += 0x58;
-
-                    int charOffset = BitConverter.ToInt32(charOffsetBytes, 0);
-
-                    fs.Seek(charOffset, SeekOrigin.Begin);
-
+                    fs.Seek(charMainOffset, SeekOrigin.Begin);
                     fs.Write(resultBytes, 0, resultBytes.Length);
 
                     MessageBox.Show("The changes were saved successfully!", string.Empty, MessageBoxButtons.OK);

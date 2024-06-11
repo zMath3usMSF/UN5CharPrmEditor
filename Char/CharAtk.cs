@@ -808,177 +808,37 @@ namespace UN5CharPrmEditor
                 atkBlockBytes.AddRange(ninjaCharsAtk.AtkUnk3);
                 atkBlockBytes.AddRange(ninjaCharsAtk.AtkUnk4);
 
-                int[] bitsGroupFlag1 = new int[8];
-                bitsGroupFlag1[7] = movForm.cmbGP1FUnk1.SelectedIndex;
-                bitsGroupFlag1[6] = movForm.cmbGP1FUnk2.SelectedIndex;
-                bitsGroupFlag1[5] = movForm.cmbGP1FUnk3.SelectedIndex;
-                bitsGroupFlag1[4] = movForm.cmbGP1FUnk4.SelectedIndex;
-                bitsGroupFlag1[3] = movForm.cmbGP1FUnk5.SelectedIndex;
-                bitsGroupFlag1[2] = movForm.cmbGP1FUnk6.SelectedIndex;
-                bitsGroupFlag1[1] = movForm.cmbGP1FallingAfterHitting.SelectedIndex;
-                bitsGroupFlag1[0] = movForm.cmbGP1FUnk8.SelectedIndex;
-                byte byteGroupFlag1 = Util.FormarByte(bitsGroupFlag1);
-                atkBlockBytes.Add(byteGroupFlag1);
-                ninjaCharsAtk.AtkFlagGroup1 = byteGroupFlag1;
-
-                int[] bitsGroupFlag2 = new int[8];
-                bitsGroupFlag2[7] = movForm.cmbGP2FUnk1.SelectedIndex;
-                bitsGroupFlag2[6] = movForm.cmbGP2FUnk2.SelectedIndex;
-                bitsGroupFlag2[5] = movForm.cmbGP2FUnk3.SelectedIndex;
-                bitsGroupFlag2[4] = movForm.cmbGP2AntiCounter.SelectedIndex;
-                bitsGroupFlag2[3] = movForm.cmbGP2FUnk5.SelectedIndex;
-                bitsGroupFlag2[2] = movForm.cmbGP2FUnk6.SelectedIndex;
-                bitsGroupFlag2[1] = movForm.cmbGP2FUnk7.SelectedIndex;
-                bitsGroupFlag2[0] = movForm.cmbGP2FUnk8.SelectedIndex;
-                byte byteGroupFlag2 = Util.FormarByte(bitsGroupFlag2);
-                atkBlockBytes.Add(byteGroupFlag2);
-                ninjaCharsAtk.AtkFlagGroup2 = byteGroupFlag2;
-
-                int[] valoresSelecionados = new int[8];
-                valoresSelecionados[7] = movForm.cmbGP3FBreakDef.SelectedIndex;
-                valoresSelecionados[6] = movForm.cmbGP3FUndefendable.SelectedIndex;
-                valoresSelecionados[5] = movForm.cmbGP3FHitFallen.SelectedIndex;
-                valoresSelecionados[4] = movForm.cmbGP3FUnk1.SelectedIndex;
-                valoresSelecionados[3] = movForm.cmbGP3FBounce.SelectedIndex;
-                valoresSelecionados[2] = movForm.cmbGP3FWallKB.SelectedIndex;
-                valoresSelecionados[1] = movForm.cmbGP3FUnk3.SelectedIndex;
-                valoresSelecionados[0] = movForm.cmbGP3FUnk4.SelectedIndex;
-                byte resultado = Util.FormarByte(valoresSelecionados);
-
-                atkBlockBytes.Add(resultado);
-                ninjaCharsAtk.AtkDefenseFlag = resultado;
-
-                int[] bitsGroupFlag4 = new int[8];
-                bitsGroupFlag4[7] = movForm.cmbGP4FUnk1.SelectedIndex;
-                bitsGroupFlag4[6] = movForm.cmbGP4FUnk2.SelectedIndex;
-                bitsGroupFlag4[5] = movForm.cmbGP4FUnk3.SelectedIndex;
-                bitsGroupFlag4[4] = movForm.cmbGP4HitFainted.SelectedIndex;
-                bitsGroupFlag4[3] = movForm.cmbGP4FUnk5.SelectedIndex;
-                bitsGroupFlag4[2] = movForm.cmbGP4Backdash.SelectedIndex;
-                bitsGroupFlag4[1] = movForm.cmbGP4DamageOnCounterattack.SelectedIndex;
-                bitsGroupFlag4[0] = movForm.cmbGP4DamageOnDefense.SelectedIndex;
-                byte byteGroupFlag4 = Util.FormarByte(bitsGroupFlag4);
-                atkBlockBytes.Add(byteGroupFlag4);
-                ninjaCharsAtk.AtkFlagGroup4 = byteGroupFlag4;
-
-                byte atkPrevious = (byte)ninjaCharsAtk.AtkPrevious;
-                atkBlockBytes.Add(atkPrevious);
-                byte atkPos = (byte)ninjaCharsAtk.AtkPos;
-                atkBlockBytes.Add(atkPos);
-                ninjaCharsAtk.AtkPos = atkPos;
+                atkBlockBytes.Add((byte)ninjaCharsAtk.AtkFlagGroup1);
+                atkBlockBytes.Add((byte)ninjaCharsAtk.AtkFlagGroup2);
+                atkBlockBytes.Add((byte)ninjaCharsAtk.AtkDefenseFlag);
+                atkBlockBytes.Add((byte)ninjaCharsAtk.AtkFlagGroup4);
+                atkBlockBytes.Add((byte)ninjaCharsAtk.AtkPrevious);
+                atkBlockBytes.Add((byte)ninjaCharsAtk.AtkPos);
                 atkBlockBytes.AddRange(ninjaCharsAtk.AtkUnk15);
-                byte atkDpadFlag = (byte)ninjaCharsAtk.AtkDpadFlag;
-                atkBlockBytes.Add(atkDpadFlag);
+                atkBlockBytes.Add((byte)ninjaCharsAtk.AtkDpadFlag);
                 byte atkButtonFlag = (byte)ninjaCharsAtk.AtkButtonFlag;
                 atkBlockBytes.Add(atkButtonFlag);
                 atkBlockBytes.AddRange(ninjaCharsAtk.AtkUnk16);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtChakra.Text)));
-                ninjaCharsAtk.AtkChakra = Convert.ToSingle(movForm.txtChakra.Text);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtDamage.Text)));
-                ninjaCharsAtk.AtkDamage = Convert.ToSingle(movForm.txtDamage.Text);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtKnockBack.Text)));
-                ninjaCharsAtk.AtkKnockBack = Convert.ToSingle(movForm.txtKnockBack.Text);
-                byte currentDmgEffect = (byte)movForm.cmbDmgEffect.SelectedIndex;
-                atkBlockBytes.Add(currentDmgEffect);
-                ninjaCharsAtk.AtkDamageEffect = currentDmgEffect;
-                byte currentDefenseEffect = (byte)(movForm.cmbDefenseEffect.SelectedIndex - 1);
-                atkBlockBytes.Add(currentDefenseEffect);
-                ninjaCharsAtk.AtkDefenseEffect = currentDefenseEffect;
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToUInt16(movForm.txtHitCount.Text)));
-                ninjaCharsAtk.AtkHitCount = Convert.ToUInt16(movForm.txtHitCount.Text);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(movForm.txtHitSpeed.Text)));
-                ninjaCharsAtk.AtkHitSpeed = Convert.ToInt16(movForm.txtHitSpeed.Text);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToUInt16(movForm.txtHitEffect.Text)));
-                ninjaCharsAtk.AtkHitEffect = Convert.ToUInt16(movForm.txtHitEffect.Text);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtSummonDistance1.Text)));
-                ninjaCharsAtk.AtkSummonDistance1 = Convert.ToSingle(movForm.txtSummonDistance1.Text);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtSummonDistance2.Text)));
-                ninjaCharsAtk.AtkSummonDistance2 = Convert.ToSingle(movForm.txtSummonDistance2.Text);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtKnockBackDirection.Text)));
-                ninjaCharsAtk.AtkKnockBackDirection = Convert.ToSingle(movForm.txtKnockBackDirection.Text);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(movForm.txtAtkSound.Text)));
-                ninjaCharsAtk.AtkSound = Convert.ToInt16(movForm.txtAtkSound.Text);
-                int currentPLSoundIndex = movForm.cmbPLSound.SelectedIndex;
-                int currentPLSound = currentPLSoundIndex - 4;
-                switch (currentPLSoundIndex)
-                {
-                    case 0:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)-4));
-                        ninjaCharsAtk.AtkPlSound = -4;
-                        break;
-                    case 1:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)-3));
-                        ninjaCharsAtk.AtkPlSound = -3;
-                        break;
-                    case 2:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)-2));
-                        ninjaCharsAtk.AtkPlSound = -2;
-                        break;
-                    case 3:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)-1));
-                        ninjaCharsAtk.AtkPlSound = -1;
-                        break;
-                    default:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)currentPLSound));
-                        ninjaCharsAtk.AtkPlSound = (short)currentPLSound;
-                        break;
-                }
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToUInt16(movForm.txtSoundDelay.Text)));
-                ninjaCharsAtk.AtkSoundDelay = Convert.ToUInt16(movForm.txtSoundDelay.Text);
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(movForm.txtDmgSound.Text)));
-                ninjaCharsAtk.AtkDamageSound = Convert.ToInt16(movForm.txtDmgSound.Text);
-                int currentDmgParticleIndex = movForm.cmbDmgParticle.SelectedIndex;
-                int currentDmgParticle = currentDmgParticleIndex - 1;
-                if (currentDmgParticleIndex == 0)
-                {
-                    atkBlockBytes.AddRange(BitConverter.GetBytes((short)-1));
-                    ninjaCharsAtk.AtkDamageParticle = -1;
-                }
-                else
-                {
-                    atkBlockBytes.AddRange(BitConverter.GetBytes((short)currentDmgParticle));
-                    ninjaCharsAtk.AtkDamageParticle = (short)currentDmgParticle;
-                }
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(movForm.txtDefenseSound.Text)));
-                ninjaCharsAtk.AtkDefenseSound = Convert.ToInt16(movForm.txtDefenseSound.Text);
-
-                int currentDefenseParticle = movForm.cmbDefenseParticle.SelectedIndex;
-                switch (currentDefenseParticle)
-                {
-                    case 0:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)-1));
-                        ninjaCharsAtk.AtkDefenseParticle = -1;
-                        break;
-                    case 1:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)0));
-                        ninjaCharsAtk.AtkDefenseParticle = 0;
-                        break;
-                    case 2:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)1));
-                        ninjaCharsAtk.AtkDefenseParticle = 1;
-                        break;
-                    case 3:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)2));
-                        ninjaCharsAtk.AtkDefenseParticle = 2;
-                        break;
-                    case 4:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)3));
-                        ninjaCharsAtk.AtkDefenseParticle = 3;
-                        break;
-                    case 5:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)4));
-                        ninjaCharsAtk.AtkDefenseParticle = 4;
-                        break;
-                    case 6:
-                        atkBlockBytes.AddRange(BitConverter.GetBytes((short)5));
-                        ninjaCharsAtk.AtkDefenseParticle = 5;
-                        break;
-                    default:
-                        break;
-                }
-
-                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(movForm.txtEnemySound.Text)));
-                ninjaCharsAtk.AtkEnemySound = Convert.ToInt16(movForm.txtEnemySound.Text);
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkChakra));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkDamage));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkKnockBack));
+                atkBlockBytes.Add((byte)ninjaCharsAtk.AtkDamageEffect);
+                atkBlockBytes.Add((byte)ninjaCharsAtk.AtkDefenseEffect);
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkHitCount));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkHitSpeed));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkHitEffect));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkSummonDistance1));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkSummonDistance2));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkKnockBackDirection));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkSound));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkPlSound));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkSoundDelay));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkDamageSound));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkDamageParticle));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkDefenseSound));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkDefenseParticle));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(ninjaCharsAtk.AtkEnemySound));
+                atkBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt32(ninjaCharsAtk.AtkAnm)));
             }
             byte[] resultBytes = atkBlockBytes.ToArray();
             return resultBytes;
@@ -993,7 +853,9 @@ namespace UN5CharPrmEditor
             {
                 using (FileStream fs = new FileStream(Main.caminhoELF, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
-                    int charAtkAreaOffset = BitConverter.ToInt32(CharGen.CharGenPrm[charID].AtkListOffset, 0) - 0xFFE80;
+                    byte[] charAtkAreaOffsetBytes = CharGen.CharGenPrm[charID].AtkListOffset;
+                    charAtkAreaOffsetBytes[3] = 0x0;
+                    int charAtkAreaOffset = BitConverter.ToInt32(charAtkAreaOffsetBytes, 0) - 0xFFE80;
 
                     fs.Seek(charAtkAreaOffset, SeekOrigin.Begin);
 
