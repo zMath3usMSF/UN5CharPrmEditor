@@ -1,0 +1,367 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D9AE2810-350E-4535-AB74-45BB9C4491F0}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>UN5CharPrmEditor</RootNamespace>
+    <AssemblyName>UN5CharPrmEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Char\CharAnm.cs" />
+    <Compile Include="Char\CharAtk.cs" />
+    <Compile Include="Char\CharGen.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Char\Util.cs" />
+    <Compile Include="Others\CCS\2D\CLUT.cs" />
+    <Compile Include="Others\CCS\2D\Material.cs" />
+    <Compile Include="Others\CCS\2D\Texture.cs" />
+    <Compile Include="Others\CCS\3D\Camera.cs" />
+    <Compile Include="Others\CCS\3D\Collisions\BoundingBox.cs" />
+    <Compile Include="Others\CCS\3D\Collisions\HitGroups.cs" />
+    <Compile Include="Others\CCS\3D\Environment\Light.cs" />
+    <Compile Include="Others\CCS\3D\Modelling\Clump.cs" />
+    <Compile Include="Others\CCS\3D\Modelling\Model.cs" />
+    <Compile Include="Others\CCS\3D\Modelling\Object.cs" />
+    <Compile Include="Others\CCS\3D\Others\Dummy.cs" />
+    <Compile Include="Others\CCS\Animation\Animation.cs" />
+    <Compile Include="Others\CCS\Animation\Controllers\Material_CT.cs" />
+    <Compile Include="Others\CCS\Animation\Controllers\Object_CT .cs" />
+    <Compile Include="Others\CCS\Animation\Frame.cs" />
+    <Compile Include="Others\CCS\Animation\Keyframes\Camera_KF.cs" />
+    <Compile Include="Others\CCS\Animation\Keyframes\Object_KF .cs" />
+    <Compile Include="Others\CCS\Block.cs" />
+    <Compile Include="Others\CCS\CCSF.cs" />
+    <Compile Include="Others\CCS\CCSNode.cs" />
+    <Compile Include="Others\CCS\Header\Header.cs" />
+    <Compile Include="Others\CCS\Header\Index.cs" />
+    <Compile Include="Others\CCS\Scripting\BinaryBlob.cs" />
+    <Compile Include="Others\CCS\Scripting\External.cs" />
+    <Compile Include="Others\CCS\Scripting\Morpher.cs" />
+    <Compile Include="Forms\UpdateMatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UpdateMatch.Designer.cs">
+      <DependentUpon>UpdateMatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\GeneralParameters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\GeneralParameters.Designer.cs">
+      <DependentUpon>GeneralParameters.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MovesetParameters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MovesetParameters.Designer.cs">
+      <DependentUpon>MovesetParameters.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Others\Helpers\FileHelper.cs" />
+    <Compile Include="Others\Helpers\Helper3D.cs" />
+    <Compile Include="Others\Helpers\Math.cs" />
+    <Compile Include="Others\ImgLib\Common\BinaryReaderExtensions.cs" />
+    <Compile Include="Others\ImgLib\Common\Endianness.cs" />
+    <Compile Include="Others\ImgLib\Common\GenericDictionary.cs" />
+    <Compile Include="Others\ImgLib\Common\ImageExtensions.cs" />
+    <Compile Include="Others\ImgLib\Common\ImageUtils.cs" />
+    <Compile Include="Others\ImgLib\Common\InteropUtils.cs" />
+    <Compile Include="Others\ImgLib\Encoding\ColorCodec.cs" />
+    <Compile Include="Others\ImgLib\Encoding\ColorCodecEndiannessDependent.cs" />
+    <Compile Include="Others\ImgLib\Encoding\ColorComparers\ARGBColorComparer.cs" />
+    <Compile Include="Others\ImgLib\Encoding\ImageDecoder.cs" />
+    <Compile Include="Others\ImgLib\Encoding\ImageDecoderDirectColor.cs" />
+    <Compile Include="Others\ImgLib\Encoding\ImageDecoderIndexed.cs" />
+    <Compile Include="Others\ImgLib\Encoding\ImageEncoder.cs" />
+    <Compile Include="Others\ImgLib\Encoding\ImageEncoderDirectColor.cs" />
+    <Compile Include="Others\ImgLib\Encoding\ImageEncoderIndexed.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec16BitLEABGR.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec24BitRGB.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec32BitABGR.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec32BitARGB.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec32BitBGRA.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec32BitRGBA.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecDXT1.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecDXT1Gamecube.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecI4.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecI8.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecIA4.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecIA8.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecRGB565.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecRGB5A3.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\IndexCodec4Bpp.cs" />
+    <Compile Include="Others\ImgLib\Encoding\Implementation\IndexCodec8Bpp.cs" />
+    <Compile Include="Others\ImgLib\Encoding\IndexCodec.cs" />
+    <Compile Include="Others\ImgLib\Encoding\IndexCodecEndiannessDependent.cs" />
+    <Compile Include="Others\ImgLib\Filters\Filter.cs" />
+    <Compile Include="Others\ImgLib\Filters\FilterComposer.cs" />
+    <Compile Include="Others\ImgLib\Filters\GamecubePlanarFilter.cs" />
+    <Compile Include="Others\ImgLib\Filters\SwizzleFilter.cs" />
+    <Compile Include="Others\ImgLib\Filters\TileFilter.cs" />
+    <Compile Include="Others\ImgLib\Filters\TIM2PaletteFilter.cs" />
+    <Compile Include="Others\ImgLib\Formats\DummyTexture.cs" />
+    <Compile Include="Others\ImgLib\Formats\GenericTextureFormat.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\NamcoTexture.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\NamcoTexture.Serializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\NUTTexture.Serializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\PE3DATTexture.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\PE3DATTexture.Serializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\PE3SimpleDATTexture.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\PE3SimpleDATTexture.Serializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\TacticsOgreEFXTexture.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\TacticsOgreEFXTexture.Serializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\TIM2Texture.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\TIM2Texture.Segment.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\TIM2Texture.Serializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\TPLTexture.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\TPLTexture.Serializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\TX48Texture.cs" />
+    <Compile Include="Others\ImgLib\Formats\Implementation\TX48Texture.Serializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\PalettedTextureFormat.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\Exceptions\MetadataException.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\MetadataReader.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\MetadataReaderBase.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\MetadataWriter.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\MetadataWriterBase.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\XmlMetadataReader.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\XmlMetadataWriter.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\SimpleTextureFormatSerializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\TextureFormatSerializer.cs" />
+    <Compile Include="Others\ImgLib\Formats\Serialization\TextureFormatSerializerProvider.cs" />
+    <Compile Include="Others\ImgLib\Formats\TextureContainer.cs" />
+    <Compile Include="Others\ImgLib\Formats\TextureFormat.cs" />
+    <Compile Include="Others\ImgLib\Formats\TextureFormatBase.cs" />
+    <Compile Include="Others\IOextent.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Forms\SelectProcess.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SelectProcess.Designer.cs">
+      <DependentUpon>SelectProcess.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Forms\UpdateMatch.resx">
+      <DependentUpon>UpdateMatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\GeneralParameters.resx">
+      <DependentUpon>GeneralParameters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MovesetParameters.resx">
+      <DependentUpon>MovesetParameters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Forms\SelectProcess.resx">
+      <DependentUpon>SelectProcess.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\home01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\home011.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_051.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_101.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_111.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_911.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_921.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_91.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_92.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\home01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Imagens\pure_home_06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_91.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pure_home_92.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Image1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xcommand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MainBackground.png" />
+    <Content Include="Resources\Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 e x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
