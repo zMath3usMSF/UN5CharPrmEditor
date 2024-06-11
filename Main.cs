@@ -23,7 +23,7 @@ namespace WindowsFormsApp1
         public static string caminhoELF;
         public static bool openedELF;
         public static int currentProcessID = 0;
-        public static byte[] memoryLength = { 00, 00, 00, 00 };
+        public static int memoryDif = 0;
         private MovesetParameters movesetParameters;
         private GeneralParameters generalParameters;
         public static int P1ID { get; set; }
@@ -221,6 +221,7 @@ namespace WindowsFormsApp1
 
         private void ClearAllList()
         {
+            lstChar.Items.Clear();
             charMainAreaList.Clear();
             charName.Clear();
             charCCS.Clear();
@@ -243,16 +244,13 @@ namespace WindowsFormsApp1
             IntPtr processHandle = OpenProcess(PROCESS_VM_READ, false, selectedProcessId);
             if (processHandle != IntPtr.Zero)
             {
-                byte[] memoryBytes = new byte[4];
-                ReadProcessMemory(processHandle, (IntPtr)0x203E8F00, memoryBytes, memoryBytes.Length, out var none);
+                byte[] currentMemoryStartBytes = new byte[4];
+                ReadProcessMemory(processHandle, (IntPtr)0x20617EF4, currentMemoryStartBytes, currentMemoryStartBytes.Length, out var none);
+                int currentMemoryStart = BitConverter.ToInt32(currentMemoryStartBytes, 0);
 
-                byte[] memoryLengthOriginal = { 0x00, 0x89, 0x92, 0x00 };
+                int originalMemoryStart = 0xBD4560;
 
-                for (int i = 0; i < memoryBytes.Length; i++)
-                {
-                    memoryBytes[i] = (byte)(memoryBytes[i] - memoryLengthOriginal[i]);
-                }
-                memoryLength = memoryBytes;
+                memoryDif = currentMemoryStart - originalMemoryStart;
 
                 byte[] buffer = new byte[2];
                 if (ReadProcessMemory(processHandle, (IntPtr)0x201EDA20, buffer, buffer.Length, out var none1))
@@ -531,14 +529,14 @@ namespace WindowsFormsApp1
                 byte[] PlayerIDByte = new byte[1];
                 PlayerIDByte[0] = (byte)PlayerID;
 
-                IntPtr PlayerOffset = (IntPtr)(isP1 == true ? 0x20C5EDB0 : 0x20C5EDD8);
+                IntPtr PlayerOffset = (IntPtr)(isP1 == true ? 0x20BD7AB0 + memoryDif : 0x20BD7AD8 + memoryDif);
 
                 WriteProcessMemory(processHandle, PlayerOffset, PlayerIDByte, (uint)PlayerIDByte.Length, out var none4);
 
                 byte[] MapIDByte = new byte[1];
                 MapIDByte[0] = (byte)MapID;
 
-                WriteProcessMemory(processHandle, (IntPtr)0x20C5EDFA, MapIDByte, (uint)MapIDByte.Length, out var none5);
+                WriteProcessMemory(processHandle, (IntPtr)0x20BD7AFA +  memoryDif, MapIDByte, (uint)MapIDByte.Length, out var none5);
 
                 CloseHandle(processHandle);
             }

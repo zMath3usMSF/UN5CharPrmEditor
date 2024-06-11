@@ -242,7 +242,7 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = Main.isUN6 == true ? 0x20C5FB44 : 0x208ED410;
+                int charCurrentP1CharTbl = 0x20BD8844 + Main.memoryDif;
 
                 byte[] buffer = new byte[4];
                 Main.ReadProcessMemory(processHandle, (IntPtr)charCurrentP1CharTbl, buffer, buffer.Length, out var none);
@@ -324,7 +324,7 @@ namespace UN5CharPrmEditor
         {
             if (comboNameList.Count == 0)
             {
-                for (int i = 0; i <= 94; i++)
+                for (int i = 0; i < 94; i++)
                 {
                     List<string> comboName = new List<string>();
                     for (int j = 0; j <= CharGen.CharGenPrm[i].AtkCount; j++)

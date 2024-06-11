@@ -43,7 +43,7 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = Main.isUN6 == true ? 0x20C5FB44 : 0x208ED410;
+                int charCurrentP1CharTbl = 0x20BD8844 + Main.memoryDif;
 
                 byte[] buffer = new byte[4];
                 Main.ReadProcessMemory(processHandle, (IntPtr)charCurrentP1CharTbl, buffer, buffer.Length, out var bytesRead);

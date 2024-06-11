@@ -212,7 +212,7 @@
             // 
             this.englishToolStripMenuItem.CheckOnClick = true;
             this.englishToolStripMenuItem.Name = "englishToolStripMenuItem";
-            this.englishToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.englishToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.englishToolStripMenuItem.Text = "English";
             this.englishToolStripMenuItem.Click += new System.EventHandler(this.englishToolStripMenuItem_Click);
             // 
@@ -220,7 +220,7 @@
             // 
             this.portuguêsToolStripMenuItem.CheckOnClick = true;
             this.portuguêsToolStripMenuItem.Name = "portuguêsToolStripMenuItem";
-            this.portuguêsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.portuguêsToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.portuguêsToolStripMenuItem.Text = "Português";
             this.portuguêsToolStripMenuItem.Click += new System.EventHandler(this.portuguêsToolStripMenuItem_Click);
             // 

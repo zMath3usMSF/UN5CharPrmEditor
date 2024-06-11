@@ -26,7 +26,7 @@ namespace UN5CharPrmEditor
             if (processHandle != IntPtr.Zero)
             {
                 byte[] PlayerIDByte = new byte[1];
-                IntPtr PlayerOffset = (IntPtr)(isP1 == true ? 0x20C5EDAC : 0x20C5EDD4);
+                IntPtr PlayerOffset = (IntPtr)(isP1 == true ? 0x20BD7AAC  + Main.memoryDif : 0x20BD7AD4  + Main.memoryDif);
                 Main.ReadProcessMemory(processHandle, PlayerOffset, PlayerIDByte, PlayerIDByte.Length, out var none4);
 
                 if (cmbCharList.Items.Count == 0)
@@ -50,7 +50,7 @@ namespace UN5CharPrmEditor
                 }
 
                 byte[] MapIDByte = new byte[1];
-                Main.ReadProcessMemory(processHandle, (IntPtr)0x20C5EDF8, MapIDByte, MapIDByte.Length, out var none5);
+                Main.ReadProcessMemory(processHandle, (IntPtr)0x20BD7AF8 + Main.memoryDif, MapIDByte, MapIDByte.Length, out var none5);
                 int MapID = MapIDByte[0];
 
                 if (cmbMapList.Items.Count == 0)
