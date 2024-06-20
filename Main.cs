@@ -477,7 +477,7 @@ namespace WindowsFormsApp1
             {
                 IntPtr processHandle = OpenProcess(PROCESS_VM_READ, false, currentProcessID);
 
-                int mapNameAreaPointer = isNA2 == true ? 0x205C04C0 : 0x205C7970;
+                int mapNameAreaPointer = isNA2 == true ? 0x205C04C4 : 0x205C7970;
 
                 IntPtr mapNameAreaOffset = (IntPtr)mapNameAreaPointer;
 
