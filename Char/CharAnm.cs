@@ -203,7 +203,7 @@ namespace UN5CharPrmEditor
                     anmNamePointerBytes[3] = 0x20;
                     int anmNamePointer = BitConverter.ToInt32(anmNamePointerBytes, 0);
 
-                    string docodedAnmName = Util.ReadStringWithOffset(anmNamePointer);
+                    string docodedAnmName = Util.ReadStringWithOffset(anmNamePointer, false);
 
                     anmNameList.Add(docodedAnmName);
                 }
@@ -219,7 +219,7 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = 0x20BD8844 + Main.memoryDif;
+                int charCurrentP1CharTbl = Main.isNA2 == true ? 0x20C42494 : 0x20BD8844 + Main.memoryDif;
 
                 byte[] buffer = new byte[4];
                 Main.ReadProcessMemory(processHandle, (IntPtr)charCurrentP1CharTbl, buffer, buffer.Length, out var none);
@@ -270,7 +270,7 @@ namespace UN5CharPrmEditor
             Array.Copy(charAnm.AnmObjAtk, 0x0, anmObjectAtk, 0, 4);
             anmObjectAtk[3] = 0x20;
             int anmObjectAtkPointer = BitConverter.ToInt32(anmObjectAtk, 0);
-            string anmObjectAtkString = Util.ReadStringWithOffset(anmObjectAtkPointer);
+            string anmObjectAtkString = Util.ReadStringWithOffset(anmObjectAtkPointer, false);
             var commonBonnesList = charAnm.CommonBonnesList;
             movForm.cmbAnmObjectAtk.Items.Clear();
             if (commonBonnesList.ContainsKey(anmObjectAtkString))
@@ -302,7 +302,7 @@ namespace UN5CharPrmEditor
             Array.Copy(charAnm.AnmObjAtk2, 0x0, anmObjectAtk2, 0, 4);
             anmObjectAtk2[3] = 0x20;
             int anmObjectAtkPointer2 = BitConverter.ToInt32(anmObjectAtk2, 0);
-            string anmObjectAtkString2 = Util.ReadStringWithOffset(anmObjectAtkPointer2);
+            string anmObjectAtkString2 = Util.ReadStringWithOffset(anmObjectAtkPointer2, false);
             movForm.txtAnmHitBoxXPos2.Text = Convert.ToString(charAnm.AnmHitBoxXPosition2);
             movForm.txtAnmHitBoxYPos2.Text = Convert.ToString(charAnm.AnmHitBoxYPosition2);
 

@@ -90,15 +90,15 @@ namespace WindowsFormsApp1
             {
                 int charID = int.Parse(lblCharID2.Text);
                 int selectedIndex = listBox1.SelectedIndex;
-                var ninjaCharsAtkBkpList = CharAtk.CharAtkPrmBkp[charID][selectedIndex];
-                CharAtk.SendTextAtk(this, ninjaCharsAtkBkpList);
+                var charAtkPrm = CharAtk.CharAtkPrmBkp[charID][selectedIndex];
+                CharAtk.SendTextAtk(this, charAtkPrm);
             }
             else
             {
                 int charID = int.Parse(lblCharID2.Text);
                 int selectedAnm = int.Parse(listBox1.SelectedItem.ToString().Split(':')[0]);
-                var ninjaCharsAnmBkpList = CharAnm.CharAnmPrmBkp[charID][selectedAnm];
-                CharAnm.SendTextAnm(this, ninjaCharsAnmBkpList);
+                var charAnmPrm = CharAnm.CharAnmPrmBkp[charID][selectedAnm];
+                CharAnm.SendTextAnm(this, charAnmPrm);
             }
         }
 

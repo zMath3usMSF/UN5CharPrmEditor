@@ -100,7 +100,7 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = 0x20BD8844 + Main.memoryDif;
+                int charCurrentP1CharTbl = Main.isNA2 == true ? 0x20C42494 : 0x20BD8844 + Main.memoryDif;
 
                 byte[] buffer = new byte[4];
 
@@ -210,34 +210,34 @@ namespace UN5CharPrmEditor
             byte [] resultBytes = resultBytesList.ToArray();
             return resultBytes;
         }
-        public static void SendTextToGenForm(GeneralParameters genForm, int charID)
+        public static void SendTextToGenForm(GeneralParameters genForm, CharGen charGenPrm)
         {
-            genForm.txtCharHeight.Text = ($"{CharGenPrm[charID].Height}");
-            genForm.txtCharWidth.Text = ($"{CharGenPrm[charID].Width}");
-            genForm.txtCharSpeed.Text = ($"{CharGenPrm[charID].Speed}");
-            genForm.txtCharSlide.Text = ($"{CharGenPrm[charID].Slide}");
-            genForm.txtCharWeight.Text = ($"{CharGenPrm[charID].Weight}");
-            genForm.txtCharGravity.Text = ($"{CharGenPrm[charID].Gravity}");
-            genForm.txtCharSpeedAir.Text = ($"{CharGenPrm[charID].SpeedAir}");
-            genForm.txtCharFirstJumpDelay.Text = ($"{CharGenPrm[charID].FirstJumpDelay}");
-            genForm.txtCharFirstJumpHeight.Text = ($"{CharGenPrm[charID].FirstJumpHeight}");
-            genForm.txtCharSecondJumpHeight.Text = ($"{CharGenPrm[charID].SecondJumpHeight}");
-            genForm.txtCharDashDelay.Text = ($"{CharGenPrm[charID].DashDelay}");
-            genForm.txtCharDashDuration.Text = ($"{CharGenPrm[charID].DashDuration}");
-            genForm.txtCharDashSpeed.Text = ($"{CharGenPrm[charID].DashSpeed}"); ;
-            genForm.txtCharDashDistance.Text = ($"{CharGenPrm[charID].DashDistance}");
-            genForm.txtCharBackDashHeight.Text = ($"{CharGenPrm[charID].BackDashHeight}");
-            genForm.txtCharBackDashWeight.Text = ($"{CharGenPrm[charID].BackDashWeight}");
-            genForm.txtCharBackDashDistance.Text = ($"{CharGenPrm[charID].BackDashDistance}");
-            genForm.txtCharBackDashHeight2.Text = ($"{CharGenPrm[charID].BackDashHeight2}");
-            genForm.txtCharStrength.Text = ($"{CharGenPrm[charID].Strength}");
-            genForm.txtCharDefense.Text = ($"{CharGenPrm[charID].Defense}");
-            genForm.txtCharDamageKnockback.Text = ($"{CharGenPrm[charID].DamageKnockback}");
-            genForm.txtCharAttackKnockback.Text = ($"{CharGenPrm[charID].AttackKnockback}");
-            genForm.txtCharStatus.Text = ($"{CharGenPrm[charID].StatusDuration}");
-            genForm.txtCharQuantityProjectiles.Text = ($"{CharGenPrm[charID].QuantityProjectiles}");
-            genForm.txtCharHealingMultiplier.Text = ($"{CharGenPrm[charID].HealingMultiplier}");
-            genForm.txtCharChakraRecoverySpeed.Text = ($"{CharGenPrm[charID].ChakraSpeed}");
+            genForm.txtCharHeight.Text = ($"{charGenPrm.Height}");
+            genForm.txtCharWidth.Text = ($"{charGenPrm.Width}");
+            genForm.txtCharSpeed.Text = ($"{charGenPrm.Speed}");
+            genForm.txtCharSlide.Text = ($"{charGenPrm.Slide}");
+            genForm.txtCharWeight.Text = ($"{charGenPrm.Weight}");
+            genForm.txtCharGravity.Text = ($"{charGenPrm.Gravity}");
+            genForm.txtCharSpeedAir.Text = ($"{charGenPrm.SpeedAir}");
+            genForm.txtCharFirstJumpDelay.Text = ($"{charGenPrm.FirstJumpDelay}");
+            genForm.txtCharFirstJumpHeight.Text = ($"{charGenPrm.FirstJumpHeight}");
+            genForm.txtCharSecondJumpHeight.Text = ($"{charGenPrm.SecondJumpHeight}");
+            genForm.txtCharDashDelay.Text = ($"{charGenPrm.DashDelay}");
+            genForm.txtCharDashDuration.Text = ($"{charGenPrm.DashDuration}");
+            genForm.txtCharDashSpeed.Text = ($"{charGenPrm.DashSpeed}"); ;
+            genForm.txtCharDashDistance.Text = ($"{charGenPrm.DashDistance}");
+            genForm.txtCharBackDashHeight.Text = ($"{charGenPrm.BackDashHeight}");
+            genForm.txtCharBackDashWeight.Text = ($"{charGenPrm.BackDashWeight}");
+            genForm.txtCharBackDashDistance.Text = ($"{charGenPrm.BackDashDistance}");
+            genForm.txtCharBackDashHeight2.Text = ($"{charGenPrm.BackDashHeight2}");
+            genForm.txtCharStrength.Text = ($"{charGenPrm.Strength}");
+            genForm.txtCharDefense.Text = ($"{charGenPrm.Defense}");
+            genForm.txtCharDamageKnockback.Text = ($"{charGenPrm.DamageKnockback}");
+            genForm.txtCharAttackKnockback.Text = ($"{charGenPrm.AttackKnockback}");
+            genForm.txtCharStatus.Text = ($"{charGenPrm.StatusDuration}");
+            genForm.txtCharQuantityProjectiles.Text = ($"{charGenPrm.QuantityProjectiles}");
+            genForm.txtCharHealingMultiplier.Text = ($"{charGenPrm.HealingMultiplier}");
+            genForm.txtCharChakraRecoverySpeed.Text = ($"{charGenPrm.ChakraSpeed}");
             genForm.grpGeneralConfig.Visible = true;
             genForm.grpMovementConfig.Visible = true;
             genForm.grpMovementAirConfig.Visible = true;

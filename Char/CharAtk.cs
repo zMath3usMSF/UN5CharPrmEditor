@@ -242,7 +242,7 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = 0x20BD8844 + Main.memoryDif;
+                int charCurrentP1CharTbl = Main.isNA2 == true ? 0x20C42494 : 0x20BD8844 + Main.memoryDif;
 
                 byte[] buffer = new byte[4];
                 Main.ReadProcessMemory(processHandle, (IntPtr)charCurrentP1CharTbl, buffer, buffer.Length, out var none);
@@ -320,6 +320,35 @@ namespace UN5CharPrmEditor
 
             return CharAtkPrm[charID][atkID];
         }
+        public static string NA2GetCharComboName(int charID, int comboNameID)
+        {
+            if (comboNameList.Count == 0)
+            {
+                for (int i = 0; i < 94; i++)
+                {
+                    List<string> comboName = new List<string>();
+                    for (int j = 0; j <= CharGen.CharGenPrm[i].AtkCount; j++)
+                    {
+                        comboName.Add("");
+                    }
+                    comboNameList.Add(comboName);
+                }
+            }
+            if (comboNameList[charID][1] == "")
+            {
+                List<string> charComboName = new List<string>();
+                for (int j = 0; j < CharGen.CharGenPrm[charID].AtkCount; j++)
+                {
+                    byte[] charComboNameOffsetBytes = CharAtkPrm[charID][j].AtkUnk2;
+                    charComboNameOffsetBytes[3] = 0x20;
+                    int charComboNameOffset = BitConverter.ToInt32(charComboNameOffsetBytes, 0);
+
+                    charComboName.Add(Util.ReadStringWithOffset(charComboNameOffset, true));
+                }
+                comboNameList[charID] = charComboName;
+            }
+            return comboNameList[charID][comboNameID];
+        }
         public static string GetCharComboName(int charID, int comboNameID)
         {
             if (comboNameList.Count == 0)
@@ -366,14 +395,13 @@ namespace UN5CharPrmEditor
                         charComboNameOffsetBytes[3] = 0x20;
                         int charComboNameOffset = BitConverter.ToInt32(charComboNameOffsetBytes, 0);
 
-                        charComboName.Add(Util.ReadStringWithOffset(charComboNameOffset));
+                        charComboName.Add(Util.ReadStringWithOffset(charComboNameOffset, false));
                     }
                     comboNameList[charID] = charComboName;
                 }
             }
             return comboNameList[charID][comboNameID];
         }
-
         public static void AddCharComboList(MovesetParameters movForm, int charID, string txtCharNameForm)
         {
             movForm.lblCharName2.Text = txtCharNameForm;
@@ -435,40 +463,80 @@ namespace UN5CharPrmEditor
                         movForm.listBox1.Items.Add($"{i}: (JanKenPon)");
                         break;
                     default:
-                        if (GetCharComboName(charID, i) == "")
+                        if(Main.isNA2 == true)
                         {
-                            for (int i2 = 0; i2 < comboNameList[charID].Count; i2++)
+                            if (NA2GetCharComboName(charID, i) == "")
                             {
-                                int value = i2 + 1;
-                                if (i >= 20 && movForm.listBox1.Items[i - value].ToString().Contains(" (JanKenPon)"))
+                                for (int i2 = 0; i2 < comboNameList[charID].Count; i2++)
                                 {
-                                    movForm.listBox1.Items.Add($"{i}: (Base Combo)");
-                                    for (int i3 = 0; i3 < comboNameList[charID].Count; i3++)
+                                    int value = i2 + 1;
+                                    if (i >= 20 && movForm.listBox1.Items[i - value].ToString().Contains(" (JanKenPon)"))
                                     {
-                                        if (comboNameList[charID][i + 1] == "")
+                                        movForm.listBox1.Items.Add($"{i}: (Base Combo)");
+                                        for (int i3 = 0; i3 < comboNameList[charID].Count; i3++)
                                         {
-                                            movForm.listBox1.Items.Add($"{i + 1}: (Base Combo)");
-                                            i++;
+                                            if (comboNameList[charID][i + 1] == "")
+                                            {
+                                                movForm.listBox1.Items.Add($"{i + 1}: (Base Combo)");
+                                                i++;
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
                                         }
-                                        else
-                                        {
-                                            break;
-                                        }
+                                        break;
                                     }
-                                    break;
-                                }
-                                if (comboNameList[charID][i + i2] != "")
-                                {
-                                    movForm.listBox1.Items.Add($"{i}: " + comboNameList[charID][i + i2]);
-                                    break;
+                                    if (comboNameList[charID][i + i2] != "")
+                                    {
+                                        movForm.listBox1.Items.Add($"{i}: " + comboNameList[charID][i + i2]);
+                                        break;
+                                    }
                                 }
                             }
+                            else
+                            {
+                                movForm.listBox1.Items.Add($"{i}: " + NA2GetCharComboName(charID, i));
+                            }
+                            break;
                         }
                         else
                         {
-                            movForm.listBox1.Items.Add($"{i}: " + GetCharComboName(charID, i));
+                            if (GetCharComboName(charID, i) == "")
+                            {
+                                for (int i2 = 0; i2 < comboNameList[charID].Count; i2++)
+                                {
+                                    int value = i2 + 1;
+                                    if (i >= 20 && movForm.listBox1.Items[i - value].ToString().Contains(" (JanKenPon)"))
+                                    {
+                                        movForm.listBox1.Items.Add($"{i}: (Base Combo)");
+                                        for (int i3 = 0; i3 < comboNameList[charID].Count; i3++)
+                                        {
+                                            if (comboNameList[charID][i + 1] == "")
+                                            {
+                                                movForm.listBox1.Items.Add($"{i + 1}: (Base Combo)");
+                                                i++;
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    if (comboNameList[charID][i + i2] != "")
+                                    {
+                                        movForm.listBox1.Items.Add($"{i}: " + comboNameList[charID][i + i2]);
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                movForm.listBox1.Items.Add($"{i}: " + GetCharComboName(charID, i));
+                            }
+                            break;
                         }
-                        break;
                 }
             }
 

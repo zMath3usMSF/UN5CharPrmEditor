@@ -43,7 +43,8 @@ namespace WindowsFormsApp1
         {
             int charID = int.Parse(lblCharID2.Text);
 
-            CharGen.SendTextToGenForm(this, charID);
+            var charAtk = CharGen.CharGenPrmBkp[charID];
+            CharGen.SendTextToGenForm(this, charAtk);
             byte[] result = CharGen.UpdateCharGenPrm(this, charID);
             CharGen.UpdateP1GenPrm(result);
         }

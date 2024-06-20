@@ -27,7 +27,7 @@ namespace WindowsFormsApp1
         private MovesetParameters movesetParameters;
         private GeneralParameters generalParameters;
         public static int P1ID { get; set; }
-
+        public static bool isNA2;
         public static bool isUN6;
         IntPtr bytesRead;
         public static List<byte[]> charMainAreaList = new List<byte[]>();
@@ -248,45 +248,76 @@ namespace WindowsFormsApp1
                 ReadProcessMemory(processHandle, (IntPtr)0x20617EF4, currentMemoryStartBytes, currentMemoryStartBytes.Length, out var none);
                 int currentMemoryStart = BitConverter.ToInt32(currentMemoryStartBytes, 0);
 
+                isNA2 = currentMemoryStart == 0 ? true : false;
+
                 int originalMemoryStart = 0xBD4560;
 
                 memoryDif = currentMemoryStart - originalMemoryStart;
 
                 byte[] buffer = new byte[2];
-                if (ReadProcessMemory(processHandle, (IntPtr)0x201EDA20, buffer, buffer.Length, out var none1))
+                if(isNA2 == true)
                 {
-                    ClearAllList();
-                    picMainBackground.Visible = false;
-
-                    ushort charNumber = BitConverter.ToUInt16(buffer, 0);
-                    int charStringTblOffset = 0x205BA570;
-
-                    if (charNumber != 94) //Verifica se é o UN6 usando quantidade de personagens presentes originalmente no jogo como base.
+                    if (ReadProcessMemory(processHandle, (IntPtr)0x201F5450, buffer, buffer.Length, out var none1))
                     {
-                        isUN6 = true;
-                    }
+                        ClearAllList();
+                        picMainBackground.Visible = false;
 
-                    if (isUN6 == true)
-                    {
-                        int charProgTblOffset = 0x20417D00;
+                        ushort charNumber = BitConverter.ToUInt16(buffer, 0);
+                        int charStringTblOffset = 0x20401AD0;
 
-                        ReadCharProgTbl(processHandle, charNumber, charProgTblOffset);
+                        if (charNumber != 94) //Verifica se é o UN6 usando quantidade de personagens presentes originalmente no jogo como base.
+                        {
+                            isUN6 = true;
+                        }
+
+                        ReadCharProgTbl(processHandle, charNumber, 0x205A2900);
+
+                        NA2ReadCharNameTbl(processHandle, charNumber, charStringTblOffset);
                     }
                     else
                     {
-                        int charProgTblOffset = 0x205AC8C0;
-
-                        ReadCharProgTbl(processHandle, charNumber, charProgTblOffset);
+                        MessageBox.Show("Error reading process memory, check if the game has already started or if the PCSX2 version is 1.6 or earlier and try again.");
+                        return;
                     }
-
-                    ReadCharNameTbl(processHandle, charNumber, charStringTblOffset);
+                    CloseHandle(processHandle);
                 }
                 else
                 {
-                    MessageBox.Show("Error reading process memory, check if the game has already started or if the PCSX2 version is 1.6 or earlier and try again.");
-                    return;
+                    if (ReadProcessMemory(processHandle, (IntPtr)0x201EDA20, buffer, buffer.Length, out var none1))
+                    {
+                        ClearAllList();
+                        picMainBackground.Visible = false;
+
+                        ushort charNumber = BitConverter.ToUInt16(buffer, 0);
+                        int charStringTblOffset = 0x205BA570;
+
+                        if (charNumber != 94) //Verifica se é o UN6 usando quantidade de personagens presentes originalmente no jogo como base.
+                        {
+                            isUN6 = true;
+                        }
+
+                        if (isUN6 == true)
+                        {
+                            int charProgTblOffset = 0x20417D00;
+
+                            ReadCharProgTbl(processHandle, charNumber, charProgTblOffset);
+                        }
+                        else
+                        {
+                            int charProgTblOffset = 0x205AC8C0;
+
+                            ReadCharProgTbl(processHandle, charNumber, charProgTblOffset);
+                        }
+
+                        ReadCharNameTbl(processHandle, charNumber, charStringTblOffset);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error reading process memory, check if the game has already started or if the PCSX2 version is 1.6 or earlier and try again.");
+                        return;
+                    }
+                    CloseHandle(processHandle);
                 }
-                CloseHandle(processHandle);
             }
             else
             {
@@ -294,7 +325,45 @@ namespace WindowsFormsApp1
             }
             lstChar.SelectedIndex = 0;
         }
+        public void NA2ReadCharNameTbl(IntPtr processHandle, int charNumber, int charStringTblOffset)
+        {
+            IntPtr NewcharOffset = (IntPtr)charStringTblOffset;
 
+            byte[] buffer2 = new byte[charNumber * 0x4];
+            ReadProcessMemory(processHandle, NewcharOffset, buffer2, buffer2.Length, out var none1);
+
+            for (int i = 0; i < buffer2.Length; i += 4)
+            {
+                byte[] bytesToRead = new byte[4];
+                Array.Copy(buffer2, i, bytesToRead, 0, 4);
+
+                bytesToRead[3] = 0x20;
+
+                int offset = BitConverter.ToInt32(bytesToRead, 0);
+
+                string decodedString = Util.ReadStringWithOffset(offset, true);
+
+                var i3 = i / 4;
+
+                charName.Add(decodedString);
+
+                if (!charInvalid.Contains(i3))
+                {
+                    if (i3 <= 93)
+                    {
+                        string charValue = i3.ToString();
+
+                        decodedString = charValue + ": " + decodedString;
+                        lstChar.Items.Add(decodedString);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                lstChar.Visible = true;
+            }
+        }
         public void ReadCharNameTbl(IntPtr processHandle, int charNumber, int charStringTblOffset)
         {
             byte[] charOffsetBytes = new byte[4];
@@ -320,7 +389,7 @@ namespace WindowsFormsApp1
 
                 int offset = BitConverter.ToInt32(bytesToRead, 0);
 
-                string decodedString = Util.ReadStringWithOffset(offset);
+                string decodedString = Util.ReadStringWithOffset(offset, false);
 
                 var i3 = i / 8;
 
@@ -392,7 +461,7 @@ namespace WindowsFormsApp1
                 ccsOffsetBytes[3] = 0x20;
                 int ccsPointer = BitConverter.ToInt32(ccsOffsetBytes, 0);
 
-                charCCS[selectedIndex] = Util.ReadStringWithOffset(ccsPointer);
+                charCCS[selectedIndex] = Util.ReadStringWithOffset(ccsPointer, false);
             }
 
             return charCCS[selectedIndex];
@@ -408,7 +477,7 @@ namespace WindowsFormsApp1
             {
                 IntPtr processHandle = OpenProcess(PROCESS_VM_READ, false, currentProcessID);
 
-                int mapNameAreaPointer = 0x205C7970;
+                int mapNameAreaPointer = isNA2 == true ? 0x205C04C0 : 0x205C7970;
 
                 IntPtr mapNameAreaOffset = (IntPtr)mapNameAreaPointer;
 
@@ -423,7 +492,7 @@ namespace WindowsFormsApp1
                 mapNamePointerBytes[3] = 0x20;
                 int mapNamePointer = BitConverter.ToInt32(mapNamePointerBytes, 0);
 
-                string decodedMapName = Util.ReadStringWithOffset(mapNamePointer);
+                string decodedMapName = isNA2 == true ? Util.ReadStringWithOffset(mapNamePointer, true) : Util.ReadStringWithOffset(mapNamePointer, false);
 
                 mapNameList[mapIndex] = decodedMapName;
             }
@@ -444,7 +513,8 @@ namespace WindowsFormsApp1
 
                 genForm.timer1.Enabled = true;
                 genForm.UpdateLabels(charName, charID);
-                CharGen.SendTextToGenForm(genForm, charID);
+                var charGenPrm = CharGen.CharGenPrm[charID];
+                CharGen.SendTextToGenForm(genForm, charGenPrm);
                 genForm.Show();
             }
         }
@@ -495,6 +565,13 @@ namespace WindowsFormsApp1
                 string txtCharNameForm = txtcharName.Text;
 
                 movForm.timer1.Enabled = true;
+                if (isNA2 == true)
+                {
+                    for (int i = 0; i < CharGen.CharGenPrm[charID].AtkCount; i++)
+                    {
+                        CharAtk.SendTextAtk(movForm, CharAtk.GetCharAtk(charID, i));
+                    }
+                }
                 CharAtk.AddCharComboList(movForm, charID, txtCharNameForm);
                 movForm.UpdateLabels(txtCharNameForm, charIDString);
                 movForm.Show();
@@ -511,32 +588,32 @@ namespace WindowsFormsApp1
             IntPtr processHandle = OpenProcess(PROCESS_ALL_ACCESS, false, currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                byte[] Unk1 = new byte[1];
-                Unk1[0] = 0x8;
+                byte[] Unk3 = new byte[1];
+                Unk3[0] = 0x2;
 
-                WriteProcessMemory(processHandle, (IntPtr)0x20617D70, Unk1, (uint)Unk1.Length, out var none1);
+                WriteProcessMemory(processHandle, isNA2 == true ? (IntPtr)0x2060767C : (IntPtr)0x20617D7C, Unk3, (uint)Unk3.Length, out var none3);
 
                 byte[] Unk2 = new byte[1];
                 Unk2[0] = 0x1;
 
-                WriteProcessMemory(processHandle, (IntPtr)0x20617D78, Unk2, (uint)Unk2.Length, out var none2);
+                WriteProcessMemory(processHandle, isNA2 == true ? (IntPtr)0x20607678 : (IntPtr)0x20617D78, Unk2, (uint)Unk2.Length, out var none2);
 
-                byte[] Unk3 = new byte[1];
-                Unk3[0] = 0x2;
+                byte[] Unk1 = new byte[1];
+                Unk1[0] = 0x8;
 
-                WriteProcessMemory(processHandle, (IntPtr)0x20617D7C, Unk3, (uint)Unk3.Length, out var none3);
+                WriteProcessMemory(processHandle, isNA2 == true ? (IntPtr)0x20607670 : (IntPtr)0x20617D70, Unk1, (uint)Unk1.Length, out var none1);
 
                 byte[] PlayerIDByte = new byte[1];
                 PlayerIDByte[0] = (byte)PlayerID;
 
-                IntPtr PlayerOffset = (IntPtr)(isP1 == true ? 0x20BD7AB0 + memoryDif : 0x20BD7AD8 + memoryDif);
+                IntPtr PlayerOffset = (IntPtr)(isP1 == true ? isNA2 == true ? 0x20C41700 : 0x20BD7AB0  + Main.memoryDif : Main.isNA2 == true ? 0x20C41724 : 0x20BD7AD8  + Main.memoryDif);
 
                 WriteProcessMemory(processHandle, PlayerOffset, PlayerIDByte, (uint)PlayerIDByte.Length, out var none4);
 
                 byte[] MapIDByte = new byte[1];
                 MapIDByte[0] = (byte)MapID;
 
-                WriteProcessMemory(processHandle, (IntPtr)0x20BD7AFA +  memoryDif, MapIDByte, (uint)MapIDByte.Length, out var none5);
+                WriteProcessMemory(processHandle, isNA2 == true ? (IntPtr)0x20C4174A : (IntPtr)0x20BD7AFA + Main.memoryDif, MapIDByte, (uint)MapIDByte.Length, out var none5);
 
                 CloseHandle(processHandle);
             }

@@ -10,7 +10,7 @@ namespace UN5CharPrmEditor
 {
     internal class Util
     {
-        public static string ReadStringWithOffset(int basePointer)
+        public static string ReadStringWithOffset(int basePointer, bool encShift)
         {
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
 
@@ -34,8 +34,15 @@ namespace UN5CharPrmEditor
                     break;
                 }
             }
-
-            string decodedString = Encoding.GetEncoding("iso-8859-1").GetString(stringBytes.ToArray());
+            string decodedString = "";
+            if(encShift == true)
+            {
+                decodedString = Encoding.GetEncoding("shift-jis").GetString(stringBytes.ToArray());
+            }
+            else
+            {
+                decodedString = Encoding.GetEncoding("iso-8859-1").GetString(stringBytes.ToArray());
+            }
             return decodedString;
         }
         public static void VerifyCurrentPlayersIDs()
@@ -43,7 +50,7 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = 0x20BD8844 + Main.memoryDif;
+                int charCurrentP1CharTbl = Main.isNA2 == true ? 0x20C42494 : 0x20BD8844 + Main.memoryDif;
 
                 byte[] buffer = new byte[4];
                 Main.ReadProcessMemory(processHandle, (IntPtr)charCurrentP1CharTbl, buffer, buffer.Length, out var bytesRead);
