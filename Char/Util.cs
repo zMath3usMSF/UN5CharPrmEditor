@@ -69,7 +69,7 @@ namespace UN5CharPrmEditor
             byte resultado = 0;
             for (int i = 0; i < 8; i++)
             {
-                // Definindo o bit na posição i de acordo com o valor na posição i do array bits
+                //Definindo o bit na posição i de acordo com o valor na posição i do array bits
                 resultado |= (byte)(bits[i] << i);
             }
             return resultado;
