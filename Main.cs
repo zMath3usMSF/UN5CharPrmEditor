@@ -582,7 +582,7 @@ namespace WindowsFormsApp1
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("UN5CharPrmEditor, version 0.0. \n\nMade by zMath3usMSF.");
+            MessageBox.Show("UN5CharPrmEditor, version 1.2. \n\nMade by zMath3usMSF.");
         }
 
         public void UpdateMatch(bool isP1, int PlayerID, int MapID)
