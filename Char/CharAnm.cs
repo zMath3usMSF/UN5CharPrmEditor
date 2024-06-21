@@ -74,32 +74,32 @@ namespace UN5CharPrmEditor
         {
             return this.MemberwiseClone();
         }
-
-        public Dictionary<string, byte[]> cCommonBonnesList = new Dictionary<string, byte[]>()
+        public Dictionary<string, byte[]> NA2CommonBonnesList = new Dictionary<string, byte[]>()
         {
-        {"OBJ_2cmn00t0 l foot", new byte[]{ 0x20, 0xC3, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 l clavicle", new byte[]{ 0x60, 0xC3, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 r finger0", new byte[]{ 0x80, 0xC3, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 pelvis", new byte[]{ 0xA0, 0xC3, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 spine", new byte[]{ 0xC0, 0xC3, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 l finger0", new byte[]{ 0x80, 0xC4, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 r foot", new byte[]{ 0xA0, 0xC4, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 l calf", new byte[]{ 0x00, 0xC5, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 r clavicle", new byte[]{ 0xC0, 0x6F, 0x42, 0x00 }},
-        {"OBJ_2cmn00t0 r calf", new byte[]{ 0xE0, 0x6F, 0x42, 0x00 }},
-        {"OBJ_2cmn00t0 head", new byte[]{ 0x20, 0xB9, 0x42, 0x00 }},
-        {"OBJ_2cmn00t0 body", new byte[]{ 0x40, 0xB9, 0x42, 0x00 }},
-        {"OBJ_2cmn00t0 r hand", new byte[]{ 0x90, 0x90, 0x46, 0x00 }},
-        {"OBJ_2cmn00t0 l hand", new byte[]{ 0xB0, 0x90, 0x46, 0x00 }},
-        {"OBJ_2cmn00t0 l thigh", new byte[]{ 0xA0, 0xF6, 0x46, 0x00 }},
-        {"OBJ_2cmn00t0 neck", new byte[]{ 0x40, 0x88, 0x49, 0x00 }},
-        {"OBJ_2cmn00t0 r thigh", new byte[]{ 0x60, 0x88, 0x49, 0x00 }},
-        {"OBJ_2cmn00t0 tail2", new byte[]{ 0x80, 0x1B, 0x4B, 0x00 }},
-        {"OBJ_2cmn00t0 tail", new byte[]{ 0x80, 0x26, 0x4C, 0x00 }},
-        {"OBJ_2cmn00t0 r upperarm", new byte[]{ 0xC0, 0x26, 0x4C, 0x00 }},
-        {"OBJ_2cmn00t0 tail1", new byte[]{ 0xE0, 0x26, 0x4C, 0x00 }},
-        {"OBJ_2cmn00t0 spine1", new byte[]{ 0x70, 0xB9, 0x4C, 0x00 }},
-        {"OBJ_2cmn00t0 l forearm", new byte[]{ 0x40, 0xC3, 0x41, 0x00 }}
+
+        {"OBJ_2cmn00t0 pelvis", new byte[]{ 0x90, 0x8F, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 spine", new byte[]{ 0xB0, 0x8F, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 l thigh", new byte[]{ 0x40, 0xE1, 0x45, 0x00 }},
+        {"OBJ_2cmn00t0 l calf", new byte[]{ 0xF0, 0x90, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 l foot", new byte[]{ 0x10, 0x8F, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 r thigh", new byte[]{ 0x30, 0x83, 0x48, 0x00 }},
+        {"OBJ_2cmn00t0 r calf", new byte[]{ 0xB0, 0x3F, 0x41, 0x00 }},
+        {"OBJ_2cmn00t0 r foot", new byte[]{ 0x90, 0x90, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 spine1", new byte[]{ 0x90, 0xC6, 0x4B, 0x00 }},
+        {"OBJ_2cmn00t0 neck", new byte[]{ 0x10, 0x7E, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 head", new byte[]{ 0xC0, 0x8A, 0x41, 0x00 }},
+        {"OBJ_2cmn00t0 l clavicle", new byte[]{ 0x50, 0x8F, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 l forearm", new byte[]{ 0x30, 0x8F, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 l hand", new byte[]{ 0xE0, 0x78, 0x45, 0x00 }},
+        {"OBJ_2cmn00t0 l finger0", new byte[]{ 0x70, 0x90, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 r clavicle", new byte[]{ 0x90, 0x3F, 0x41, 0x00 }},
+        {"OBJ_2cmn00t0 r upperarm", new byte[]{ 0x90, 0x30, 0x4B, 0x00 }},
+        {"OBJ_2cmn00t0 r hand", new byte[]{ 0xC0, 0x78, 0x45, 0x00 }},
+        {"OBJ_2cmn00t0 r finger0", new byte[]{ 0x70, 0x8F, 0x40, 0x00 }},
+        {"OBJ_2cmn00t0 tail", new byte[]{ 0x50, 0x30, 0x4B, 0x00 }},
+        {"OBJ_2cmn00t0 tail1", new byte[]{ 0xB0, 0x30, 0x4B, 0x00 }},
+        {"OBJ_2cmn00t0 tail2", new byte[]{ 0x30, 0x1F, 0x4A, 0x00 }},
+        {"OBJ_2cmn00t0 body", new byte[]{ 0xE0, 0x8A, 0x41, 0x00 }},
         };
 
         public Dictionary<string, byte[]> CommonBonnesList = new Dictionary<string, byte[]>()
@@ -214,7 +214,7 @@ namespace UN5CharPrmEditor
             return charAnmNameList[CharIndex][AnmIndex];
         }
 
-        public static void UpdateP1Anm(byte[] resultBytes, int selectedAnm)
+        public static void UpdateP1Anm(byte[] resultBytes, int selectedAnm, int charID)
         {
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
@@ -240,6 +240,13 @@ namespace UN5CharPrmEditor
                 IntPtr P1AnmOffset = (IntPtr)P1AnmPointer;
 
                 Main.WriteProcessMemory(processHandle, P1AnmOffset, resultBytes, (uint)resultBytes.Length, out var none2);
+
+                //Write Normal in Memory
+                byte[] anmNormalMemoryOffset = CharGen.CharGenPrm[charID].AnmListOffset;
+                anmNormalMemoryOffset[3] = 0x20;
+                P1AnmPointer = BitConverter.ToInt32(anmNormalMemoryOffset, 0) + skipAnms;
+                P1AnmOffset = (IntPtr)P1AnmPointer;
+                Main.WriteProcessMemory(processHandle, P1AnmOffset, resultBytes, (uint)resultBytes.Length, out var none3);
 
                 Main.CloseHandle(processHandle);
             }
@@ -271,7 +278,7 @@ namespace UN5CharPrmEditor
             anmObjectAtk[3] = 0x20;
             int anmObjectAtkPointer = BitConverter.ToInt32(anmObjectAtk, 0);
             string anmObjectAtkString = Util.ReadStringWithOffset(anmObjectAtkPointer, false);
-            var commonBonnesList = charAnm.CommonBonnesList;
+            var commonBonnesList = Main.isNA2 == true ? charAnm.NA2CommonBonnesList : charAnm.CommonBonnesList;
             movForm.cmbAnmObjectAtk.Items.Clear();
             if (commonBonnesList.ContainsKey(anmObjectAtkString))
             {
@@ -367,7 +374,8 @@ namespace UN5CharPrmEditor
             anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtHitBoxScale.Text)));
             ninjaCharsAnm.AnmHitBoxScale = Convert.ToSingle(movForm.txtHitBoxScale.Text);
             int selectedIndexcmbAnmObjectAtk = movForm.cmbAnmObjectAtk.SelectedIndex;
-            if (ninjaCharsAnm.CommonBonnesList.TryGetValue(movForm.cmbAnmObjectAtk.Items[selectedIndexcmbAnmObjectAtk].ToString(), out byte[] anmObjAtkPointerBytes))
+            var commonBonnesList = Main.isNA2 == true ? ninjaCharsAnm.NA2CommonBonnesList : ninjaCharsAnm.CommonBonnesList;
+            if (commonBonnesList.TryGetValue(movForm.cmbAnmObjectAtk.Items[selectedIndexcmbAnmObjectAtk].ToString(), out byte[] anmObjAtkPointerBytes))
             {
                 anmBlockBytes.AddRange(anmObjAtkPointerBytes);
                 ninjaCharsAnm.AnmObjAtk = anmObjAtkPointerBytes;
@@ -389,7 +397,7 @@ namespace UN5CharPrmEditor
             anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtAnmHitBoxScale2.Text)));
             ninjaCharsAnm.AnmHitBoxScale2 = Convert.ToSingle(movForm.txtAnmHitBoxScale2.Text);
             int selectedIndexCmbAnmObjectAtk2 = movForm.cmbAnmObjectAtk2.SelectedIndex;
-            if (ninjaCharsAnm.CommonBonnesList.TryGetValue(movForm.cmbAnmObjectAtk2.Items[selectedIndexCmbAnmObjectAtk2].ToString(), out byte[] anmObjAtkPointerBytes2))
+            if (commonBonnesList.TryGetValue(movForm.cmbAnmObjectAtk2.Items[selectedIndexCmbAnmObjectAtk2].ToString(), out byte[] anmObjAtkPointerBytes2))
             {
                 anmBlockBytes.AddRange(anmObjAtkPointerBytes2);
                 ninjaCharsAnm.AnmObjAtk2 = anmObjAtkPointerBytes2;
@@ -456,7 +464,8 @@ namespace UN5CharPrmEditor
                 {
                     byte[] charAnmAreaOffsetBytes = CharGen.CharGenPrm[charID].AnmListOffset;
                     charAnmAreaOffsetBytes[3] = 0x0;
-                    int charAnmAreaOffset = BitConverter.ToInt32(charAnmAreaOffsetBytes, 0) - 0xFFE80;
+                    int subValue = Main.isNA2 == true ? 0xFFF00 : 0xFFE80;
+                    int charAnmAreaOffset = BitConverter.ToInt32(charAnmAreaOffsetBytes, 0) - subValue;
 
                     fs.Seek(charAnmAreaOffset, SeekOrigin.Begin);
 

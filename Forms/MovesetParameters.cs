@@ -73,14 +73,14 @@ namespace WindowsFormsApp1
                 int atkID = int.Parse(lblSelectedAtk2.Text);
                 byte[] resultBytes = CharAtk.UpdateCharAtkPrm(this, charID, atkID);
                 int selectedAtk = listBox1.SelectedIndex;
-                CharAtk.UpdateP1Atk(resultBytes, selectedAtk);
+                CharAtk.UpdateP1Atk(resultBytes, selectedAtk, charID);
             }
             else
             {
                 int charID = int.Parse(lblCharID2.Text);
                 byte[] resultBytes = CharAnm.UpdateCharAnmPrm(this, charID);
                 int selectedAnm = int.Parse(listBox1.SelectedItem.ToString().Split(':')[0]);
-                CharAnm.UpdateP1Anm(resultBytes, selectedAnm);
+                CharAnm.UpdateP1Anm(resultBytes, selectedAnm, charID);
             }
         }
 
@@ -107,13 +107,20 @@ namespace WindowsFormsApp1
             if (btnEditAtkParameters.Visible == false)
             {
                 int charID = int.Parse(lblCharID2.Text);
-                byte[] resultBytes = CharAtk.UpdateAllCharAtkPrm(this, charID);
+                int atkID = int.Parse(lblSelectedAtk2.Text);
+                byte[] resultBytes = CharAtk.UpdateCharAtkPrm(this, charID, atkID);
+                int selectedAtk = listBox1.SelectedIndex;
+                CharAtk.UpdateP1Atk(resultBytes, selectedAtk, charID);
+                resultBytes = CharAtk.UpdateAllCharAtkPrm(this, charID);
                 CharAtk.WriteELFCharAtk(resultBytes, charID);
             }
             else
             {
                 int charID = int.Parse(lblCharID2.Text);
-                byte[] resultBytes = CharAnm.UpdateAllCharAnmPrm(this, charID);
+                byte[] resultBytes = CharAnm.UpdateCharAnmPrm(this, charID);
+                int selectedAnm = int.Parse(listBox1.SelectedItem.ToString().Split(':')[0]);
+                CharAnm.UpdateP1Anm(resultBytes, selectedAnm, charID);
+                resultBytes = CharAnm.UpdateAllCharAnmPrm(this, charID);
                 CharAnm.WriteELFCharAnm(resultBytes, charID);
             }
         }

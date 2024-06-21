@@ -236,7 +236,7 @@ namespace UN5CharPrmEditor
             return this.MemberwiseClone();
         }
 
-        public static void UpdateP1Atk(byte[] resultBytes, int selectedAtk) //resultbytes is divided into two parts because the 4 bytes of offset 0x1C
+        public static void UpdateP1Atk(byte[] resultBytes, int selectedAtk, int charID) //resultbytes is divided into two parts because the 4 bytes of offset 0x1C
                                                                             //change when it goes into memory, which causes a bug if it is changed.
         {
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
@@ -275,6 +275,19 @@ namespace UN5CharPrmEditor
                 IntPtr P1AtkOffset2 = (IntPtr)P1AtkPointer2;
 
                 Main.WriteProcessMemory(processHandle, P1AtkOffset2, resultBytesParte2, (uint)resultBytesParte2.Length, out var none3);
+
+                //Write Normal in Memory
+                byte[] atkNormalMemoryOffset = CharGen.CharGenPrm[charID].AtkListOffset;
+                atkNormalMemoryOffset[3] = 0x20;
+                P1AtkPointer = BitConverter.ToInt32(atkNormalMemoryOffset, 0) + skipAtks;
+                Array.Copy(resultBytes, 0, resultBytesParte1, 0, resultBytesParte1.Length);
+                P1AtkOffset = (IntPtr)P1AtkPointer;
+                Main.WriteProcessMemory(processHandle, P1AtkOffset, resultBytesParte1, (uint)resultBytesParte1.Length, out var none4);
+
+                Array.Copy(resultBytes, 0x20, resultBytesParte2, 0, resultBytesParte2.Length);
+                P1AtkPointer2 = BitConverter.ToInt32(atkNormalMemoryOffset, 0) + skipAtks + 0x20;
+                P1AtkOffset2 = (IntPtr)P1AtkPointer2;
+                Main.WriteProcessMemory(processHandle, P1AtkOffset2, resultBytesParte2, (uint)resultBytesParte2.Length, out var none5);
 
                 Main.CloseHandle(processHandle);
             }
@@ -339,7 +352,8 @@ namespace UN5CharPrmEditor
                 List<string> charComboName = new List<string>();
                 for (int j = 0; j < CharGen.CharGenPrm[charID].AtkCount; j++)
                 {
-                    byte[] charComboNameOffsetBytes = CharAtkPrm[charID][j].AtkUnk2;
+                    byte[] charComboNameOffsetBytes = new byte[4];
+                    Array.Copy(CharAtkPrm[charID][j].AtkUnk2, charComboNameOffsetBytes, CharAtkPrm[charID][j].AtkUnk2.Length);
                     charComboNameOffsetBytes[3] = 0x20;
                     int charComboNameOffset = BitConverter.ToInt32(charComboNameOffsetBytes, 0);
 
@@ -923,7 +937,8 @@ namespace UN5CharPrmEditor
                 {
                     byte[] charAtkAreaOffsetBytes = CharGen.CharGenPrm[charID].AtkListOffset;
                     charAtkAreaOffsetBytes[3] = 0x0;
-                    int charAtkAreaOffset = BitConverter.ToInt32(charAtkAreaOffsetBytes, 0) - 0xFFE80;
+                    int subValue = Main.isNA2 == true ? 0xFFF00 : 0xFFE80;
+                    int charAtkAreaOffset = BitConverter.ToInt32(charAtkAreaOffsetBytes, 0) - subValue;
 
                     fs.Seek(charAtkAreaOffset, SeekOrigin.Begin);
 

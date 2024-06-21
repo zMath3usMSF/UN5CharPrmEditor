@@ -30,6 +30,7 @@ namespace WindowsFormsApp1
         public static bool isNA2;
         public static bool isUN6;
         IntPtr bytesRead;
+        public static List<IntPtr> charMainAreaOffsets = new List<IntPtr>();
         public static List<byte[]> charMainAreaList = new List<byte[]>();
         public static List<string> charName = new List<string>();
         public static List<string> charCCS = new List<string>();
@@ -222,6 +223,7 @@ namespace WindowsFormsApp1
         private void ClearAllList()
         {
             lstChar.Items.Clear();
+            charMainAreaOffsets.Clear();
             charMainAreaList.Clear();
             charName.Clear();
             charCCS.Clear();
@@ -433,6 +435,8 @@ namespace WindowsFormsApp1
 
                     IntPtr charMainAreaOffset = (IntPtr)charMainAreaOffsetBytes;
 
+                    charMainAreaOffsets.Add(charMainAreaOffset);
+
                     byte[] charMainAreaBuffer = new byte[0x120];
                     ReadProcessMemory(processHandle, charMainAreaOffset, charMainAreaBuffer, charMainAreaBuffer.Length, out bytesRead);
 
@@ -477,14 +481,12 @@ namespace WindowsFormsApp1
             {
                 IntPtr processHandle = OpenProcess(PROCESS_VM_READ, false, currentProcessID);
 
-                int mapNameAreaPointer = isNA2 == true ? 0x205C04C4 : 0x205C7970;
+                int mapNameAreaPointer = isNA2 == true ? 0x205C04C0 : 0x205C7970;
 
                 IntPtr mapNameAreaOffset = (IntPtr)mapNameAreaPointer;
 
                 byte[] mapNameAreaBuffer = new byte[24 * 0x4];
                 ReadProcessMemory(processHandle, mapNameAreaOffset, mapNameAreaBuffer, mapNameAreaBuffer.Length, out var none2);
-
-                List<string> anmNameList = new List<string>();
 
                 byte[] mapNamePointerBytes = new byte[4];
                 Array.Copy(mapNameAreaBuffer, mapIndex * 0x4, mapNamePointerBytes, 0, 4);
@@ -524,7 +526,7 @@ namespace WindowsFormsApp1
             var openFileDialog = new OpenFileDialog()
             {
                 Title = "Select the ELF.",
-                Filter = "ELF Files|*.05;*.06|All Files|*.*"
+                Filter = "ELF Files|*.05;*.06;*.37|All Files|*.*"
             };
 
             if (openFileDialog.ShowDialog() != DialogResult.OK)

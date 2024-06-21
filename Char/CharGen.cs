@@ -95,7 +95,7 @@ namespace UN5CharPrmEditor
         {
             return this.MemberwiseClone();
         }
-        public static void UpdateP1GenPrm(byte[] resultBytes)
+        public static void UpdateP1GenPrm(byte[] resultBytes, int charID)
         {
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
@@ -115,6 +115,8 @@ namespace UN5CharPrmEditor
 
                 Main.WriteProcessMemory(processHandle, NewOffsetPlus58, resultBytes, (uint)resultBytes.Length, out var none1);
 
+                Main.WriteProcessMemory(processHandle, Main.charMainAreaOffsets[charID] + 0x58, resultBytes, (uint)resultBytes.Length, out var none2);
+
                 Main.CloseHandle(processHandle);
             }
         }
@@ -129,12 +131,14 @@ namespace UN5CharPrmEditor
                 using (FileStream fs = new FileStream(Main.caminhoELF, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
                     int skipChars = charID * 0x8 + 0x4;
-                    fs.Seek(0x317E80 + skipChars, SeekOrigin.Begin);
+                    int mainAreaOffset = Main.isNA2 == true ? 0x4A2A00 : Main.isUN6 == true ? 0x317E80 : 0x4ACA40;
+                    fs.Seek(mainAreaOffset + skipChars, SeekOrigin.Begin);
 
                     byte[] charMainPointer = new byte[4];
                     fs.Read(charMainPointer, 0, charMainPointer.Length);
                     int charMainOffset = BitConverter.ToInt32(charMainPointer, 0);
-                    charMainOffset = charMainOffset - 0xFFE80 + 0x58;
+                    int subValue = Main.isNA2 == true ? 0xFFF00 : 0xFFE80;
+                    charMainOffset = charMainOffset - subValue + 0x58;
 
                     fs.Seek(charMainOffset, SeekOrigin.Begin);
                     fs.Write(resultBytes, 0, resultBytes.Length);
