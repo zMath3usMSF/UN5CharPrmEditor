@@ -475,7 +475,7 @@ namespace UN5CharPrmEditor
                         }
                         else
                         {
-                            fs.Seek(charAwkOffset, SeekOrigin.Begin);//
+                            fs.Seek(charAwkOffset, SeekOrigin.Begin);
                             byte[] buffer = new byte[4];
                             fs.Read(buffer, 0, buffer.Length);
                             int skipAwk = awkPos * 2;

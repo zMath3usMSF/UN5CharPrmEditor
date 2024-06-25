@@ -242,7 +242,7 @@
             // 
             this.picMainBackground.Image = global::UN5CharPrmEditor.Properties.Resources.MainBackground;
             this.picMainBackground.InitialImage = global::UN5CharPrmEditor.Properties.Resources.MainBackground;
-            this.picMainBackground.Location = new System.Drawing.Point(-638, 27);
+            this.picMainBackground.Location = new System.Drawing.Point(0, 27);
             this.picMainBackground.Name = "picMainBackground";
             this.picMainBackground.Size = new System.Drawing.Size(867, 408);
             this.picMainBackground.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
