@@ -64,6 +64,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AwakeningParameters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AwakeningParameters.Designer.cs">
+      <DependentUpon>AwakeningParameters.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CharAwk.cs" />
     <Compile Include="Char\CharAnm.cs" />
     <Compile Include="Char\CharAtk.cs" />
     <Compile Include="Char\CharGen.cs" />
@@ -201,6 +208,9 @@
     <Compile Include="Forms\SelectProcess.Designer.cs">
       <DependentUpon>SelectProcess.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AwakeningParameters.resx">
+      <DependentUpon>AwakeningParameters.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\UpdateMatch.resx">
       <DependentUpon>UpdateMatch.cs</DependentUpon>
     </EmbeddedResource>

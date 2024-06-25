@@ -33,7 +33,6 @@
             this.txtcharName = new System.Windows.Forms.TextBox();
             this.txtCCSName = new System.Windows.Forms.TextBox();
             this.lblCCSName = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnEditGeneralParameters = new System.Windows.Forms.Button();
             this.lstChar = new System.Windows.Forms.ListBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -49,10 +48,12 @@
             this.englishToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.portuguêsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnEditMovesetParameters = new System.Windows.Forms.Button();
+            this.btnEditAwekeningParameters = new System.Windows.Forms.Button();
             this.picMainBackground = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMainBackground)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // lblcharName
@@ -92,15 +93,6 @@
             this.lblCCSName.TabIndex = 6;
             this.lblCCSName.Text = "CCS Name:";
             this.lblCCSName.Visible = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(235, 66);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(628, 269);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pictureBox1.TabIndex = 7;
-            this.pictureBox1.TabStop = false;
             // 
             // btnEditGeneralParameters
             // 
@@ -172,7 +164,7 @@
             this.changeP1CharacterToolStripMenuItem,
             this.changeP2CharacterToolStripMenuItem});
             this.changeCharacterToolStripMenuItem.Name = "changeCharacterToolStripMenuItem";
-            this.changeCharacterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.changeCharacterToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.changeCharacterToolStripMenuItem.Text = "Change Character";
             // 
             // changeP1CharacterToolStripMenuItem
@@ -226,7 +218,7 @@
             // 
             // btnEditMovesetParameters
             // 
-            this.btnEditMovesetParameters.Location = new System.Drawing.Point(387, 352);
+            this.btnEditMovesetParameters.Location = new System.Drawing.Point(385, 352);
             this.btnEditMovesetParameters.Name = "btnEditMovesetParameters";
             this.btnEditMovesetParameters.Size = new System.Drawing.Size(135, 23);
             this.btnEditMovesetParameters.TabIndex = 12;
@@ -235,22 +227,43 @@
             this.btnEditMovesetParameters.Visible = false;
             this.btnEditMovesetParameters.Click += new System.EventHandler(this.btnEditMovesetParameters_Click);
             // 
+            // btnEditAwekeningParameters
+            // 
+            this.btnEditAwekeningParameters.Location = new System.Drawing.Point(540, 352);
+            this.btnEditAwekeningParameters.Name = "btnEditAwekeningParameters";
+            this.btnEditAwekeningParameters.Size = new System.Drawing.Size(151, 23);
+            this.btnEditAwekeningParameters.TabIndex = 14;
+            this.btnEditAwekeningParameters.Text = "Edit Awekeninng Parameters";
+            this.btnEditAwekeningParameters.UseVisualStyleBackColor = true;
+            this.btnEditAwekeningParameters.Visible = false;
+            this.btnEditAwekeningParameters.Click += new System.EventHandler(this.btnEditAwekeningParameters_Click);
+            // 
             // picMainBackground
             // 
             this.picMainBackground.Image = global::UN5CharPrmEditor.Properties.Resources.MainBackground;
             this.picMainBackground.InitialImage = global::UN5CharPrmEditor.Properties.Resources.MainBackground;
-            this.picMainBackground.Location = new System.Drawing.Point(0, 25);
+            this.picMainBackground.Location = new System.Drawing.Point(-638, 27);
             this.picMainBackground.Name = "picMainBackground";
             this.picMainBackground.Size = new System.Drawing.Size(867, 408);
             this.picMainBackground.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picMainBackground.TabIndex = 13;
             this.picMainBackground.TabStop = false;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(235, 66);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(628, 269);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.TabIndex = 7;
+            this.pictureBox1.TabStop = false;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(867, 429);
+            this.Controls.Add(this.btnEditAwekeningParameters);
             this.Controls.Add(this.picMainBackground);
             this.Controls.Add(this.btnEditMovesetParameters);
             this.Controls.Add(this.lstChar);
@@ -267,10 +280,10 @@
             this.MaximizeBox = false;
             this.Name = "Main";
             this.Text = "UN5CharPrmEditor";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMainBackground)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -298,6 +311,7 @@
         private System.Windows.Forms.ToolStripMenuItem languageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portuguêsToolStripMenuItem;
+        private System.Windows.Forms.Button btnEditAwekeningParameters;
     }
 }
 

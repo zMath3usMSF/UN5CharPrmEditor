@@ -24,6 +24,7 @@ namespace WindowsFormsApp1
         public static bool openedELF;
         public static int currentProcessID = 0;
         public static int memoryDif = 0;
+        private AwakeningParameters awakeningParameters;
         private MovesetParameters movesetParameters;
         private GeneralParameters generalParameters;
         public static int P1ID { get; set; }
@@ -83,6 +84,7 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             lstChar.SelectedIndexChanged += lstChar_AfterSelect;
+            awakeningParameters = new AwakeningParameters();
             movesetParameters = new MovesetParameters();
             generalParameters = new GeneralParameters();
 
@@ -131,6 +133,7 @@ namespace WindowsFormsApp1
         {
             btnEditGeneralParameters.Visible = true;
             btnEditMovesetParameters.Visible = true;
+            btnEditAwekeningParameters.Visible = true;
 
             string selectedString = lstChar.SelectedItem.ToString();
 
@@ -239,6 +242,9 @@ namespace WindowsFormsApp1
             CharAnm.CharAnmPrm.Clear();
             CharAnm.CharAnmPrmBkp.Clear();
             CharAnm.charAnmNameList.Clear();
+
+            CharAwk.CharAwkPrm.Clear();
+            CharAwk.CharAwkPrmBkp.Clear();
         }
 
         public void ProcessListBoxSelectedItem(int selectedProcessId)
@@ -450,6 +456,8 @@ namespace WindowsFormsApp1
                     CharGen.CharGenPrmBkp.Add(clone);
                     #endregion
                 }
+
+                CharAwk.ReadCharAwkIDList();
             }
         }
 
@@ -653,6 +661,25 @@ namespace WindowsFormsApp1
             Settings.Default.EnglishChecked = false;
             Settings.Default.Save();
             englishToolStripMenuItem.Checked = false;
+        }
+
+        private void btnEditAwekeningParameters_Click(object sender, EventArgs e)
+        {
+            string selectedString = lstChar.SelectedItem.ToString();
+
+            string[] splitString = selectedString.Split(':');
+            if (splitString.Length > 1)
+            {
+                string charIDString = splitString[0].Trim();
+                int charID = Convert.ToInt32(charIDString);
+                AwakeningParameters awkForm = new AwakeningParameters();
+                string txtCharNameForm = txtcharName.Text;
+
+                awkForm.timer1.Enabled = true;
+                CharAwk.AddItemsToListBox(awkForm, charID);
+                awkForm.UpdateLabels(txtCharNameForm, charIDString);
+                awkForm.Show();
+            }
         }
     }
 }

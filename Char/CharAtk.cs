@@ -126,7 +126,7 @@ namespace UN5CharPrmEditor
           {31, "Faint (Blue Flames Eff)"}
         };
 
-        public Dictionary<int, string> PLSoundList = new Dictionary<int, string>()
+        public static Dictionary<int, string> PLSoundList = new Dictionary<int, string>()
         {
         {0, "ATK_cmn_vS"},
         {1, "ATK_cmn_vM"},
@@ -309,8 +309,8 @@ namespace UN5CharPrmEditor
                 atkListOffsetBytes[3] = 0x20;
                 int atkListPointer = BitConverter.ToInt32(CharGen.CharGenPrm[charID].AtkListOffset, 0);
 
-                List<CharAtk> ninjaCharsAtk = new List<CharAtk>();
-                List<CharAtk> ninjaCharsAtkBkp = new List<CharAtk>();
+                List<CharAtk> charAtkPrm = new List<CharAtk>();
+                List<CharAtk> charAtkPrmBkp = new List<CharAtk>();
                 for (int i = 0; i != atkCount; i++)
                 {
                     byte[] currentAtkBlock = new byte[0x54];
@@ -323,14 +323,13 @@ namespace UN5CharPrmEditor
                     {
                         var ninja = ReadCharAtkPrm(currentAtkBlock);
                         var clone = (CharAtk)ninja.Clone();
-                        ninjaCharsAtk.Add(ninja);
-                        ninjaCharsAtkBkp.Add(clone);
+                        charAtkPrm.Add(ninja);
+                        charAtkPrmBkp.Add(clone);
                     }
                 }
-                CharAtkPrm[charID] = ninjaCharsAtk;
-                CharAtkPrmBkp[charID] = ninjaCharsAtk;
+                CharAtkPrm[charID] = charAtkPrm;
+                CharAtkPrmBkp[charID] = charAtkPrmBkp;
             }
-
             return CharAtkPrm[charID][atkID];
         }
         public static string NA2GetCharComboName(int charID, int comboNameID)
@@ -558,7 +557,7 @@ namespace UN5CharPrmEditor
             movForm.btnEditAtkParameters.Visible = false;
         }
 
-        public static void SendTextAtk(MovesetParameters movForm, CharAtk ninjaCharsAtk)
+        public static void SendTextAtk(MovesetParameters movForm, CharAtk charAtkPrm)
         {
             if (movForm.cmbGP3FUndefendable.Items.Count == 0)
             {
@@ -571,49 +570,49 @@ namespace UN5CharPrmEditor
                     comboBox.Items.AddRange(yesNoOptions);
                 }
             }
-            VerifyFlagGroup1Bits(movForm, ninjaCharsAtk.AtkFlagGroup1);
-            VerifyFlagGroup2Bits(movForm, ninjaCharsAtk.AtkFlagGroup2);
-            VerifyDefenseFlagBits(movForm, ninjaCharsAtk.AtkDefenseFlag);
-            VerifyFlagGroup4Bits(movForm, ninjaCharsAtk.AtkFlagGroup4);
+            VerifyFlagGroup1Bits(movForm, charAtkPrm.AtkFlagGroup1);
+            VerifyFlagGroup2Bits(movForm, charAtkPrm.AtkFlagGroup2);
+            VerifyDefenseFlagBits(movForm, charAtkPrm.AtkDefenseFlag);
+            VerifyFlagGroup4Bits(movForm, charAtkPrm.AtkFlagGroup4);
 
-            movForm.txtChakra.Text = ($"{ninjaCharsAtk.AtkChakra}");
-            movForm.txtDamage.Text = ($"{ninjaCharsAtk.AtkDamage}");
-            movForm.txtKnockBack.Text = ($"{ninjaCharsAtk.AtkKnockBack}");
+            movForm.txtChakra.Text = ($"{charAtkPrm.AtkChakra}");
+            movForm.txtDamage.Text = ($"{charAtkPrm.AtkDamage}");
+            movForm.txtKnockBack.Text = ($"{charAtkPrm.AtkKnockBack}");
 
-            movForm.cmbDmgEffect.Items.AddRange(movForm.cmbDmgEffect.Items.Count == 0 ? ninjaCharsAtk.DamageEffectList.Values.ToArray() : new object[0]);
-            int currentDmgEffect = (int)ninjaCharsAtk.AtkDamageEffect;
+            movForm.cmbDmgEffect.Items.AddRange(movForm.cmbDmgEffect.Items.Count == 0 ? charAtkPrm.DamageEffectList.Values.ToArray() : new object[0]);
+            int currentDmgEffect = (int)charAtkPrm.AtkDamageEffect;
             movForm.cmbDmgEffect.SelectedIndex = Math.Min(currentDmgEffect, 31);
 
-            movForm.cmbDefenseEffect.Items.AddRange(movForm.cmbDefenseEffect.Items.Count == 0 ? ninjaCharsAtk.DefenseEffectList.Values.ToArray() : new object[0]);
-            int currentDefenseEffect = ninjaCharsAtk.AtkDefenseEffect;
+            movForm.cmbDefenseEffect.Items.AddRange(movForm.cmbDefenseEffect.Items.Count == 0 ? charAtkPrm.DefenseEffectList.Values.ToArray() : new object[0]);
+            int currentDefenseEffect = charAtkPrm.AtkDefenseEffect;
             movForm.cmbDefenseEffect.SelectedIndex = currentDefenseEffect == 255 ? 0 : currentDefenseEffect + 1;
 
-            movForm.txtHitCount.Text = ($"{ninjaCharsAtk.AtkHitCount}");
-            movForm.txtHitSpeed.Text = ($"{ninjaCharsAtk.AtkHitSpeed}");
-            movForm.txtHitEffect.Text = ($"{ninjaCharsAtk.AtkHitEffect}");
-            movForm.txtSummonDistance1.Text = $"{ninjaCharsAtk.AtkSummonDistance1}";
-            movForm.txtSummonDistance2.Text = $"{ninjaCharsAtk.AtkSummonDistance2}";
-            movForm.txtKnockBackDirection.Text = $"{ninjaCharsAtk.AtkKnockBackDirection}";
-            movForm.txtAtkSound.Text = ($"{ninjaCharsAtk.AtkSound}");
+            movForm.txtHitCount.Text = ($"{charAtkPrm.AtkHitCount}");
+            movForm.txtHitSpeed.Text = ($"{charAtkPrm.AtkHitSpeed}");
+            movForm.txtHitEffect.Text = ($"{charAtkPrm.AtkHitEffect}");
+            movForm.txtSummonDistance1.Text = $"{charAtkPrm.AtkSummonDistance1}";
+            movForm.txtSummonDistance2.Text = $"{charAtkPrm.AtkSummonDistance2}";
+            movForm.txtKnockBackDirection.Text = $"{charAtkPrm.AtkKnockBackDirection}";
+            movForm.txtAtkSound.Text = ($"{charAtkPrm.AtkSound}");
 
-            movForm.cmbPLSound.Items.AddRange(movForm.cmbPLSound.Items.Count == 0 ? ninjaCharsAtk.PLSoundList.Values.ToArray() : new object[0]);
-            int currentPLSound = (int)ninjaCharsAtk.AtkPlSound;
+            movForm.cmbPLSound.Items.AddRange(movForm.cmbPLSound.Items.Count == 0 ? PLSoundList.Values.ToArray() : new object[0]);
+            int currentPLSound = (int)charAtkPrm.AtkPlSound;
             movForm.cmbPLSound.SelectedIndex = currentPLSound == -4 ? 0 : currentPLSound == -3 ? 1 : currentPLSound == -2 ? 2 : currentPLSound == -1 ? 3 : currentPLSound > 34 ? 0 : currentPLSound + 4;
 
-            movForm.txtSoundDelay.Text = ($"{ninjaCharsAtk.AtkSoundDelay}");
-            movForm.txtDmgSound.Text = ($"{ninjaCharsAtk.AtkDamageSound}");
+            movForm.txtSoundDelay.Text = ($"{charAtkPrm.AtkSoundDelay}");
+            movForm.txtDmgSound.Text = ($"{charAtkPrm.AtkDamageSound}");
 
-            movForm.cmbDmgParticle.Items.AddRange(movForm.cmbDmgParticle.Items.Count == 0 ? ninjaCharsAtk.DamageParticleList.Values.ToArray() : new object[0]);
-            int currentDmgParticle = (int)ninjaCharsAtk.AtkDamageParticle;
+            movForm.cmbDmgParticle.Items.AddRange(movForm.cmbDmgParticle.Items.Count == 0 ? charAtkPrm.DamageParticleList.Values.ToArray() : new object[0]);
+            int currentDmgParticle = (int)charAtkPrm.AtkDamageParticle;
             movForm.cmbDmgParticle.SelectedIndex = currentDmgParticle > 24 || currentDmgParticle == -1 ? 0 : currentDmgParticle + 1;
 
-            movForm.txtDefenseSound.Text = ($"{ninjaCharsAtk.AtkDefenseSound}");
+            movForm.txtDefenseSound.Text = ($"{charAtkPrm.AtkDefenseSound}");
 
-            movForm.cmbDefenseParticle.Items.AddRange(movForm.cmbDefenseParticle.Items.Count == 0 ? ninjaCharsAtk.DefenseParticleList.Values.ToArray() : new object[0]);
-            int currentDefenseParticle = ninjaCharsAtk.AtkDefenseParticle;
+            movForm.cmbDefenseParticle.Items.AddRange(movForm.cmbDefenseParticle.Items.Count == 0 ? charAtkPrm.DefenseParticleList.Values.ToArray() : new object[0]);
+            int currentDefenseParticle = charAtkPrm.AtkDefenseParticle;
             movForm.cmbDefenseParticle.SelectedIndex = currentDefenseParticle < 0 ? currentDefenseParticle + 1 : 0;
 
-            movForm.txtEnemySound.Text = ($"{ninjaCharsAtk.AtkEnemySound}");
+            movForm.txtEnemySound.Text = ($"{charAtkPrm.AtkEnemySound}");
         }
         public static void VerifyFlagGroup1Bits(MovesetParameters movForm, uint AtkDefenseFlag)
         {
