@@ -245,6 +245,10 @@ namespace WindowsFormsApp1
 
             CharAwk.CharAwkPrm.Clear();
             CharAwk.CharAwkPrmBkp.Clear();
+            CharAwk.CharAwkIDList.Clear();
+            CharAwk.CharAwkActivationType.Clear();
+            CharAwk.CharAwkActivationSound.Clear();
+
         }
 
         public void ProcessListBoxSelectedItem(int selectedProcessId)
