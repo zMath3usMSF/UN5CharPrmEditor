@@ -9,11 +9,11 @@ using WindowsFormsApp1;
 
 namespace UN5CharPrmEditor
 {
-    internal class CharAnm
+    internal class PlAnm
     {
-        public static List<List<string>> charAnmNameList = new List<List<string>>();
-        public static List<List<CharAnm>> CharAnmPrm = new List<List<CharAnm>>();
-        public static List<List<CharAnm>> CharAnmPrmBkp = new List<List<CharAnm>>();
+        public static List<List<string>> PlAnmListName = new List<List<string>>();
+        public static List<List<PlAnm>> PlAnmPrm = new List<List<PlAnm>>();
+        public static List<List<PlAnm>> PlAnmPrmBkp = new List<List<PlAnm>>();
 
         #region Anm Attributes
 
@@ -33,7 +33,7 @@ namespace UN5CharPrmEditor
 
         #endregion
 
-        internal static CharAnm ReadCharAnmPrm(byte[] Input) => new CharAnm
+        internal static PlAnm ReadPlAnmPrm(byte[] Input) => new PlAnm
         {
             AnmID = (short)Input.ReadUInt(0x0, 16),
 
@@ -129,25 +129,25 @@ namespace UN5CharPrmEditor
         {"OBJ_2cmn00t0 body", new byte[]{ 0x40, 0xB9, 0x42, 0x00 }},
         };
 
-        public static CharAnm GetCharAnm(int currentCharID, int selectedIndex)
+        public static PlAnm GetPlAnm(int currentCharID, int selectedIndex)
         {
-            int anmCount = CharGen.CharGenPrm[currentCharID].AnmCount;
+            int anmCount = PlGen.CharGenPrm[currentCharID].AnmCount;
 
-            while (CharAnmPrm.Count <= 93)
+            while (PlAnmPrm.Count <= Main.charCount)
             {
-                CharAnmPrm.Add(new List<CharAnm>());
-                CharAnmPrmBkp.Add(new List<CharAnm>());
+                PlAnmPrm.Add(new List<PlAnm>());
+                PlAnmPrmBkp.Add(new List<PlAnm>());
             }
-            if (CharAnmPrm[currentCharID].Count == 0)
+            if (PlAnmPrm[currentCharID].Count == 0)
             {
                 IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
 
-                byte[] anmListOffsetBytes = CharGen.CharGenPrm[currentCharID].AnmListOffset;
+                byte[] anmListOffsetBytes = PlGen.CharGenPrm[currentCharID].AnmListOffset;
                 anmListOffsetBytes[3] = 0x20;
                 int anmListPointer = BitConverter.ToInt32(anmListOffsetBytes, 0);
 
-                List<CharAnm> ninjaCharsAnm = new List<CharAnm>();
-                List<CharAnm> ninjaCharsAnmBkp = new List<CharAnm>();
+                List<PlAnm> ninjaCharsAnm = new List<PlAnm>();
+                List<PlAnm> ninjaCharsAnmBkp = new List<PlAnm>();
 
                 for (int i = 0; i != anmCount; i++)
                 {
@@ -159,59 +159,43 @@ namespace UN5CharPrmEditor
 
                     if (Main.ReadProcessMemory(processHandle, currentAnmListOffset, currentAnmBlock, currentAnmBlock.Length, out var bytesRead))
                     {
-                        var ninja = CharAnm.ReadCharAnmPrm(currentAnmBlock);
-                        var clone = (CharAnm)ninja.Clone();
+                        var ninja = PlAnm.ReadPlAnmPrm(currentAnmBlock);
+                        var clone = (PlAnm)ninja.Clone();
                         ninjaCharsAnm.Add(ninja);
                         ninjaCharsAnmBkp.Add(clone);
                     }
                 }
-                CharAnmPrm[currentCharID] = ninjaCharsAnm;
-                CharAnmPrmBkp[currentCharID] = ninjaCharsAnmBkp;
+                PlAnmPrm[currentCharID] = ninjaCharsAnm;
+                PlAnmPrmBkp[currentCharID] = ninjaCharsAnmBkp;
             }
 
-            return CharAnmPrm[currentCharID][selectedIndex];
+            return PlAnmPrm[currentCharID][selectedIndex];
         }
-
-        public static string GetCharAnmName(int CharIndex, int AnmIndex)
+        public static string GetPlAnmName(int CharIndex, int AnmIndex)
         {
-            while (charAnmNameList.Count <= 93)
+            while (PlAnmListName.Count <= Main.charCount)
             {
-                charAnmNameList.Add(new List<string>());
+                PlAnmListName.Add(new List<string>());
             }
-            if (charAnmNameList[CharIndex].Count == 0)
+            if (PlAnmListName[CharIndex].Count == 0)
             {
                 IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
+                int anmNameCount = PlGen.CharGenPrm[CharIndex].AnmNameCount;
 
-                int anmNameCount = CharGen.CharGenPrm[CharIndex].AnmNameCount;
-
-                byte[] anmNameAreaPointerBytes = CharGen.CharGenPrm[CharIndex].AnmNameListOffset;
-                anmNameAreaPointerBytes[3] = 0x20;
-                int anmNameAreaPointer = BitConverter.ToInt32(anmNameAreaPointerBytes, 0);
-
-                IntPtr anmNameAreaOffset = (IntPtr)anmNameAreaPointer;
-
+                int anmNameAreaPointer = BitConverter.ToInt32(PlGen.CharGenPrm[CharIndex].AnmNameListOffset, 0) + 0x20000000;
                 byte[] anmNameAreaBuffer = new byte[anmNameCount * 0x4];
-                Main.ReadProcessMemory(processHandle, anmNameAreaOffset, anmNameAreaBuffer, anmNameAreaBuffer.Length, out var none2);
+                Main.ReadProcessMemory(processHandle, (IntPtr)anmNameAreaPointer, anmNameAreaBuffer, anmNameAreaBuffer.Length, out var none2);
 
                 List<string> anmNameList = new List<string>();
-
                 for (int i = 0; i < anmNameCount; i++)
                 {
-                    byte[] anmNamePointerBytes = new byte[4];
-                    Array.Copy(anmNameAreaBuffer, i * 0x4, anmNamePointerBytes, 0, 4);
-
-                    anmNamePointerBytes[3] = 0x20;
-                    int anmNamePointer = BitConverter.ToInt32(anmNamePointerBytes, 0);
-
+                    int anmNamePointer = BitConverter.ToInt32(anmNameAreaBuffer, i * 0x4) + 0x20000000;
                     string docodedAnmName = Util.ReadStringWithOffset(anmNamePointer, false);
-
                     anmNameList.Add(docodedAnmName);
                 }
-
-                charAnmNameList[CharIndex] = anmNameList;
+                PlAnmListName[CharIndex] = anmNameList;
             }
-
-            return charAnmNameList[CharIndex][AnmIndex];
+            return PlAnmListName[CharIndex][AnmIndex];
         }
 
         public static void UpdateP1Anm(byte[] resultBytes, int selectedAnm, int charID)
@@ -242,7 +226,7 @@ namespace UN5CharPrmEditor
                 Main.WriteProcessMemory(processHandle, P1AnmOffset, resultBytes, (uint)resultBytes.Length, out var none2);
 
                 //Write Normal in Memory
-                byte[] anmNormalMemoryOffset = CharGen.CharGenPrm[charID].AnmListOffset;
+                byte[] anmNormalMemoryOffset = PlGen.CharGenPrm[charID].AnmListOffset;
                 anmNormalMemoryOffset[3] = 0x20;
                 P1AnmPointer = BitConverter.ToInt32(anmNormalMemoryOffset, 0) + skipAnms;
                 P1AnmOffset = (IntPtr)P1AnmPointer;
@@ -252,15 +236,14 @@ namespace UN5CharPrmEditor
             }
         }
 
-        public static void SendTextAnm(MovesetParameters movForm, CharAnm charAnm)
+        public static void SendTextAnm(MovesetParameters movForm, PlAnm charAnm)
         {
             int currentCharID = int.Parse(movForm.lblCharID2.Text);
 
-            movForm.cmbPlayAnmID.Items.AddRange(movForm.cmbPlayAnmID.Items.Count == 0 ? charAnmNameList[currentCharID].ToArray() : new object[0]);
+            movForm.cmbPlayAnmID.Items.AddRange(movForm.cmbPlayAnmID.Items.Count == 0 ? PlAnmListName[currentCharID].ToArray() : new object[0]);
             movForm.cmbPlayAnmID.SelectedIndex = charAnm.AnmID;
             movForm.numAnmUnk1.Value = charAnm.AnmUnk1;
-            float anmSpeed = Convert.ToSingle(charAnm.AnmSpeed) / 256;
-            movForm.txtAnmSpeed.Text = Convert.ToString(anmSpeed);
+            movForm.numAnmSpeed.Value = charAnm.AnmSpeed;
             movForm.numAnmUnk2.Value = charAnm.AnmUnk2;
             movForm.numAnmUnk3.Value = charAnm.AnmUnk3;
             movForm.numAnmUnk4.Value = charAnm.AnmUnk4;
@@ -338,7 +321,7 @@ namespace UN5CharPrmEditor
         {
             int anmBlockID = int.Parse(movForm.listBox1.SelectedItem.ToString().Split(':')[0]);
 
-            var ninjaCharsAnm = CharAnmPrm[charID][anmBlockID];
+            var ninjaCharsAnm = PlAnmPrm[charID][anmBlockID];
 
             List<byte> anmBlockBytes = new List<byte>();
 
@@ -348,9 +331,8 @@ namespace UN5CharPrmEditor
             anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(ninjaCharsAnm.AnmUnk)));
             anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16((short)movForm.numAnmUnk1.Value)));
             ninjaCharsAnm.AnmUnk1 = (short)movForm.numAnmUnk1.Value;
-            float anmSpeed = Convert.ToSingle(movForm.txtAnmSpeed.Text.Replace(",", ".")) * 256;
-            anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToUInt16((ushort)anmSpeed)));
-            ninjaCharsAnm.AnmSpeed = Convert.ToUInt16((ushort)anmSpeed);
+            anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToUInt16(movForm.numAnmSpeed.Value)));
+            ninjaCharsAnm.AnmSpeed = Convert.ToUInt16(movForm.numAnmSpeed.Value);
             anmBlockBytes.Add((byte)movForm.numAnmUnk2.Value);
             ninjaCharsAnm.AnmUnk2 = (byte)movForm.numAnmUnk2.Value;
             anmBlockBytes.Add((byte)movForm.numAnmUnk3.Value);
@@ -419,9 +401,9 @@ namespace UN5CharPrmEditor
         {
             List<byte> anmBlockBytes = new List<byte>();
 
-            for(int i = 0; i < CharGen.CharGenPrm[charID].AnmCount; i++)
+            for(int i = 0; i < PlGen.CharGenPrm[charID].AnmCount; i++)
             {
-                var ninjaCharsAnm = CharAnmPrm[charID][i];
+                var ninjaCharsAnm = PlAnmPrm[charID][i];
 
                 anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(ninjaCharsAnm.AnmID)));
                 anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToInt16(ninjaCharsAnm.AnmUnk)));
@@ -462,7 +444,7 @@ namespace UN5CharPrmEditor
             {
                 using (FileStream fs = new FileStream(Main.caminhoELF, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
-                    byte[] charAnmAreaOffsetBytes = CharGen.CharGenPrm[charID].AnmListOffset;
+                    byte[] charAnmAreaOffsetBytes = PlGen.CharGenPrm[charID].AnmListOffset;
                     charAnmAreaOffsetBytes[3] = 0x0;
                     int subValue = Main.isNA2 == true ? 0xFFF00 : 0xFFE80;
                     int charAnmAreaOffset = BitConverter.ToInt32(charAnmAreaOffsetBytes, 0) - subValue;

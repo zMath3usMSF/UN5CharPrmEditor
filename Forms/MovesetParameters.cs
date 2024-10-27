@@ -35,12 +35,12 @@ namespace WindowsFormsApp1
             {
                 lblSelectedAtk2.Text = listBox1.SelectedIndex.ToString();
 
-                CharAtk.SendTextAtk(this, CharAtk.GetCharAtk(charID, selectedIndex));
+                PlAtk.SendTextAtk(this, PlAtk.GetCharAtk(charID, selectedIndex));
             }
             else
             {
                 int selectedAnm = int.Parse(listBox1.SelectedItem.ToString().Split(':')[0]);
-                CharAnm.SendTextAnm(this, CharAnm.GetCharAnm(charID, selectedAnm));
+                PlAnm.SendTextAnm(this, PlAnm.GetPlAnm(charID, selectedAnm));
             }
         }
 
@@ -71,16 +71,16 @@ namespace WindowsFormsApp1
             {
                 int charID = int.Parse(lblCharID2.Text);
                 int atkID = int.Parse(lblSelectedAtk2.Text);
-                byte[] resultBytes = CharAtk.UpdateCharAtkPrm(this, charID, atkID);
+                byte[] resultBytes = PlAtk.UpdateCharAtkPrm(this, charID, atkID);
                 int selectedAtk = listBox1.SelectedIndex;
-                CharAtk.UpdateP1Atk(resultBytes, selectedAtk, charID);
+                PlAtk.UpdateP1Atk(resultBytes, selectedAtk, charID);
             }
             else
             {
                 int charID = int.Parse(lblCharID2.Text);
-                byte[] resultBytes = CharAnm.UpdateCharAnmPrm(this, charID);
+                byte[] resultBytes = PlAnm.UpdateCharAnmPrm(this, charID);
                 int selectedAnm = int.Parse(listBox1.SelectedItem.ToString().Split(':')[0]);
-                CharAnm.UpdateP1Anm(resultBytes, selectedAnm, charID);
+                PlAnm.UpdateP1Anm(resultBytes, selectedAnm, charID);
             }
         }
 
@@ -90,15 +90,15 @@ namespace WindowsFormsApp1
             {
                 int charID = int.Parse(lblCharID2.Text);
                 int selectedIndex = listBox1.SelectedIndex;
-                var charAtkPrm = CharAtk.CharAtkPrmBkp[charID][selectedIndex];
-                CharAtk.SendTextAtk(this, charAtkPrm);
+                var charAtkPrm = PlAtk.CharAtkPrmBkp[charID][selectedIndex];
+                PlAtk.SendTextAtk(this, charAtkPrm);
             }
             else
             {
                 int charID = int.Parse(lblCharID2.Text);
                 int selectedAnm = int.Parse(listBox1.SelectedItem.ToString().Split(':')[0]);
-                var charAnmPrm = CharAnm.CharAnmPrmBkp[charID][selectedAnm];
-                CharAnm.SendTextAnm(this, charAnmPrm);
+                var charAnmPrm = PlAnm.PlAnmPrmBkp[charID][selectedAnm];
+                PlAnm.SendTextAnm(this, charAnmPrm);
             }
         }
 
@@ -107,21 +107,14 @@ namespace WindowsFormsApp1
             if (btnEditAtkParameters.Visible == false)
             {
                 int charID = int.Parse(lblCharID2.Text);
-                int atkID = int.Parse(lblSelectedAtk2.Text);
-                byte[] resultBytes = CharAtk.UpdateCharAtkPrm(this, charID, atkID);
-                int selectedAtk = listBox1.SelectedIndex;
-                CharAtk.UpdateP1Atk(resultBytes, selectedAtk, charID);
-                resultBytes = CharAtk.UpdateAllCharAtkPrm(this, charID);
-                CharAtk.WriteELFCharAtk(resultBytes, charID);
+                byte[] resultBytes = PlAtk.UpdateAllCharAtkPrm(this, charID);
+                PlAtk.WriteELFCharAtk(resultBytes, charID);
             }
             else
             {
                 int charID = int.Parse(lblCharID2.Text);
-                byte[] resultBytes = CharAnm.UpdateCharAnmPrm(this, charID);
-                int selectedAnm = int.Parse(listBox1.SelectedItem.ToString().Split(':')[0]);
-                CharAnm.UpdateP1Anm(resultBytes, selectedAnm, charID);
-                resultBytes = CharAnm.UpdateAllCharAnmPrm(this, charID);
-                CharAnm.WriteELFCharAnm(resultBytes, charID);
+                byte[] resultBytes = PlAnm.UpdateAllCharAnmPrm(this, charID);
+                PlAnm.WriteELFCharAnm(resultBytes, charID);
             }
         }
 
@@ -141,16 +134,16 @@ namespace WindowsFormsApp1
             int SelectedAtk = int.Parse(lblSelectedAtk2.Text);
             int currentCharID = int.Parse(lblCharID2.Text);
 
-            int AtkAnmBlock = CharAtk.CharAtkPrm[currentCharID][SelectedAtk].AtkAnm;
-            int MaxAnm = CharGen.CharGenPrm[currentCharID].AnmCount;
+            int AtkAnmBlock = PlAtk.CharAtkPrm[currentCharID][SelectedAtk].AtkAnm;
+            int MaxAnm = PlGen.CharGenPrm[currentCharID].AnmCount;
 
             for (int i = AtkAnmBlock; i < MaxAnm; i++)
             {
-                int AnmID = CharAnm.GetCharAnm(currentCharID, i).AnmID;
+                int AnmID = PlAnm.GetPlAnm(currentCharID, i).AnmID;
 
                 if (-1 != AnmID)
                 {
-                    listBox1.Items.Add($"{i}: {CharAnm.GetCharAnmName(currentCharID, AnmID)}");
+                    listBox1.Items.Add($"{i}: {PlAnm.GetPlAnmName(currentCharID, AnmID)}");
                 }
                 else
                 {
@@ -166,7 +159,7 @@ namespace WindowsFormsApp1
             listBox1.Items.Clear();
             int currentCharID = int.Parse(lblCharID2.Text);
             string currentCharName = lblCharName2.Text;
-            CharAtk.AddCharComboList(this, currentCharID, currentCharName);
+            PlAtk.AddCharComboList(this, currentCharID, currentCharName);
             listBox1.SelectedIndex = int.Parse(lblSelectedAtk2.Text);
         }
     }

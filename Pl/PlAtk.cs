@@ -9,10 +9,10 @@ using WindowsFormsApp1;
 
 namespace UN5CharPrmEditor
 {
-    internal class CharAtk
+    internal class PlAtk
     {
-        public static List<List<CharAtk>> CharAtkPrm = new List<List<CharAtk>>();
-        public static List<List<CharAtk>> CharAtkPrmBkp = new List<List<CharAtk>>();
+        public static List<List<PlAtk>> CharAtkPrm = new List<List<PlAtk>>();
+        public static List<List<PlAtk>> CharAtkPrmBkp = new List<List<PlAtk>>();
         public static List<List<string>> comboNameList = new List<List<string>>();
 
         #region Atk Attributes
@@ -34,7 +34,7 @@ namespace UN5CharPrmEditor
 
         #endregion
 
-        internal static CharAtk ReadCharAtkPrm(byte[] Input) => new CharAtk
+        internal static PlAtk ReadCharAtkPrm(byte[] Input) => new PlAtk
         {
             AtkUnk = Input.ReadBytes(0x0, 4),
             AtkUnk1 = Input.ReadBytes(0x4, 4),
@@ -90,7 +90,7 @@ namespace UN5CharPrmEditor
             AtkAnm = (short)Input.ReadUInt(0x50, 32),
         };
 
-        public Dictionary<int, string> DamageEffectList = new Dictionary<int, string>()
+        public static Dictionary<int, string> DamageEffectList = new Dictionary<int, string>()
         {
           {0, "Normal"},
           {1, "Normal 1"},
@@ -166,7 +166,7 @@ namespace UN5CharPrmEditor
         {35, "ckrCharge"}
         };
 
-        public Dictionary<int, string> DamageParticleList = new Dictionary<int, string>()
+        public static Dictionary<int, string> DamageParticleList = new Dictionary<int, string>()
         {
         {0, "Normal Middle"},
         {1, "Without"},
@@ -205,7 +205,7 @@ namespace UN5CharPrmEditor
         {4, "Defense Break"}
         };
 
-        public Dictionary<int, string> DefenseEffectList = new Dictionary<int, string>()
+        public static Dictionary<int, string> DefenseEffectList = new Dictionary<int, string>()
         {
         {0, "???"},
         {1, "Normal"},
@@ -220,7 +220,7 @@ namespace UN5CharPrmEditor
         {10, "Diagonal 4"}
         };
 
-        public Dictionary<int, string> DefenseParticleList = new Dictionary<int, string>()
+        public static Dictionary<int, string> DefenseParticleList = new Dictionary<int, string>()
         {
         {0, "Normal"},
         {1, "Without"},
@@ -277,7 +277,7 @@ namespace UN5CharPrmEditor
                 Main.WriteProcessMemory(processHandle, P1AtkOffset2, resultBytesParte2, (uint)resultBytesParte2.Length, out var none3);
 
                 //Write Normal in Memory
-                byte[] atkNormalMemoryOffset = CharGen.CharGenPrm[charID].AtkListOffset;
+                byte[] atkNormalMemoryOffset = PlGen.CharGenPrm[charID].AtkListOffset;
                 atkNormalMemoryOffset[3] = 0x20;
                 P1AtkPointer = BitConverter.ToInt32(atkNormalMemoryOffset, 0) + skipAtks;
                 Array.Copy(resultBytes, 0, resultBytesParte1, 0, resultBytesParte1.Length);
@@ -292,25 +292,25 @@ namespace UN5CharPrmEditor
                 Main.CloseHandle(processHandle);
             }
         }
-        public static CharAtk GetCharAtk(int charID, int atkID)
+        public static PlAtk GetCharAtk(int charID, int atkID)
         {
-            int atkCount = CharGen.CharGenPrm[charID].AtkCount;
+            int atkCount = PlGen.CharGenPrm[charID].AtkCount;
 
-            while (CharAtkPrm.Count <= 93)
+            while (CharAtkPrm.Count <= Main.charCount)
             {
-                CharAtkPrm.Add(new List<CharAtk>());
-                CharAtkPrmBkp.Add(new List<CharAtk>());
+                CharAtkPrm.Add(new List<PlAtk>());
+                CharAtkPrmBkp.Add(new List<PlAtk>());
             }
             if (CharAtkPrm[charID].Count == 0)
             {
                 IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
 
-                byte[] atkListOffsetBytes = CharGen.CharGenPrm[charID].AtkListOffset;
+                byte[] atkListOffsetBytes = PlGen.CharGenPrm[charID].AtkListOffset;
                 atkListOffsetBytes[3] = 0x20;
-                int atkListPointer = BitConverter.ToInt32(CharGen.CharGenPrm[charID].AtkListOffset, 0);
+                int atkListPointer = BitConverter.ToInt32(PlGen.CharGenPrm[charID].AtkListOffset, 0);
 
-                List<CharAtk> charAtkPrm = new List<CharAtk>();
-                List<CharAtk> charAtkPrmBkp = new List<CharAtk>();
+                List<PlAtk> charAtkPrm = new List<PlAtk>();
+                List<PlAtk> charAtkPrmBkp = new List<PlAtk>();
                 for (int i = 0; i != atkCount; i++)
                 {
                     byte[] currentAtkBlock = new byte[0x54];
@@ -322,7 +322,7 @@ namespace UN5CharPrmEditor
                     if (Main.ReadProcessMemory(processHandle, currentAtkListOffset, currentAtkBlock, currentAtkBlock.Length, out var bytesRead))
                     {
                         var ninja = ReadCharAtkPrm(currentAtkBlock);
-                        var clone = (CharAtk)ninja.Clone();
+                        var clone = (PlAtk)ninja.Clone();
                         charAtkPrm.Add(ninja);
                         charAtkPrmBkp.Add(clone);
                     }
@@ -339,7 +339,7 @@ namespace UN5CharPrmEditor
                 for (int i = 0; i < 94; i++)
                 {
                     List<string> comboName = new List<string>();
-                    for (int j = 0; j <= CharGen.CharGenPrm[i].AtkCount; j++)
+                    for (int j = 0; j <= PlGen.CharGenPrm[i].AtkCount; j++)
                     {
                         comboName.Add("");
                     }
@@ -349,7 +349,7 @@ namespace UN5CharPrmEditor
             if (comboNameList[charID][1] == "")
             {
                 List<string> charComboName = new List<string>();
-                for (int j = 0; j < CharGen.CharGenPrm[charID].AtkCount; j++)
+                for (int j = 0; j < PlGen.CharGenPrm[charID].AtkCount; j++)
                 {
                     byte[] charComboNameOffsetBytes = new byte[4];
                     Array.Copy(CharAtkPrm[charID][j].AtkUnk2, charComboNameOffsetBytes, CharAtkPrm[charID][j].AtkUnk2.Length);
@@ -366,10 +366,10 @@ namespace UN5CharPrmEditor
         {
             if (comboNameList.Count == 0)
             {
-                for (int i = 0; i < 94; i++)
+                for (int i = 0; i < Main.charCount; i++)
                 {
                     List<string> comboName = new List<string>();
-                    for (int j = 0; j <= CharGen.CharGenPrm[i].AtkCount; j++)
+                    for (int j = 0; j <= PlGen.CharGenPrm[i].AtkCount; j++)
                     {
                         comboName.Add("");
                     }
@@ -388,7 +388,7 @@ namespace UN5CharPrmEditor
                     generalComboNameOffset[3] = 0x20;
                     int comboOffset = BitConverter.ToInt32(generalComboNameOffset, 0);
 
-                    byte[] generalComboNameArea = new byte[94 * 4];
+                    byte[] generalComboNameArea = new byte[Main.charCount * 4];
 
                     Main.ReadProcessMemory(processHandle, (IntPtr)comboOffset, generalComboNameArea, generalComboNameArea.Length, out bytesRead);
 
@@ -397,11 +397,11 @@ namespace UN5CharPrmEditor
                     charComboNameAreaOffsetBytes[3] = 0x20;
                     int charComboNameAreaOffset = BitConverter.ToInt32(charComboNameAreaOffsetBytes, 0);
 
-                    byte[] charComboNameArea = new byte[CharGen.CharGenPrm[charID].AtkCount * 4];
+                    byte[] charComboNameArea = new byte[PlGen.CharGenPrm[charID].AtkCount * 4];
                     Main.ReadProcessMemory(processHandle, (IntPtr)charComboNameAreaOffset, charComboNameArea, charComboNameArea.Length, out bytesRead);
 
                     List<string> charComboName = new List<string>();
-                    for (int j = 0; j < CharGen.CharGenPrm[charID].AtkCount; j++)
+                    for (int j = 0; j < PlGen.CharGenPrm[charID].AtkCount; j++)
                     {
                         byte[] charComboNameOffsetBytes = new byte[4];
                         Array.Copy(charComboNameArea, j * 4, charComboNameOffsetBytes, 0, charComboNameOffsetBytes.Length);
@@ -418,9 +418,24 @@ namespace UN5CharPrmEditor
         public static void AddCharComboList(MovesetParameters movForm, int charID, string txtCharNameForm)
         {
             movForm.lblCharName2.Text = txtCharNameForm;
-            movForm.lblComboCount2.Text = CharGen.CharGenPrm[charID].AtkCount.ToString();
-
-            for (int i = 0; i < CharGen.CharGenPrm[charID].AtkCount; i++)
+            movForm.lblComboCount2.Text = PlGen.CharGenPrm[charID].AtkCount.ToString();
+            for (int i = 1; i < 94; i++)
+            {
+                List<string> comboName = new List<string>();
+                for (int j = 0; j <= 3; j++)
+                {
+                    string hm = GetCharComboName(i, j);
+                }
+            }
+            List<string> jutsus = new List<string>();
+            for (int i = 1; i < 94; i++)
+            {
+                jutsus.Add(comboNameList[i][1]);
+                jutsus.Add(comboNameList[i][3]);
+            }
+            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            File.WriteAllLines(Path.Combine(desktop, "jutsus.txt"), jutsus.ToArray());
+            for (int i = 0; i < PlGen.CharGenPrm[charID].AtkCount; i++)
             {
                 switch (i)
                 {
@@ -557,7 +572,7 @@ namespace UN5CharPrmEditor
             movForm.btnEditAtkParameters.Visible = false;
         }
 
-        public static void SendTextAtk(MovesetParameters movForm, CharAtk charAtkPrm)
+        public static void SendTextAtk(MovesetParameters movForm, PlAtk charAtkPrm)
         {
             if (movForm.cmbGP3FUndefendable.Items.Count == 0)
             {
@@ -579,11 +594,11 @@ namespace UN5CharPrmEditor
             movForm.txtDamage.Text = ($"{charAtkPrm.AtkDamage}");
             movForm.txtKnockBack.Text = ($"{charAtkPrm.AtkKnockBack}");
 
-            movForm.cmbDmgEffect.Items.AddRange(movForm.cmbDmgEffect.Items.Count == 0 ? charAtkPrm.DamageEffectList.Values.ToArray() : new object[0]);
+            movForm.cmbDmgEffect.Items.AddRange(movForm.cmbDmgEffect.Items.Count == 0 ? DamageEffectList.Values.ToArray() : new object[0]);
             int currentDmgEffect = (int)charAtkPrm.AtkDamageEffect;
             movForm.cmbDmgEffect.SelectedIndex = Math.Min(currentDmgEffect, 31);
 
-            movForm.cmbDefenseEffect.Items.AddRange(movForm.cmbDefenseEffect.Items.Count == 0 ? charAtkPrm.DefenseEffectList.Values.ToArray() : new object[0]);
+            movForm.cmbDefenseEffect.Items.AddRange(movForm.cmbDefenseEffect.Items.Count == 0 ? PlAtk.DefenseEffectList.Values.ToArray() : new object[0]);
             int currentDefenseEffect = charAtkPrm.AtkDefenseEffect;
             movForm.cmbDefenseEffect.SelectedIndex = currentDefenseEffect == 255 ? 0 : currentDefenseEffect + 1;
 
@@ -598,20 +613,15 @@ namespace UN5CharPrmEditor
             movForm.cmbPLSound.Items.AddRange(movForm.cmbPLSound.Items.Count == 0 ? PLSoundList.Values.ToArray() : new object[0]);
             int currentPLSound = (int)charAtkPrm.AtkPlSound;
             movForm.cmbPLSound.SelectedIndex = currentPLSound == -4 ? 0 : currentPLSound == -3 ? 1 : currentPLSound == -2 ? 2 : currentPLSound == -1 ? 3 : currentPLSound > 34 ? 0 : currentPLSound + 4;
-
             movForm.txtSoundDelay.Text = ($"{charAtkPrm.AtkSoundDelay}");
             movForm.txtDmgSound.Text = ($"{charAtkPrm.AtkDamageSound}");
-
-            movForm.cmbDmgParticle.Items.AddRange(movForm.cmbDmgParticle.Items.Count == 0 ? charAtkPrm.DamageParticleList.Values.ToArray() : new object[0]);
+            movForm.cmbDmgParticle.Items.AddRange(movForm.cmbDmgParticle.Items.Count == 0 ? DamageParticleList.Values.ToArray() : new object[0]);
             int currentDmgParticle = (int)charAtkPrm.AtkDamageParticle;
             movForm.cmbDmgParticle.SelectedIndex = currentDmgParticle > 24 || currentDmgParticle == -1 ? 0 : currentDmgParticle + 1;
-
             movForm.txtDefenseSound.Text = ($"{charAtkPrm.AtkDefenseSound}");
-
-            movForm.cmbDefenseParticle.Items.AddRange(movForm.cmbDefenseParticle.Items.Count == 0 ? charAtkPrm.DefenseParticleList.Values.ToArray() : new object[0]);
+            movForm.cmbDefenseParticle.Items.AddRange(movForm.cmbDefenseParticle.Items.Count == 0 ? DefenseParticleList.Values.ToArray() : new object[0]);
             int currentDefenseParticle = charAtkPrm.AtkDefenseParticle;
             movForm.cmbDefenseParticle.SelectedIndex = currentDefenseParticle < 0 ? currentDefenseParticle + 1 : 0;
-
             movForm.txtEnemySound.Text = ($"{charAtkPrm.AtkEnemySound}");
         }
         public static void VerifyFlagGroup1Bits(MovesetParameters movForm, uint AtkDefenseFlag)
@@ -879,7 +889,7 @@ namespace UN5CharPrmEditor
         {
             List<byte> atkBlockBytes = new List<byte>();
 
-            for (int i = 0; i < CharGen.CharGenPrm[charID].AtkCount; i++)
+            for (int i = 0; i < PlGen.CharGenPrm[charID].AtkCount; i++)
             {
                 var ninjaCharsAtk = CharAtkPrm[charID][i];
 
@@ -934,7 +944,7 @@ namespace UN5CharPrmEditor
             {
                 using (FileStream fs = new FileStream(Main.caminhoELF, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
-                    byte[] charAtkAreaOffsetBytes = CharGen.CharGenPrm[charID].AtkListOffset;
+                    byte[] charAtkAreaOffsetBytes = PlGen.CharGenPrm[charID].AtkListOffset;
                     charAtkAreaOffsetBytes[3] = 0x0;
                     int subValue = Main.isNA2 == true ? 0xFFF00 : 0xFFE80;
                     int charAtkAreaOffset = BitConverter.ToInt32(charAtkAreaOffsetBytes, 0) - subValue;

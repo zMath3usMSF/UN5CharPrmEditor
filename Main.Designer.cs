@@ -51,6 +51,7 @@
             this.btnEditAwekeningParameters = new System.Windows.Forms.Button();
             this.picMainBackground = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.btnEditJutsusParameters = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMainBackground)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -242,7 +243,7 @@
             // 
             this.picMainBackground.Image = global::UN5CharPrmEditor.Properties.Resources.MainBackground;
             this.picMainBackground.InitialImage = global::UN5CharPrmEditor.Properties.Resources.MainBackground;
-            this.picMainBackground.Location = new System.Drawing.Point(0, 27);
+            this.picMainBackground.Location = new System.Drawing.Point(-638, 27);
             this.picMainBackground.Name = "picMainBackground";
             this.picMainBackground.Size = new System.Drawing.Size(867, 408);
             this.picMainBackground.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -258,11 +259,23 @@
             this.pictureBox1.TabIndex = 7;
             this.pictureBox1.TabStop = false;
             // 
+            // btnEditJutsusParameters
+            // 
+            this.btnEditJutsusParameters.Location = new System.Drawing.Point(712, 352);
+            this.btnEditJutsusParameters.Name = "btnEditJutsusParameters";
+            this.btnEditJutsusParameters.Size = new System.Drawing.Size(123, 23);
+            this.btnEditJutsusParameters.TabIndex = 15;
+            this.btnEditJutsusParameters.Text = "Edit Jutsus Parameters";
+            this.btnEditJutsusParameters.UseVisualStyleBackColor = true;
+            this.btnEditJutsusParameters.Visible = false;
+            this.btnEditJutsusParameters.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(867, 429);
+            this.Controls.Add(this.btnEditJutsusParameters);
             this.Controls.Add(this.btnEditAwekeningParameters);
             this.Controls.Add(this.picMainBackground);
             this.Controls.Add(this.btnEditMovesetParameters);
@@ -312,6 +325,7 @@
         private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portuguêsToolStripMenuItem;
         private System.Windows.Forms.Button btnEditAwekeningParameters;
+        private System.Windows.Forms.Button btnEditJutsusParameters;
     }
 }
 

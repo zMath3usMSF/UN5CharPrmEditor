@@ -37,9 +37,9 @@ namespace WindowsFormsApp1
 
                 // Faça o que você precisa com o ID do processo, como armazená-lo em uma variável
                 // Por exemplo:
-                int idDoProcessoSelecionado = selectedProcessId;
+                int selectedProcessID = selectedProcessId;
 
-                form1Instance.SelectedProcess(idDoProcessoSelecionado);
+                form1Instance.SelectedProcess(selectedProcessID);
 
                 this.Close();
             }

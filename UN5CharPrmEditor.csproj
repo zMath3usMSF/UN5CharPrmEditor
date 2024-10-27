@@ -29,7 +29,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -64,18 +64,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AwakeningParameters.cs">
+    <Compile Include="CharSkl.cs" />
+    <Compile Include="Forms\AwakeningParameters.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AwakeningParameters.Designer.cs">
+    <Compile Include="Forms\AwakeningParameters.Designer.cs">
       <DependentUpon>AwakeningParameters.cs</DependentUpon>
     </Compile>
-    <Compile Include="CharAwk.cs" />
-    <Compile Include="Char\CharAnm.cs" />
-    <Compile Include="Char\CharAtk.cs" />
-    <Compile Include="Char\CharGen.cs" />
+    <Compile Include="Pl\PlAwk.cs" />
+    <Compile Include="Pl\PlAnm.cs" />
+    <Compile Include="Pl\PlAtk.cs" />
+    <Compile Include="Pl\PlGen.cs" />
+    <Compile Include="JutsuParameters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="JutsuParameters.Designer.cs">
+      <DependentUpon>JutsuParameters.cs</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="Char\Util.cs" />
+    <Compile Include="Pl\Util.cs" />
     <Compile Include="Others\CCS\2D\CLUT.cs" />
     <Compile Include="Others\CCS\2D\Material.cs" />
     <Compile Include="Others\CCS\2D\Texture.cs" />
@@ -208,11 +215,14 @@
     <Compile Include="Forms\SelectProcess.Designer.cs">
       <DependentUpon>SelectProcess.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AwakeningParameters.resx">
+    <EmbeddedResource Include="Forms\AwakeningParameters.resx">
       <DependentUpon>AwakeningParameters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UpdateMatch.resx">
       <DependentUpon>UpdateMatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="JutsuParameters.resx">
+      <DependentUpon>JutsuParameters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

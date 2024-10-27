@@ -51,7 +51,7 @@ namespace UN5CharPrmEditor
 
             lblSelectedAwakening2.Text = listBox1.SelectedItem.ToString().Split(':')[0];
             cmbSwitchToAwakening.SelectedIndexChanged -= cmbSwitchToAwakening_SelectedIndexChanged;
-            CharAwk.SendTextAwk(this, CharAwk.GetCharAwk(selectedAwk, false), selectedAwk, charID);
+            PlAwk.SendTextAwk(this, PlAwk.GetCharAwk(selectedAwk, false), selectedAwk, charID);
             cmbSwitchToAwakening.SelectedIndexChanged += cmbSwitchToAwakening_SelectedIndexChanged;
         }
         public void cmbSwitchToAwakening_SelectedIndexChanged(object sender, EventArgs e)
@@ -64,7 +64,7 @@ namespace UN5CharPrmEditor
             lblSelectedAwakening2.Text = Convert.ToString(cmbSwitchToAwakening.SelectedIndex);
             listBox1.Items[selectedIndex] = $"{selectedAwk}: Char Awakening {selectedIndex + 1}";
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
-            CharAwk.SendTextAwk(this, CharAwk.GetCharAwk(selectedAwk, false), selectedAwk, charID);
+            PlAwk.SendTextAwk(this, PlAwk.GetCharAwk(selectedAwk, false), selectedAwk, charID);
         }
 
         private void btnUpdateP1_Click(object sender, EventArgs e)
@@ -72,8 +72,8 @@ namespace UN5CharPrmEditor
             int charID = int.Parse(lblCharID2.Text);
             int selectedAwk = Convert.ToInt32(listBox1.SelectedItem.ToString().Split(':')[0]);
             int awkPos = listBox1.SelectedIndex;
-            var result = CharAwk.UpdateCharAwkPrm(this, selectedAwk, charID, false);
-            CharAwk.UpdateP1AwkPrm(result.charAwkPrmBlock, result.charAwkAct, selectedAwk, charID, awkPos);
+            var result = PlAwk.UpdateCharAwkPrm(this, selectedAwk, charID, false);
+            PlAwk.UpdateP1AwkPrm(result.charAwkPrmBlock, result.charAwkAct, selectedAwk, charID, awkPos);
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -81,9 +81,9 @@ namespace UN5CharPrmEditor
             int charID = int.Parse(lblCharID2.Text);
             int selectedAwk = Convert.ToInt32(listBox1.SelectedItem.ToString().Split(':')[0]);
             int awkPos = listBox1.SelectedIndex;
-            CharAwk.SendTextAwk(this, CharAwk.GetCharAwk(selectedAwk, true), selectedAwk, charID);
-            var result = CharAwk.UpdateCharAwkPrm(this, selectedAwk, charID, true);
-            CharAwk.UpdateP1AwkPrm(result.charAwkPrmBlock, result.charAwkAct, selectedAwk, charID, awkPos);
+            PlAwk.SendTextAwk(this, PlAwk.GetCharAwk(selectedAwk, true), selectedAwk, charID);
+            var result = PlAwk.UpdateCharAwkPrm(this, selectedAwk, charID, true);
+            PlAwk.UpdateP1AwkPrm(result.charAwkPrmBlock, result.charAwkAct, selectedAwk, charID, awkPos);
         }
 
         private void btnSaveELF_Click(object sender, EventArgs e)
@@ -91,9 +91,8 @@ namespace UN5CharPrmEditor
             int charID = int.Parse(lblCharID2.Text);
             int selectedAwk = Convert.ToInt32(listBox1.SelectedItem.ToString().Split(':')[0]);
             int awkPos = listBox1.SelectedIndex;
-            var result = CharAwk.UpdateCharAwkPrm(this, selectedAwk, charID, false);
-            CharAwk.UpdateP1AwkPrm(result.charAwkPrmBlock, result.charAwkAct, selectedAwk, charID, awkPos);
-            CharAwk.WriteELFAwkPrm(result.charAwkPrmBlock, result.charAwkAct, selectedAwk, charID, awkPos);
+            var result = PlAwk.UpdateCharAwkPrm(this, selectedAwk, charID, false);
+            PlAwk.WriteELFAwkPrm(result.charAwkPrmBlock, result.charAwkAct, selectedAwk, charID, awkPos);
         }
     }
 }

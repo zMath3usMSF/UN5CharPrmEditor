@@ -712,7 +712,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "AwakeningParameters";
-            this.Text = "Awakening Parameters:";
+            this.Text = "Edit Awakening Parameters:";
             ((System.ComponentModel.ISupportInitialize)(this.numAwkDuration)).EndInit();
             this.grpAwakeningParameters.ResumeLayout(false);
             this.grpAwakeningParameters.PerformLayout();

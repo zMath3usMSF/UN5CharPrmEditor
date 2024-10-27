@@ -195,7 +195,6 @@
             this.numAnmUnk1 = new System.Windows.Forms.NumericUpDown();
             this.lblAnmUnk1 = new System.Windows.Forms.Label();
             this.lblPlayAnmID = new System.Windows.Forms.Label();
-            this.txtAnmSpeed = new System.Windows.Forms.TextBox();
             this.cmbPlayAnmID = new System.Windows.Forms.ComboBox();
             this.txtCharYDistance = new System.Windows.Forms.TextBox();
             this.lblAnmSpeed = new System.Windows.Forms.Label();
@@ -205,6 +204,7 @@
             this.lblSelectedAtk2 = new System.Windows.Forms.Label();
             this.lblSelectedAtk = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.numAnmSpeed = new System.Windows.Forms.NumericUpDown();
             this.grpAttackParameters.SuspendLayout();
             this.grpAttackFlagGroup3.SuspendLayout();
             this.grpAttackFlagGroup1.SuspendLayout();
@@ -225,6 +225,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numAnmUnk3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numAnmUnk2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numAnmUnk1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numAnmSpeed)).BeginInit();
             this.SuspendLayout();
             // 
             // listBox1
@@ -1742,6 +1743,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.numAnmSpeed);
             this.groupBox1.Controls.Add(this.lblAnmUnk6);
             this.groupBox1.Controls.Add(this.txtAnmUnk6);
             this.groupBox1.Controls.Add(this.lblAnmUnk5);
@@ -1755,7 +1757,6 @@
             this.groupBox1.Controls.Add(this.numAnmUnk1);
             this.groupBox1.Controls.Add(this.lblAnmUnk1);
             this.groupBox1.Controls.Add(this.lblPlayAnmID);
-            this.groupBox1.Controls.Add(this.txtAnmSpeed);
             this.groupBox1.Controls.Add(this.cmbPlayAnmID);
             this.groupBox1.Controls.Add(this.txtCharYDistance);
             this.groupBox1.Controls.Add(this.lblAnmSpeed);
@@ -1904,13 +1905,6 @@
             this.lblPlayAnmID.TabIndex = 0;
             this.lblPlayAnmID.Text = "Play Anm:";
             // 
-            // txtAnmSpeed
-            // 
-            this.txtAnmSpeed.Location = new System.Drawing.Point(267, 16);
-            this.txtAnmSpeed.Name = "txtAnmSpeed";
-            this.txtAnmSpeed.Size = new System.Drawing.Size(47, 20);
-            this.txtAnmSpeed.TabIndex = 21;
-            // 
             // cmbPlayAnmID
             // 
             this.cmbPlayAnmID.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -1985,6 +1979,18 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.VerifyOpenedELF);
             // 
+            // numAnmSpeed
+            // 
+            this.numAnmSpeed.Location = new System.Drawing.Point(267, 17);
+            this.numAnmSpeed.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numAnmSpeed.Name = "numAnmSpeed";
+            this.numAnmSpeed.Size = new System.Drawing.Size(64, 20);
+            this.numAnmSpeed.TabIndex = 34;
+            // 
             // MovesetParameters
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2040,6 +2046,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numAnmUnk3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numAnmUnk2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numAnmUnk1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numAnmSpeed)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2189,7 +2196,6 @@
         public System.Windows.Forms.Label lblCharYDistance;
         public System.Windows.Forms.TextBox txtCharXDistance;
         public System.Windows.Forms.Label lblCharXDistance;
-        public System.Windows.Forms.TextBox txtAnmSpeed;
         public System.Windows.Forms.GroupBox groupBox2;
         public System.Windows.Forms.GroupBox groupBox1;
         public System.Windows.Forms.GroupBox groupBox3;
@@ -2222,5 +2228,6 @@
         public System.Windows.Forms.Label lblAnmUnk8;
         public System.Windows.Forms.TextBox txtAnmHitBoxScale2;
         public System.Windows.Forms.Timer timer1;
+        public System.Windows.Forms.NumericUpDown numAnmSpeed;
     }
 }

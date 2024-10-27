@@ -9,10 +9,10 @@ using WindowsFormsApp1;
 
 namespace UN5CharPrmEditor
 {
-    internal class CharAwk
+    internal class PlAwk
     {
-        public static List<CharAwk> CharAwkPrm = new List<CharAwk>();
-        public static List<CharAwk> CharAwkPrmBkp = new List<CharAwk>();
+        public static List<PlAwk> CharAwkPrm = new List<PlAwk>();
+        public static List<PlAwk> CharAwkPrmBkp = new List<PlAwk>();
         public static List<List<int>> CharAwkIDList = new List<List<int>>();
         public static List<int> CharAwkActivationType = new List<int>();
         public static List<int> CharAwkActivationSound = new List<int>();
@@ -105,7 +105,7 @@ namespace UN5CharPrmEditor
         {
             return this.MemberwiseClone();
         }
-        internal static CharAwk ReadAwkGenPrm(byte[] Input) => new CharAwk
+        internal static PlAwk ReadAwkGenPrm(byte[] Input) => new PlAwk
         {
             Unk = Input.ReadBytes(0x0, 4),
             AwkExtPrg = Input.ReadBytes(0x4, 4),
@@ -190,7 +190,7 @@ namespace UN5CharPrmEditor
                 Main.CloseHandle(processHandle);
             }
         }
-        public static CharAwk GetCharAwk(int selectedAwk, bool reset)
+        public static PlAwk GetCharAwk(int selectedAwk, bool reset)
         {
             while (CharAwkPrm.Count <= awkCount)
             {
@@ -209,7 +209,7 @@ namespace UN5CharPrmEditor
                     if(Main.ReadProcessMemory(processHandle, (IntPtr)awkAreaOffset + skipAwk, currentAwkBlock, currentAwkBlock.Length, out var none))
                     {
                         var ninja = ReadAwkGenPrm(currentAwkBlock);
-                        var clone = (CharAwk)ninja.Clone();
+                        var clone = (PlAwk)ninja.Clone();
                         CharAwkPrm[selectedAwk] = ninja;
                         CharAwkPrmBkp[selectedAwk] = clone;
                     }
@@ -227,7 +227,7 @@ namespace UN5CharPrmEditor
                 awkForm.listBox1.Items.Add($"{CharAwkIDList[charID][i]}: Char Awakening {i + 1}");
             }
         }
-        public static void SendTextAwk(AwakeningParameters awkForm, CharAwk charAwkPrm, int selectedIndex, int charID)
+        public static void SendTextAwk(AwakeningParameters awkForm, PlAwk charAwkPrm, int selectedIndex, int charID)
         {
             if(awkForm.cmbSwitchToAwakening.Items.Count == 0)
             {
@@ -304,7 +304,7 @@ namespace UN5CharPrmEditor
             }
             if (awkForm.cmbPLSound.Items.Count == 0)
             {
-                awkForm.cmbPLSound.Items.AddRange(CharAtk.PLSoundList.Values.ToArray());
+                awkForm.cmbPLSound.Items.AddRange(PlAtk.PLSoundList.Values.ToArray());
             }
             int currentPLSound = CharAwkActivationSound[charID];
             awkForm.cmbPLSound.SelectedIndex = currentPLSound == -4 ? 0 : currentPLSound == -3 ? 1 : currentPLSound == -2 ? 2 : currentPLSound == -1 ? 3 : currentPLSound > 34 ? 0 : currentPLSound + 4;

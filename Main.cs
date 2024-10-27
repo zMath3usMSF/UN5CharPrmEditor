@@ -20,6 +20,7 @@ namespace WindowsFormsApp1
     {
         #region Variables
         public static List<int> charInvalid = new List<int> { 0, 8, 9, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 44, 45, 74, 88 };
+        public static int charCount = 0;
         public static string caminhoELF;
         public static bool openedELF;
         public static int currentProcessID = 0;
@@ -134,6 +135,7 @@ namespace WindowsFormsApp1
             btnEditGeneralParameters.Visible = true;
             btnEditMovesetParameters.Visible = true;
             btnEditAwekeningParameters.Visible = true;
+            btnEditJutsusParameters.Visible = true;
 
             string selectedString = lstChar.SelectedItem.ToString();
 
@@ -143,7 +145,7 @@ namespace WindowsFormsApp1
                 charCCS.Clear();
                 string charIDString = splitString[0].Trim();
                 int charID = Convert.ToInt32(charIDString);
-                txtcharName.Text = ($"{charName[charID]}");
+                txtcharName.Text = charID > 94 ? "???" : $"{charName[charID]}";
                 lblcharName.Visible = true;
                 txtcharName.Visible = true;
                 txtCCSName.Text = GetCharCCSName(charID);
@@ -152,73 +154,93 @@ namespace WindowsFormsApp1
 
                 int nodeIndex = lstChar.SelectedIndex;
 
-                if ((nodeIndex >= 29 && nodeIndex <= 38) || nodeIndex >= 55 && nodeIndex <= 56)
+                if(nodeIndex > 73)
                 {
-                    if ((nodeIndex >= 55 && nodeIndex <= 56))
-                    {
-                        nodeIndex = nodeIndex - 51;
-
-                        int x = (nodeIndex % 3) * 170;
-                        int y = ((nodeIndex / 3) % 2) * 256;
-
-                        Rectangle cropArea = new Rectangle(x, y, 170, 256);
-
-                        string resourceName = $"pure_home_92";
-
-                        Bitmap croppedImage = Resources.ResourceManager.GetObject(resourceName) as Bitmap;
-
-                        croppedImage = croppedImage.Clone(cropArea, croppedImage.PixelFormat);
-
-                        pictureBox1.Image = croppedImage;
-                    }
-                    else
-                    {
-                        if ((nodeIndex >= 29 && nodeIndex <= 38))
-                        {
-                            nodeIndex = nodeIndex - 29;
-                        }
-
-                        int imageNumber = nodeIndex / 6 + 1;
-
-                        int x = (nodeIndex % 3) * 170;
-                        int y = ((nodeIndex / 3) % 2) * 256;
-
-                        Rectangle cropArea = new Rectangle(x, y, 170, 256);
-
-                        string resourceName = $"pure_home_9{imageNumber}";
-
-                        Bitmap croppedImage = Resources.ResourceManager.GetObject(resourceName) as Bitmap;
-
-                        croppedImage = croppedImage.Clone(cropArea, croppedImage.PixelFormat);
-
-                        pictureBox1.Image = croppedImage;
-                    }
-                }
-                else
-                {
-                    if (nodeIndex >= 38 && nodeIndex <= 54)
-                    {
-                        nodeIndex = nodeIndex - 10;
-                    }
-                    if (nodeIndex >= 57)
-                    {
-                        nodeIndex = nodeIndex - 12;
-                    }
-
                     int imageNumber = nodeIndex / 6 + 1;
 
-                    string resourceName = $"pure_home_{imageNumber:D2}";
+                    string resourceName = $"pure_home_{11:D2}";
 
                     Bitmap croppedImage = Resources.ResourceManager.GetObject(resourceName) as Bitmap;
 
-                    int x = (nodeIndex % 3) * 170;
-                    int y = ((nodeIndex / 3) % 2) * 256;
+                    int x = 2 * 170;
+                    int y = 0;
 
                     Rectangle cropArea = new Rectangle(x, y, 170, 256);
 
                     croppedImage = croppedImage.Clone(cropArea, croppedImage.PixelFormat);
 
                     pictureBox1.Image = croppedImage;
+                }
+                else
+                {
+                    if ((nodeIndex >= 29 && nodeIndex <= 38) || nodeIndex >= 55 && nodeIndex <= 56)
+                    {
+                        if ((nodeIndex >= 55 && nodeIndex <= 56))
+                        {
+                            nodeIndex = nodeIndex - 51;
+
+                            int x = (nodeIndex % 3) * 170;
+                            int y = ((nodeIndex / 3) % 2) * 256;
+
+                            Rectangle cropArea = new Rectangle(x, y, 170, 256);
+
+                            string resourceName = $"pure_home_92";
+
+                            Bitmap croppedImage = Resources.ResourceManager.GetObject(resourceName) as Bitmap;
+
+                            croppedImage = croppedImage.Clone(cropArea, croppedImage.PixelFormat);
+
+                            pictureBox1.Image = croppedImage;
+                        }
+                        else
+                        {
+                            if ((nodeIndex >= 29 && nodeIndex <= 38))
+                            {
+                                nodeIndex = nodeIndex - 29;
+                            }
+
+                            int imageNumber = nodeIndex / 6 + 1;
+
+                            int x = (nodeIndex % 3) * 170;
+                            int y = ((nodeIndex / 3) % 2) * 256;
+
+                            Rectangle cropArea = new Rectangle(x, y, 170, 256);
+
+                            string resourceName = $"pure_home_9{imageNumber}";
+
+                            Bitmap croppedImage = Resources.ResourceManager.GetObject(resourceName) as Bitmap;
+
+                            croppedImage = croppedImage.Clone(cropArea, croppedImage.PixelFormat);
+
+                            pictureBox1.Image = croppedImage;
+                        }
+                    }
+                    else
+                    {
+                        if (nodeIndex >= 38 && nodeIndex <= 54)
+                        {
+                            nodeIndex = nodeIndex - 10;
+                        }
+                        if (nodeIndex >= 57)
+                        {
+                            nodeIndex = nodeIndex - 12;
+                        }
+
+                        int imageNumber = nodeIndex / 6 + 1;
+
+                        string resourceName = $"pure_home_{imageNumber:D2}";
+
+                        Bitmap croppedImage = Resources.ResourceManager.GetObject(resourceName) as Bitmap;
+
+                        int x = (nodeIndex % 3) * 170;
+                        int y = ((nodeIndex / 3) % 2) * 256;
+
+                        Rectangle cropArea = new Rectangle(x, y, 170, 256);
+
+                        croppedImage = croppedImage.Clone(cropArea, croppedImage.PixelFormat);
+
+                        pictureBox1.Image = croppedImage;
+                    }
                 }
             }
         }
@@ -232,22 +254,22 @@ namespace WindowsFormsApp1
             charCCS.Clear();
             mapNameList.Clear();
 
-            CharGen.CharGenPrm.Clear();
-            CharGen.CharGenPrmBkp.Clear();
+            PlGen.CharGenPrm.Clear();
+            PlGen.CharGenPrmBkp.Clear();
 
-            CharAtk.CharAtkPrm.Clear();
-            CharAtk.CharAtkPrmBkp.Clear();
-            CharAtk.comboNameList.Clear();
+            PlAtk.CharAtkPrm.Clear();
+            PlAtk.CharAtkPrmBkp.Clear();
+            PlAtk.comboNameList.Clear();
 
-            CharAnm.CharAnmPrm.Clear();
-            CharAnm.CharAnmPrmBkp.Clear();
-            CharAnm.charAnmNameList.Clear();
+            PlAnm.PlAnmPrm.Clear();
+            PlAnm.PlAnmPrmBkp.Clear();
+            PlAnm.PlAnmListName.Clear();
 
-            CharAwk.CharAwkPrm.Clear();
-            CharAwk.CharAwkPrmBkp.Clear();
-            CharAwk.CharAwkIDList.Clear();
-            CharAwk.CharAwkActivationType.Clear();
-            CharAwk.CharAwkActivationSound.Clear();
+            PlAwk.CharAwkPrm.Clear();
+            PlAwk.CharAwkPrmBkp.Clear();
+            PlAwk.CharAwkIDList.Clear();
+            PlAwk.CharAwkActivationType.Clear();
+            PlAwk.CharAwkActivationSound.Clear();
 
         }
 
@@ -274,17 +296,12 @@ namespace WindowsFormsApp1
                         ClearAllList();
                         picMainBackground.Visible = false;
 
-                        ushort charNumber = BitConverter.ToUInt16(buffer, 0);
+                        charCount = BitConverter.ToInt16(buffer, 0);
                         int charStringTblOffset = 0x20401AD0;
 
-                        if (charNumber != 94) //Verifica se é o UN6 usando quantidade de personagens presentes originalmente no jogo como base.
-                        {
-                            isUN6 = true;
-                        }
+                        ReadCharProgTbl(processHandle, 0x205A2900);
 
-                        ReadCharProgTbl(processHandle, charNumber, 0x205A2900);
-
-                        NA2ReadCharNameTbl(processHandle, charNumber, charStringTblOffset);
+                        NA2ReadCharNameTbl(processHandle, charCount, charStringTblOffset);
                     }
                     else
                     {
@@ -300,28 +317,27 @@ namespace WindowsFormsApp1
                         ClearAllList();
                         picMainBackground.Visible = false;
 
-                        ushort charNumber = BitConverter.ToUInt16(buffer, 0);
+                        charCount = BitConverter.ToInt16(buffer, 0);
                         int charStringTblOffset = 0x205BA570;
 
-                        if (charNumber != 94) //Verifica se é o UN6 usando quantidade de personagens presentes originalmente no jogo como base.
+                        if (charCount != 94) //Verifica se é o UN6 usando quantidade de personagens presentes originalmente no jogo como base.
                         {
                             isUN6 = true;
                         }
-
                         if (isUN6 == true)
                         {
                             int charProgTblOffset = 0x20417D00;
 
-                            ReadCharProgTbl(processHandle, charNumber, charProgTblOffset);
+                            ReadCharProgTbl(processHandle, charProgTblOffset);
                         }
                         else
                         {
                             int charProgTblOffset = 0x205AC8C0;
 
-                            ReadCharProgTbl(processHandle, charNumber, charProgTblOffset);
+                            ReadCharProgTbl(processHandle, charProgTblOffset);
                         }
 
-                        ReadCharNameTbl(processHandle, charNumber, charStringTblOffset);
+                        ReadCharNameTbl(processHandle, charCount, charStringTblOffset);
                     }
                     else
                     {
@@ -421,13 +437,19 @@ namespace WindowsFormsApp1
                         break;
                     }
                 }
-                lstChar.Visible = true;
             }
+            int count = 0;
+            for (int j = 94; j < charCount; j++)
+            {
+                count ++;
+                lstChar.Items.Add($"{94 + count}: {GetCharCCSName(94 + count)}");
+            }
+            lstChar.Visible = true;
         }
 
-        public void ReadCharProgTbl(IntPtr processHandle, int charNumber, int charProgTblOffset)
+        public void ReadCharProgTbl(IntPtr processHandle, int charProgTblOffset)
         {
-            byte[] charProgBuffer = new byte[charNumber * 0x8];
+            byte[] charProgBuffer = new byte[0x5E * 0x8];
             if (ReadProcessMemory(processHandle, (IntPtr)charProgTblOffset, charProgBuffer, charProgBuffer.Length, out bytesRead))
             {
                 for (int i = 0; i < charProgBuffer.Length; i += 8)
@@ -454,26 +476,65 @@ namespace WindowsFormsApp1
                     #endregion
 
                     #region Read General Char Parameters
-                    var ninja = CharGen.ReadCharGenPrm(charMainAreaBuffer);
-                    var clone = (CharGen)ninja.Clone();
-                    CharGen.CharGenPrm.Add(ninja);
-                    CharGen.CharGenPrmBkp.Add(clone);
+                    var ninja = PlGen.ReadCharGenPrm(charMainAreaBuffer);
+                    var clone = (PlGen)ninja.Clone();
+                    PlGen.CharGenPrm.Add(ninja);
+                    PlGen.CharGenPrmBkp.Add(clone);
                     #endregion
                 }
 
-                CharAwk.ReadCharAwkIDList();
+                PlAwk.ReadCharAwkIDList();
+            }
+            if (charCount != 0x5D)
+            {
+                charProgBuffer = new byte[(charCount + 1 - 0x5E) * 0x8];
+                if (ReadProcessMemory(processHandle, (IntPtr)0x20956100, charProgBuffer, charProgBuffer.Length, out bytesRead))
+                {
+                    for (int i = 0; i < charProgBuffer.Length; i += 8)
+                    {
+                        #region Read Char ProgArea and MainArea
+                        byte[] charProgAreaBytes = new byte[8];
+                        Array.Copy(charProgBuffer, i, charProgAreaBytes, 0, 8);
+
+                        byte[] charMainAreaPointerBytes = new byte[4];
+                        Array.Copy(charProgAreaBytes, 4, charMainAreaPointerBytes, 0, 4);
+
+                        charMainAreaPointerBytes[3] = 0x20;
+
+                        int charMainAreaOffsetBytes = BitConverter.ToInt32(charMainAreaPointerBytes, 0);
+
+                        IntPtr charMainAreaOffset = (IntPtr)charMainAreaOffsetBytes;
+
+                        charMainAreaOffsets.Add(charMainAreaOffset);
+
+                        byte[] charMainAreaBuffer = new byte[0x120];
+                        ReadProcessMemory(processHandle, charMainAreaOffset, charMainAreaBuffer, charMainAreaBuffer.Length, out bytesRead);
+
+                        charMainAreaList.Add(charMainAreaBuffer);
+                        #endregion
+
+                        #region Read General Char Parameters
+                        var ninja = PlGen.ReadCharGenPrm(charMainAreaBuffer);
+                        var clone = (PlGen)ninja.Clone();
+                        PlGen.CharGenPrm.Add(ninja);
+                        PlGen.CharGenPrmBkp.Add(clone);
+                        #endregion
+                    }
+
+                    PlAwk.ReadCharAwkIDList();
+                }
             }
         }
 
         public static string GetCharCCSName(int selectedIndex)
         {
-            while (charCCS.Count <= 93)
+            while (charCCS.Count <= charCount)
             {
                 charCCS.Add("");
             }
             if (charCCS[selectedIndex] == "")
             {   
-                byte[] ccsOffsetBytes = CharGen.CharGenPrm[selectedIndex].CCSOffset;
+                byte[] ccsOffsetBytes = PlGen.CharGenPrm[selectedIndex].CCSOffset;
                 ccsOffsetBytes[3] = 0x20;
                 int ccsPointer = BitConverter.ToInt32(ccsOffsetBytes, 0);
 
@@ -527,8 +588,8 @@ namespace WindowsFormsApp1
 
                 genForm.timer1.Enabled = true;
                 genForm.UpdateLabels(charName, charID);
-                var charGenPrm = CharGen.CharGenPrm[charID];
-                CharGen.SendTextToGenForm(genForm, charGenPrm);
+                var charGenPrm = PlGen.CharGenPrm[charID];
+                PlGen.SendTextToGenForm(genForm, charGenPrm);
                 genForm.Show();
             }
         }
@@ -581,12 +642,12 @@ namespace WindowsFormsApp1
                 movForm.timer1.Enabled = true;
                 if (isNA2 == true)
                 {
-                    for (int i = 0; i < CharGen.CharGenPrm[charID].AtkCount; i++)
+                    for (int i = 0; i < PlGen.CharGenPrm[charID].AtkCount; i++)
                     {
-                        CharAtk.SendTextAtk(movForm, CharAtk.GetCharAtk(charID, i));
+                        PlAtk.SendTextAtk(movForm, PlAtk.GetCharAtk(charID, i));
                     }
                 }
-                CharAtk.AddCharComboList(movForm, charID, txtCharNameForm);
+                PlAtk.AddCharComboList(movForm, charID, txtCharNameForm);
                 movForm.UpdateLabels(txtCharNameForm, charIDString);
                 movForm.Show();
             }
@@ -680,9 +741,27 @@ namespace WindowsFormsApp1
                 string txtCharNameForm = txtcharName.Text;
 
                 awkForm.timer1.Enabled = true;
-                CharAwk.AddItemsToListBox(awkForm, charID);
+                PlAwk.AddItemsToListBox(awkForm, charID);
                 awkForm.UpdateLabels(txtCharNameForm, charIDString);
                 awkForm.Show();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string selectedString = lstChar.SelectedItem.ToString();
+
+            string[] splitString = selectedString.Split(':');
+            if (splitString.Length > 1)
+            {
+                JutsuParameters jtsForm = new JutsuParameters();
+                string charName = txtcharName.Text;
+                string charID = splitString[0].Trim();
+
+                jtsForm.timer1.Enabled = true;
+                jtsForm.UpdateLabels(charName, charID);
+                jtsForm.AddToListBox(int.Parse(charID));
+                jtsForm.Show();
             }
         }
     }
