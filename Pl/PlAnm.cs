@@ -143,7 +143,6 @@ namespace UN5CharPrmEditor
                 IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
 
                 byte[] anmListOffsetBytes = PlGen.CharGenPrm[currentCharID].AnmListOffset;
-                anmListOffsetBytes[3] = 0x20;
                 int anmListPointer = BitConverter.ToInt32(anmListOffsetBytes, 0);
 
                 List<PlAnm> ninjaCharsAnm = new List<PlAnm>();
@@ -155,7 +154,7 @@ namespace UN5CharPrmEditor
                     int skipsAnmBlocks = i * 0x4C;
                     int currentAnmListPointer = anmListPointer + skipsAnmBlocks;
 
-                    IntPtr currentAnmListOffset = (IntPtr)currentAnmListPointer;
+                    IntPtr currentAnmListOffset = (IntPtr)(Main.baseOffset + (ulong)currentAnmListPointer);
 
                     if (Main.ReadProcessMemory(processHandle, currentAnmListOffset, currentAnmBlock, currentAnmBlock.Length, out var bytesRead))
                     {
@@ -182,14 +181,14 @@ namespace UN5CharPrmEditor
                 IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
                 int anmNameCount = PlGen.CharGenPrm[CharIndex].AnmNameCount;
 
-                int anmNameAreaPointer = BitConverter.ToInt32(PlGen.CharGenPrm[CharIndex].AnmNameListOffset, 0) + 0x20000000;
+                ulong anmNameAreaPointer = (ulong)BitConverter.ToInt32(PlGen.CharGenPrm[CharIndex].AnmNameListOffset, 0);
                 byte[] anmNameAreaBuffer = new byte[anmNameCount * 0x4];
                 Main.ReadProcessMemory(processHandle, (IntPtr)anmNameAreaPointer, anmNameAreaBuffer, anmNameAreaBuffer.Length, out var none2);
 
                 List<string> anmNameList = new List<string>();
                 for (int i = 0; i < anmNameCount; i++)
                 {
-                    int anmNamePointer = BitConverter.ToInt32(anmNameAreaBuffer, i * 0x4) + 0x20000000;
+                    int anmNamePointer = BitConverter.ToInt32(anmNameAreaBuffer, i * 0x4);
                     string docodedAnmName = Util.ReadStringWithOffset(anmNamePointer, false);
                     anmNameList.Add(docodedAnmName);
                 }
@@ -203,33 +202,29 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = Main.isNA2 == true ? 0x20C42494 : 0x20BD8844 + Main.memoryDif;
+                int charCurrentP1CharTbl = Main.isNA2 == true ? 0xC42494 : 0xBD8844 + Main.memoryDif;
 
                 byte[] buffer = new byte[4];
-                Main.ReadProcessMemory(processHandle, (IntPtr)charCurrentP1CharTbl, buffer, buffer.Length, out var none);
-                buffer[3] = 0x20;
+                Main.ReadProcessMemory(processHandle, (IntPtr)(Main.baseOffset + (ulong)charCurrentP1CharTbl), buffer, buffer.Length, out var none);
 
                 int P1Offset = BitConverter.ToInt32(buffer, 0) + 204;
 
-                IntPtr NewP1Offset = (IntPtr)P1Offset;
+                IntPtr NewP1Offset = (IntPtr)(Main.baseOffset + (ulong)P1Offset);
 
                 Main.ReadProcessMemory(processHandle, NewP1Offset, buffer, buffer.Length, out var none1);
-
-                buffer[3] = 0x20;
 
                 int skipAnms = selectedAnm * 0x4C;
 
                 int P1AnmPointer = BitConverter.ToInt32(buffer, 0) + skipAnms;
 
-                IntPtr P1AnmOffset = (IntPtr)P1AnmPointer;
+                IntPtr P1AnmOffset = (IntPtr)(Main.baseOffset + (ulong)P1AnmPointer);
 
                 Main.WriteProcessMemory(processHandle, P1AnmOffset, resultBytes, (uint)resultBytes.Length, out var none2);
 
                 //Write Normal in Memory
                 byte[] anmNormalMemoryOffset = PlGen.CharGenPrm[charID].AnmListOffset;
-                anmNormalMemoryOffset[3] = 0x20;
                 P1AnmPointer = BitConverter.ToInt32(anmNormalMemoryOffset, 0) + skipAnms;
-                P1AnmOffset = (IntPtr)P1AnmPointer;
+                P1AnmOffset = (IntPtr)(Main.baseOffset + (ulong)P1AnmPointer);
                 Main.WriteProcessMemory(processHandle, P1AnmOffset, resultBytes, (uint)resultBytes.Length, out var none3);
 
                 Main.CloseHandle(processHandle);
@@ -258,7 +253,6 @@ namespace UN5CharPrmEditor
             movForm.txtHitBoxScale.Text = Convert.ToString(charAnm.AnmHitBoxScale);
             byte[] anmObjectAtk = new byte[4];
             Array.Copy(charAnm.AnmObjAtk, 0x0, anmObjectAtk, 0, 4);
-            anmObjectAtk[3] = 0x20;
             int anmObjectAtkPointer = BitConverter.ToInt32(anmObjectAtk, 0);
             string anmObjectAtkString = Util.ReadStringWithOffset(anmObjectAtkPointer, false);
             var commonBonnesList = Main.isNA2 == true ? charAnm.NA2CommonBonnesList : charAnm.CommonBonnesList;
@@ -290,7 +284,6 @@ namespace UN5CharPrmEditor
             movForm.txtAnmHitBoxScale2.Text = Convert.ToString(charAnm.AnmHitBoxScale2);
             byte[] anmObjectAtk2 = new byte[4];
             Array.Copy(charAnm.AnmObjAtk2, 0x0, anmObjectAtk2, 0, 4);
-            anmObjectAtk2[3] = 0x20;
             int anmObjectAtkPointer2 = BitConverter.ToInt32(anmObjectAtk2, 0);
             string anmObjectAtkString2 = Util.ReadStringWithOffset(anmObjectAtkPointer2, false);
             movForm.txtAnmHitBoxXPos2.Text = Convert.ToString(charAnm.AnmHitBoxXPosition2);

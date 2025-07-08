@@ -72,7 +72,7 @@ namespace UN5CharPrmEditor
             Main.ReadProcessMemory(processHandle, (IntPtr)0x208C2AD0, jutsuNameAreaBuffer, jutsuNameAreaBuffer.Length, out var none2);
             for (int i = 0; i < 0xC5; i++)
             {
-                int currentPointer = BitConverter.ToInt32(jutsuNameAreaBuffer, i * 4) + 0x20000000;
+                int currentPointer = BitConverter.ToInt32(jutsuNameAreaBuffer, i * 4);
                 string docodedAnmName = Util.ReadStringWithOffset(currentPointer, false);
                 charJutsuNameList.Add(docodedAnmName);
             }

@@ -242,19 +242,14 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = Main.isNA2 == true ? 0x20C42494 : 0x20BD8844 + Main.memoryDif;
+                int charCurrentP1CharTbl = Main.isNA2 == true ? 0xC42494 : 0xBD8844 + Main.memoryDif;
 
                 byte[] buffer = new byte[4];
-                Main.ReadProcessMemory(processHandle, (IntPtr)charCurrentP1CharTbl, buffer, buffer.Length, out var none);
-                buffer[3] = 0x20;
+                Main.ReadProcessMemory(processHandle, (IntPtr)(Main.baseOffset + (ulong)charCurrentP1CharTbl), buffer, buffer.Length, out var none);
 
                 int P1Offset = BitConverter.ToInt32(buffer, 0) + 188;
 
-                IntPtr NewP1Offset = (IntPtr)P1Offset;
-
-                Main.ReadProcessMemory(processHandle, NewP1Offset, buffer, buffer.Length, out var none1);
-
-                buffer[3] = 0x20;
+                Main.ReadProcessMemory(processHandle, Util.ToPointer(P1Offset), buffer, buffer.Length, out var none1);
 
                 int skipAtks = selectedAtk * 0x54;
 
@@ -278,7 +273,6 @@ namespace UN5CharPrmEditor
 
                 //Write Normal in Memory
                 byte[] atkNormalMemoryOffset = PlGen.CharGenPrm[charID].AtkListOffset;
-                atkNormalMemoryOffset[3] = 0x20;
                 P1AtkPointer = BitConverter.ToInt32(atkNormalMemoryOffset, 0) + skipAtks;
                 Array.Copy(resultBytes, 0, resultBytesParte1, 0, resultBytesParte1.Length);
                 P1AtkOffset = (IntPtr)P1AtkPointer;
@@ -306,7 +300,6 @@ namespace UN5CharPrmEditor
                 IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
 
                 byte[] atkListOffsetBytes = PlGen.CharGenPrm[charID].AtkListOffset;
-                atkListOffsetBytes[3] = 0x20;
                 int atkListPointer = BitConverter.ToInt32(PlGen.CharGenPrm[charID].AtkListOffset, 0);
 
                 List<PlAtk> charAtkPrm = new List<PlAtk>();
@@ -317,9 +310,7 @@ namespace UN5CharPrmEditor
                     int skipsAtkBlocks = i * 0x54;
                     int currentAtkListPointer = atkListPointer + skipsAtkBlocks;
 
-                    IntPtr currentAtkListOffset = (IntPtr)currentAtkListPointer;
-
-                    if (Main.ReadProcessMemory(processHandle, currentAtkListOffset, currentAtkBlock, currentAtkBlock.Length, out var bytesRead))
+                    if (Main.ReadProcessMemory(processHandle, Util.ToPointer(currentAtkListPointer), currentAtkBlock, currentAtkBlock.Length, out var bytesRead))
                     {
                         var ninja = ReadCharAtkPrm(currentAtkBlock);
                         var clone = (PlAtk)ninja.Clone();
@@ -353,7 +344,6 @@ namespace UN5CharPrmEditor
                 {
                     byte[] charComboNameOffsetBytes = new byte[4];
                     Array.Copy(CharAtkPrm[charID][j].AtkUnk2, charComboNameOffsetBytes, CharAtkPrm[charID][j].AtkUnk2.Length);
-                    charComboNameOffsetBytes[3] = 0x20;
                     int charComboNameOffset = BitConverter.ToInt32(charComboNameOffsetBytes, 0);
 
                     charComboName.Add(Util.ReadStringWithOffset(charComboNameOffset, true));
@@ -378,34 +368,31 @@ namespace UN5CharPrmEditor
             }
             if (comboNameList[charID][1] == "")
             {
-                int charAtkNameTblOffset = 0x205BA950;
+                int charAtkNameTblOffset = 0x5BA950;
                 IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
 
                 byte[] generalComboNameOffset = new byte[4];
 
-                if (Main.ReadProcessMemory(processHandle, (IntPtr)charAtkNameTblOffset, generalComboNameOffset, generalComboNameOffset.Length, out var bytesRead))
+                if (Main.ReadProcessMemory(processHandle, Util.ToPointer(charAtkNameTblOffset), generalComboNameOffset, generalComboNameOffset.Length, out var bytesRead))
                 {
-                    generalComboNameOffset[3] = 0x20;
                     int comboOffset = BitConverter.ToInt32(generalComboNameOffset, 0);
 
                     byte[] generalComboNameArea = new byte[Main.charCount * 4];
 
-                    Main.ReadProcessMemory(processHandle, (IntPtr)comboOffset, generalComboNameArea, generalComboNameArea.Length, out bytesRead);
+                    Main.ReadProcessMemory(processHandle, Util.ToPointer(comboOffset), generalComboNameArea, generalComboNameArea.Length, out bytesRead);
 
                     byte[] charComboNameAreaOffsetBytes = new byte[4];
                     Array.Copy(generalComboNameArea, charID * 4, charComboNameAreaOffsetBytes, 0, charComboNameAreaOffsetBytes.Length);
-                    charComboNameAreaOffsetBytes[3] = 0x20;
                     int charComboNameAreaOffset = BitConverter.ToInt32(charComboNameAreaOffsetBytes, 0);
 
                     byte[] charComboNameArea = new byte[PlGen.CharGenPrm[charID].AtkCount * 4];
-                    Main.ReadProcessMemory(processHandle, (IntPtr)charComboNameAreaOffset, charComboNameArea, charComboNameArea.Length, out bytesRead);
+                    Main.ReadProcessMemory(processHandle, Util.ToPointer(charComboNameAreaOffset), charComboNameArea, charComboNameArea.Length, out bytesRead);
 
                     List<string> charComboName = new List<string>();
                     for (int j = 0; j < PlGen.CharGenPrm[charID].AtkCount; j++)
                     {
                         byte[] charComboNameOffsetBytes = new byte[4];
                         Array.Copy(charComboNameArea, j * 4, charComboNameOffsetBytes, 0, charComboNameOffsetBytes.Length);
-                        charComboNameOffsetBytes[3] = 0x20;
                         int charComboNameOffset = BitConverter.ToInt32(charComboNameOffsetBytes, 0);
 
                         charComboName.Add(Util.ReadStringWithOffset(charComboNameOffset, false));

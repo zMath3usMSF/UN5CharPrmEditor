@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -31,6 +32,9 @@ namespace WindowsFormsApp1
             {
                 // Obtenha o processo selecionado na ListBox
                 ProcessDetails selectedProcess = (ProcessDetails)ListBox1.SelectedItem;
+
+                var processes = Process.GetProcessById(selectedProcess.Id);
+                baseOffset = (ulong)processes.MainModule.BaseAddress + 0x31EC0000;
 
                 // Obtenha o ID do processo selecionado
                 int selectedProcessId = selectedProcess.Id;

@@ -243,7 +243,7 @@
             // 
             this.picMainBackground.Image = global::UN5CharPrmEditor.Properties.Resources.MainBackground;
             this.picMainBackground.InitialImage = global::UN5CharPrmEditor.Properties.Resources.MainBackground;
-            this.picMainBackground.Location = new System.Drawing.Point(-638, 27);
+            this.picMainBackground.Location = new System.Drawing.Point(0, 27);
             this.picMainBackground.Name = "picMainBackground";
             this.picMainBackground.Size = new System.Drawing.Size(867, 408);
             this.picMainBackground.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -275,9 +275,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(867, 429);
+            this.Controls.Add(this.picMainBackground);
             this.Controls.Add(this.btnEditJutsusParameters);
             this.Controls.Add(this.btnEditAwekeningParameters);
-            this.Controls.Add(this.picMainBackground);
             this.Controls.Add(this.btnEditMovesetParameters);
             this.Controls.Add(this.lstChar);
             this.Controls.Add(this.btnEditGeneralParameters);

@@ -98,12 +98,11 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = Main.isNA2 == true ? 0x20C42494 : 0x20BD8844 + Main.memoryDif;
+                int charCurrentP1CharTbl = Main.isNA2 == true ? 0xC42494 : 0xBD8844 + Main.memoryDif;
 
                 byte[] buffer = new byte[4];
 
-                Main.ReadProcessMemory(processHandle, (IntPtr)charCurrentP1CharTbl, buffer, buffer.Length, out var none);
-                buffer[3] = 0x20;
+                Main.ReadProcessMemory(processHandle, (IntPtr)(Main.baseOffset + (ulong)charCurrentP1CharTbl), buffer, buffer.Length, out var none);
 
                 int P1Offset = BitConverter.ToInt32(buffer, 0) + 140;
 
@@ -113,7 +112,7 @@ namespace UN5CharPrmEditor
 
                 Main.WriteProcessMemory(processHandle, NewOffsetPlus58, resultBytes, (uint)resultBytes.Length, out var none1);
 
-                Main.WriteProcessMemory(processHandle, Main.charMainAreaOffsets[charID] + 0x58, resultBytes, (uint)resultBytes.Length, out var none2);
+                Main.WriteProcessMemory(processHandle, Util.ToPointer(Main.charMainAreaOffsets[charID] + 0x58), resultBytes, (uint)resultBytes.Length, out var none2);
 
                 Main.CloseHandle(processHandle);
             }

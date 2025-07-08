@@ -10,11 +10,32 @@ namespace UN5CharPrmEditor
 {
     internal class Util
     {
+        public static byte[] ReadProcessMemoryBytes(int address, int length)
+        {
+            byte[] buffer = new byte[length];
+            IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
+
+            Main.ReadProcessMemory(processHandle, ToPointer(address), buffer, buffer.Length, out var none);
+            return buffer;
+        }
+        public static int ReadProcessMemoryInt32(int address)
+        {
+            byte[] buffer = new byte[4];
+            IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
+
+            Main.ReadProcessMemory(processHandle, ToPointer(address), buffer, 4, out var none);
+            return BitConverter.ToInt32(buffer, 0);
+        }
+
+        public static IntPtr ToPointer(int value)
+        {
+            return (IntPtr)(Main.baseOffset + (ulong)value);
+        }
         public static string ReadStringWithOffset(int basePointer, bool encShift)
         {
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
 
-            IntPtr baseOffset = (IntPtr)basePointer;
+            IntPtr baseOffset = (IntPtr)((ulong)basePointer + Main.baseOffset);
 
             List<byte> stringBytes = new List<byte>();
 
@@ -30,7 +51,7 @@ namespace UN5CharPrmEditor
                 }
                 else
                 {
-                    MessageBox.Show("Error reading string.");
+                    //MessageBox.Show("Error reading string.");
                     break;
                 }
             }
