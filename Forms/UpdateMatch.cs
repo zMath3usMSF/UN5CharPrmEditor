@@ -25,21 +25,18 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                byte[] PlayerIDByte = new byte[1];
-                IntPtr PlayerOffset = (IntPtr)(Main.baseOffset + (ulong)(isP1 == true ? Main.isNA2 == true ? 0xC416FC : 0xBD7AAC  + Main.memoryDif : Main.isNA2 == true ? 0xC41724 : 0xBD7AD4  + Main.memoryDif));
-                Main.ReadProcessMemory(processHandle, PlayerOffset, PlayerIDByte, PlayerIDByte.Length, out var none4);
-
+                int PlayerOffset = isP1 == true ? 0xBD7AAC  + Main.memoryDif : 0xBD7AD4  + Main.memoryDif;
+                int PlayerID = Util.ReadProcessMemoryInt8(PlayerOffset);
                 if (cmbCharList.Items.Count == 0)
                 {
                     for (int i = 0; i <= 93; i++)
                     {
                         if (!Main.charInvalid.Contains(i))
                         {
-                            cmbCharList.Items.Add($"{i}: {Main.charName[i]}");
+                            cmbCharList.Items.Add($"{i}: {Main.charNameList[i]}");
                         }
                     }
                 }
-                int PlayerID = PlayerIDByte[0];
                 for(int i = 0; i < cmbCharList.Items.Count; i++)
                 {
                     string[] teste = cmbCharList.Items[i].ToString().Split(':');
@@ -50,7 +47,7 @@ namespace UN5CharPrmEditor
                 }
 
                 byte[] MapIDByte = new byte[1];
-                Main.ReadProcessMemory(processHandle, Main.isNA2 == true ? (IntPtr)(0xC41748 + Main.baseOffset): (IntPtr)(0xBD7AF8 + Main.baseOffset + (ulong)Main.memoryDif), MapIDByte, MapIDByte.Length, out var none5);
+                Main.ReadProcessMemory(processHandle, (IntPtr)(0xBD7AF8 + Main.eeAddress + (ulong)Main.memoryDif), MapIDByte, MapIDByte.Length, out var none5);
                 int MapID = MapIDByte[0];
 
                 if (cmbMapList.Items.Count == 0)

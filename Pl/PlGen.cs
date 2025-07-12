@@ -93,27 +93,16 @@ namespace UN5CharPrmEditor
         {
             return this.MemberwiseClone();
         }
-        public static void UpdateP1GenPrm(byte[] resultBytes, int charID)
+        public static void UpdateP1GenPrm(byte[] charGeneralDataBlock, int charID)
         {
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = Main.isNA2 == true ? 0xC42494 : 0xBD8844 + Main.memoryDif;
+                int charCurrentP1CharTbl = 0xBD8844 + Main.memoryDif;
+                int P1Offs = Util.ReadProcessMemoryInt32(charCurrentP1CharTbl) + 0x8C;
 
-                byte[] buffer = new byte[4];
-
-                Main.ReadProcessMemory(processHandle, (IntPtr)(Main.baseOffset + (ulong)charCurrentP1CharTbl), buffer, buffer.Length, out var none);
-
-                int P1Offset = BitConverter.ToInt32(buffer, 0) + 140;
-
-                IntPtr NewP1Offset = (IntPtr)P1Offset;
-
-                IntPtr NewOffsetPlus58 = IntPtr.Add(NewP1Offset, 0x58);
-
-                Main.WriteProcessMemory(processHandle, NewOffsetPlus58, resultBytes, (uint)resultBytes.Length, out var none1);
-
-                Main.WriteProcessMemory(processHandle, Util.ToPointer(Main.charMainAreaOffsets[charID] + 0x58), resultBytes, (uint)resultBytes.Length, out var none2);
-
+                Util.WriteProcessMemoryBytes(P1Offs + 0x58, charGeneralDataBlock);
+                Util.WriteProcessMemoryBytes(Main.charMainAreaOffsets[charID] + 0x58, charGeneralDataBlock);
                 Main.CloseHandle(processHandle);
             }
         }
@@ -128,13 +117,13 @@ namespace UN5CharPrmEditor
                 using (FileStream fs = new FileStream(Main.caminhoELF, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                 {
                     int skipChars = charID * 0x8 + 0x4;
-                    int mainAreaOffset = Main.isNA2 == true ? 0x4A2A00 : Main.isUN6 == true ? 0x317E80 : 0x4ACA40;
+                    int mainAreaOffset = Main.isUN6 == true ? 0x317E80 : 0x4ACA40;
                     fs.Seek(mainAreaOffset + skipChars, SeekOrigin.Begin);
 
                     byte[] charMainPointer = new byte[4];
                     fs.Read(charMainPointer, 0, charMainPointer.Length);
                     int charMainOffset = BitConverter.ToInt32(charMainPointer, 0);
-                    int subValue = Main.isNA2 == true ? 0xFFF00 : 0xFFE80;
+                    int subValue = 0xFFE80;
                     charMainOffset = charMainOffset - subValue + 0x58;
 
                     fs.Seek(charMainOffset, SeekOrigin.Begin);

@@ -242,46 +242,29 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = Main.isNA2 == true ? 0xC42494 : 0xBD8844 + Main.memoryDif;
-
-                byte[] buffer = new byte[4];
-                Main.ReadProcessMemory(processHandle, (IntPtr)(Main.baseOffset + (ulong)charCurrentP1CharTbl), buffer, buffer.Length, out var none);
-
-                int P1Offset = BitConverter.ToInt32(buffer, 0) + 188;
-
-                Main.ReadProcessMemory(processHandle, Util.ToPointer(P1Offset), buffer, buffer.Length, out var none1);
-
+                int charCurrentP1CharTbl = 0xBD8844 + Main.memoryDif;
+                int P1Offset = Util.ReadProcessMemoryInt32(charCurrentP1CharTbl) + 0xBC;
                 int skipAtks = selectedAtk * 0x54;
 
-                int P1AtkPointer = BitConverter.ToInt32(buffer, 0) + skipAtks;
-
-                byte[] resultBytesParte1 = new byte[0x1C];
-                Array.Copy(resultBytes, 0, resultBytesParte1, 0, resultBytesParte1.Length);
-
-                IntPtr P1AtkOffset = (IntPtr)P1AtkPointer;
-
-                Main.WriteProcessMemory(processHandle, P1AtkOffset, resultBytesParte1, (uint)resultBytesParte1.Length, out var none2);
+                int P1AtkOffs = Util.ReadProcessMemoryInt32(P1Offset) + skipAtks;
+                byte[] resultBytesPart1 = new byte[0x1C];
+                Array.Copy(resultBytes, 0, resultBytesPart1, 0, resultBytesPart1.Length);
+                Util.WriteProcessMemoryBytes(P1AtkOffs, resultBytesPart1);
 
                 byte[] resultBytesParte2 = new byte[0x30];
                 Array.Copy(resultBytes, 0x20, resultBytesParte2, 0, resultBytesParte2.Length);
-
-                int P1AtkPointer2 = BitConverter.ToInt32(buffer, 0) + skipAtks + 0x20;
-
-                IntPtr P1AtkOffset2 = (IntPtr)P1AtkPointer2;
-
-                Main.WriteProcessMemory(processHandle, P1AtkOffset2, resultBytesParte2, (uint)resultBytesParte2.Length, out var none3);
+                int P1AtkOffs2 = Util.ReadProcessMemoryInt32(P1Offset) + skipAtks + 0x20;
+                Util.WriteProcessMemoryBytes(P1AtkOffs2, resultBytesParte2);
 
                 //Write Normal in Memory
                 byte[] atkNormalMemoryOffset = PlGen.CharGenPrm[charID].AtkListOffset;
-                P1AtkPointer = BitConverter.ToInt32(atkNormalMemoryOffset, 0) + skipAtks;
-                Array.Copy(resultBytes, 0, resultBytesParte1, 0, resultBytesParte1.Length);
-                P1AtkOffset = (IntPtr)P1AtkPointer;
-                Main.WriteProcessMemory(processHandle, P1AtkOffset, resultBytesParte1, (uint)resultBytesParte1.Length, out var none4);
+                P1AtkOffs = BitConverter.ToInt32(atkNormalMemoryOffset, 0) + skipAtks;
+                Array.Copy(resultBytes, 0, resultBytesPart1, 0, resultBytesPart1.Length);
+                Util.WriteProcessMemoryBytes(P1AtkOffs, resultBytesPart1);
 
                 Array.Copy(resultBytes, 0x20, resultBytesParte2, 0, resultBytesParte2.Length);
-                P1AtkPointer2 = BitConverter.ToInt32(atkNormalMemoryOffset, 0) + skipAtks + 0x20;
-                P1AtkOffset2 = (IntPtr)P1AtkPointer2;
-                Main.WriteProcessMemory(processHandle, P1AtkOffset2, resultBytesParte2, (uint)resultBytesParte2.Length, out var none5);
+                P1AtkOffs2 = BitConverter.ToInt32(atkNormalMemoryOffset, 0) + skipAtks + 0x20;
+                Util.WriteProcessMemoryBytes(P1AtkOffs2, resultBytesParte2);
 
                 Main.CloseHandle(processHandle);
             }
@@ -306,51 +289,19 @@ namespace UN5CharPrmEditor
                 List<PlAtk> charAtkPrmBkp = new List<PlAtk>();
                 for (int i = 0; i != atkCount; i++)
                 {
-                    byte[] currentAtkBlock = new byte[0x54];
                     int skipsAtkBlocks = i * 0x54;
                     int currentAtkListPointer = atkListPointer + skipsAtkBlocks;
+                    byte[] currentAtkBlock = Util.ReadProcessMemoryBytes(currentAtkListPointer, 0x54);
 
-                    if (Main.ReadProcessMemory(processHandle, Util.ToPointer(currentAtkListPointer), currentAtkBlock, currentAtkBlock.Length, out var bytesRead))
-                    {
-                        var ninja = ReadCharAtkPrm(currentAtkBlock);
-                        var clone = (PlAtk)ninja.Clone();
-                        charAtkPrm.Add(ninja);
-                        charAtkPrmBkp.Add(clone);
-                    }
+                    var ninja = ReadCharAtkPrm(currentAtkBlock);
+                    var clone = (PlAtk)ninja.Clone();
+                    charAtkPrm.Add(ninja);
+                    charAtkPrmBkp.Add(clone);
                 }
                 CharAtkPrm[charID] = charAtkPrm;
                 CharAtkPrmBkp[charID] = charAtkPrmBkp;
             }
             return CharAtkPrm[charID][atkID];
-        }
-        public static string NA2GetCharComboName(int charID, int comboNameID)
-        {
-            if (comboNameList.Count == 0)
-            {
-                for (int i = 0; i < 94; i++)
-                {
-                    List<string> comboName = new List<string>();
-                    for (int j = 0; j <= PlGen.CharGenPrm[i].AtkCount; j++)
-                    {
-                        comboName.Add("");
-                    }
-                    comboNameList.Add(comboName);
-                }
-            }
-            if (comboNameList[charID][1] == "")
-            {
-                List<string> charComboName = new List<string>();
-                for (int j = 0; j < PlGen.CharGenPrm[charID].AtkCount; j++)
-                {
-                    byte[] charComboNameOffsetBytes = new byte[4];
-                    Array.Copy(CharAtkPrm[charID][j].AtkUnk2, charComboNameOffsetBytes, CharAtkPrm[charID][j].AtkUnk2.Length);
-                    int charComboNameOffset = BitConverter.ToInt32(charComboNameOffsetBytes, 0);
-
-                    charComboName.Add(Util.ReadStringWithOffset(charComboNameOffset, true));
-                }
-                comboNameList[charID] = charComboName;
-            }
-            return comboNameList[charID][comboNameID];
         }
         public static string GetCharComboName(int charID, int comboNameID)
         {
@@ -369,36 +320,25 @@ namespace UN5CharPrmEditor
             if (comboNameList[charID][1] == "")
             {
                 int charAtkNameTblOffset = 0x5BA950;
-                IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
+                byte[] generalComboNameOffset = Util.ReadProcessMemoryBytes(charAtkNameTblOffset, 4);
+                int comboOffset = BitConverter.ToInt32(generalComboNameOffset, 0);
 
-                byte[] generalComboNameOffset = new byte[4];
+                byte[] generalComboNameArea = Util.ReadProcessMemoryBytes(comboOffset, Main.charCount * 4);
+                byte[] charComboNameAreaOffsetBytes = new byte[4];
+                Array.Copy(generalComboNameArea, charID * 4, charComboNameAreaOffsetBytes, 0, charComboNameAreaOffsetBytes.Length);
+                int charComboNameAreaOffset = BitConverter.ToInt32(charComboNameAreaOffsetBytes, 0);
 
-                if (Main.ReadProcessMemory(processHandle, Util.ToPointer(charAtkNameTblOffset), generalComboNameOffset, generalComboNameOffset.Length, out var bytesRead))
+                byte[] charComboNameArea = Util.ReadProcessMemoryBytes(charComboNameAreaOffset, PlGen.CharGenPrm[charID].AtkCount * 4);
+                List<string> charComboName = new List<string>();
+                for (int j = 0; j < PlGen.CharGenPrm[charID].AtkCount; j++)
                 {
-                    int comboOffset = BitConverter.ToInt32(generalComboNameOffset, 0);
+                    byte[] charComboNameOffsetBytes = new byte[4];
+                    Array.Copy(charComboNameArea, j * 4, charComboNameOffsetBytes, 0, charComboNameOffsetBytes.Length);
+                    int charComboNameOffset = BitConverter.ToInt32(charComboNameOffsetBytes, 0);
 
-                    byte[] generalComboNameArea = new byte[Main.charCount * 4];
-
-                    Main.ReadProcessMemory(processHandle, Util.ToPointer(comboOffset), generalComboNameArea, generalComboNameArea.Length, out bytesRead);
-
-                    byte[] charComboNameAreaOffsetBytes = new byte[4];
-                    Array.Copy(generalComboNameArea, charID * 4, charComboNameAreaOffsetBytes, 0, charComboNameAreaOffsetBytes.Length);
-                    int charComboNameAreaOffset = BitConverter.ToInt32(charComboNameAreaOffsetBytes, 0);
-
-                    byte[] charComboNameArea = new byte[PlGen.CharGenPrm[charID].AtkCount * 4];
-                    Main.ReadProcessMemory(processHandle, Util.ToPointer(charComboNameAreaOffset), charComboNameArea, charComboNameArea.Length, out bytesRead);
-
-                    List<string> charComboName = new List<string>();
-                    for (int j = 0; j < PlGen.CharGenPrm[charID].AtkCount; j++)
-                    {
-                        byte[] charComboNameOffsetBytes = new byte[4];
-                        Array.Copy(charComboNameArea, j * 4, charComboNameOffsetBytes, 0, charComboNameOffsetBytes.Length);
-                        int charComboNameOffset = BitConverter.ToInt32(charComboNameOffsetBytes, 0);
-
-                        charComboName.Add(Util.ReadStringWithOffset(charComboNameOffset, false));
-                    }
-                    comboNameList[charID] = charComboName;
+                    charComboName.Add(Util.ReadStringWithOffset(charComboNameOffset, false));
                 }
+                comboNameList[charID] = charComboName;
             }
             return comboNameList[charID][comboNameID];
         }
@@ -478,80 +418,40 @@ namespace UN5CharPrmEditor
                         movForm.listBox1.Items.Add($"{i}: (JanKenPon)");
                         break;
                     default:
-                        if(Main.isNA2 == true)
+                        if (GetCharComboName(charID, i) == "")
                         {
-                            if (NA2GetCharComboName(charID, i) == "")
+                            for (int i2 = 0; i2 < comboNameList[charID].Count; i2++)
                             {
-                                for (int i2 = 0; i2 < comboNameList[charID].Count; i2++)
+                                int value = i2 + 1;
+                                if (i >= 20 && movForm.listBox1.Items[i - value].ToString().Contains(" (JanKenPon)"))
                                 {
-                                    int value = i2 + 1;
-                                    if (i >= 20 && movForm.listBox1.Items[i - value].ToString().Contains(" (JanKenPon)"))
+                                    movForm.listBox1.Items.Add($"{i}: (Base Combo)");
+                                    for (int i3 = 0; i3 < comboNameList[charID].Count; i3++)
                                     {
-                                        movForm.listBox1.Items.Add($"{i}: (Base Combo)");
-                                        for (int i3 = 0; i3 < comboNameList[charID].Count; i3++)
+                                        if (comboNameList[charID][i + 1] == "")
                                         {
-                                            if (comboNameList[charID][i + 1] == "")
-                                            {
-                                                movForm.listBox1.Items.Add($"{i + 1}: (Base Combo)");
-                                                i++;
-                                            }
-                                            else
-                                            {
-                                                break;
-                                            }
+                                            movForm.listBox1.Items.Add($"{i + 1}: (Base Combo)");
+                                            i++;
                                         }
-                                        break;
+                                        else
+                                        {
+                                            break;
+                                        }
                                     }
-                                    if (comboNameList[charID][i + i2] != "")
-                                    {
-                                        movForm.listBox1.Items.Add($"{i}: " + comboNameList[charID][i + i2]);
-                                        break;
-                                    }
+                                    break;
+                                }
+                                if (comboNameList[charID][i + i2] != "")
+                                {
+                                    movForm.listBox1.Items.Add($"{i}: " + comboNameList[charID][i + i2]);
+                                    break;
                                 }
                             }
-                            else
-                            {
-                                movForm.listBox1.Items.Add($"{i}: " + NA2GetCharComboName(charID, i));
-                            }
-                            break;
                         }
                         else
                         {
-                            if (GetCharComboName(charID, i) == "")
-                            {
-                                for (int i2 = 0; i2 < comboNameList[charID].Count; i2++)
-                                {
-                                    int value = i2 + 1;
-                                    if (i >= 20 && movForm.listBox1.Items[i - value].ToString().Contains(" (JanKenPon)"))
-                                    {
-                                        movForm.listBox1.Items.Add($"{i}: (Base Combo)");
-                                        for (int i3 = 0; i3 < comboNameList[charID].Count; i3++)
-                                        {
-                                            if (comboNameList[charID][i + 1] == "")
-                                            {
-                                                movForm.listBox1.Items.Add($"{i + 1}: (Base Combo)");
-                                                i++;
-                                            }
-                                            else
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        break;
-                                    }
-                                    if (comboNameList[charID][i + i2] != "")
-                                    {
-                                        movForm.listBox1.Items.Add($"{i}: " + comboNameList[charID][i + i2]);
-                                        break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                movForm.listBox1.Items.Add($"{i}: " + GetCharComboName(charID, i));
-                            }
-                            break;
+                            movForm.listBox1.Items.Add($"{i}: " + GetCharComboName(charID, i));
                         }
+                        break;
                 }
             }
 
@@ -933,7 +833,7 @@ namespace UN5CharPrmEditor
                 {
                     byte[] charAtkAreaOffsetBytes = PlGen.CharGenPrm[charID].AtkListOffset;
                     charAtkAreaOffsetBytes[3] = 0x0;
-                    int subValue = Main.isNA2 == true ? 0xFFF00 : 0xFFE80;
+                    int subValue = 0xFFE80;
                     int charAtkAreaOffset = BitConverter.ToInt32(charAtkAreaOffsetBytes, 0) - subValue;
 
                     fs.Seek(charAtkAreaOffset, SeekOrigin.Begin);

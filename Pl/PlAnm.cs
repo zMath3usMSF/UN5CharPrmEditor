@@ -74,33 +74,6 @@ namespace UN5CharPrmEditor
         {
             return this.MemberwiseClone();
         }
-        public Dictionary<string, byte[]> NA2CommonBonnesList = new Dictionary<string, byte[]>()
-        {
-
-        {"OBJ_2cmn00t0 pelvis", new byte[]{ 0x90, 0x8F, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 spine", new byte[]{ 0xB0, 0x8F, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 l thigh", new byte[]{ 0x40, 0xE1, 0x45, 0x00 }},
-        {"OBJ_2cmn00t0 l calf", new byte[]{ 0xF0, 0x90, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 l foot", new byte[]{ 0x10, 0x8F, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 r thigh", new byte[]{ 0x30, 0x83, 0x48, 0x00 }},
-        {"OBJ_2cmn00t0 r calf", new byte[]{ 0xB0, 0x3F, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 r foot", new byte[]{ 0x90, 0x90, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 spine1", new byte[]{ 0x90, 0xC6, 0x4B, 0x00 }},
-        {"OBJ_2cmn00t0 neck", new byte[]{ 0x10, 0x7E, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 head", new byte[]{ 0xC0, 0x8A, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 l clavicle", new byte[]{ 0x50, 0x8F, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 l forearm", new byte[]{ 0x30, 0x8F, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 l hand", new byte[]{ 0xE0, 0x78, 0x45, 0x00 }},
-        {"OBJ_2cmn00t0 l finger0", new byte[]{ 0x70, 0x90, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 r clavicle", new byte[]{ 0x90, 0x3F, 0x41, 0x00 }},
-        {"OBJ_2cmn00t0 r upperarm", new byte[]{ 0x90, 0x30, 0x4B, 0x00 }},
-        {"OBJ_2cmn00t0 r hand", new byte[]{ 0xC0, 0x78, 0x45, 0x00 }},
-        {"OBJ_2cmn00t0 r finger0", new byte[]{ 0x70, 0x8F, 0x40, 0x00 }},
-        {"OBJ_2cmn00t0 tail", new byte[]{ 0x50, 0x30, 0x4B, 0x00 }},
-        {"OBJ_2cmn00t0 tail1", new byte[]{ 0xB0, 0x30, 0x4B, 0x00 }},
-        {"OBJ_2cmn00t0 tail2", new byte[]{ 0x30, 0x1F, 0x4A, 0x00 }},
-        {"OBJ_2cmn00t0 body", new byte[]{ 0xE0, 0x8A, 0x41, 0x00 }},
-        };
 
         public Dictionary<string, byte[]> CommonBonnesList = new Dictionary<string, byte[]>()
         {
@@ -150,19 +123,14 @@ namespace UN5CharPrmEditor
 
                 for (int i = 0; i != anmCount; i++)
                 {
-                    byte[] currentAnmBlock = new byte[0x4C];
                     int skipsAnmBlocks = i * 0x4C;
-                    int currentAnmListPointer = anmListPointer + skipsAnmBlocks;
+                    int currentAnmListOffs = anmListPointer + skipsAnmBlocks;
+                    byte[] currentAnmBlock = Util.ReadProcessMemoryBytes(currentAnmListOffs, 0x4C);
 
-                    IntPtr currentAnmListOffset = (IntPtr)(Main.baseOffset + (ulong)currentAnmListPointer);
-
-                    if (Main.ReadProcessMemory(processHandle, currentAnmListOffset, currentAnmBlock, currentAnmBlock.Length, out var bytesRead))
-                    {
-                        var ninja = PlAnm.ReadPlAnmPrm(currentAnmBlock);
-                        var clone = (PlAnm)ninja.Clone();
-                        ninjaCharsAnm.Add(ninja);
-                        ninjaCharsAnmBkp.Add(clone);
-                    }
+                    var ninja = ReadPlAnmPrm(currentAnmBlock);
+                    var clone = (PlAnm)ninja.Clone();
+                    ninjaCharsAnm.Add(ninja);
+                    ninjaCharsAnmBkp.Add(clone);
                 }
                 PlAnmPrm[currentCharID] = ninjaCharsAnm;
                 PlAnmPrmBkp[currentCharID] = ninjaCharsAnmBkp;
@@ -178,12 +146,9 @@ namespace UN5CharPrmEditor
             }
             if (PlAnmListName[CharIndex].Count == 0)
             {
-                IntPtr processHandle = Main.OpenProcess(Main.PROCESS_VM_READ, false, Main.currentProcessID);
                 int anmNameCount = PlGen.CharGenPrm[CharIndex].AnmNameCount;
-
-                ulong anmNameAreaPointer = (ulong)BitConverter.ToInt32(PlGen.CharGenPrm[CharIndex].AnmNameListOffset, 0);
-                byte[] anmNameAreaBuffer = new byte[anmNameCount * 0x4];
-                Main.ReadProcessMemory(processHandle, (IntPtr)anmNameAreaPointer, anmNameAreaBuffer, anmNameAreaBuffer.Length, out var none2);
+                int anmNameAreaPointer = BitConverter.ToInt32(PlGen.CharGenPrm[CharIndex].AnmNameListOffset, 0);
+                byte[] anmNameAreaBuffer = Util.ReadProcessMemoryBytes(anmNameAreaPointer, anmNameCount * 0x4);
 
                 List<string> anmNameList = new List<string>();
                 for (int i = 0; i < anmNameCount; i++)
@@ -202,30 +167,17 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charCurrentP1CharTbl = Main.isNA2 == true ? 0xC42494 : 0xBD8844 + Main.memoryDif;
-
-                byte[] buffer = new byte[4];
-                Main.ReadProcessMemory(processHandle, (IntPtr)(Main.baseOffset + (ulong)charCurrentP1CharTbl), buffer, buffer.Length, out var none);
-
-                int P1Offset = BitConverter.ToInt32(buffer, 0) + 204;
-
-                IntPtr NewP1Offset = (IntPtr)(Main.baseOffset + (ulong)P1Offset);
-
-                Main.ReadProcessMemory(processHandle, NewP1Offset, buffer, buffer.Length, out var none1);
+                int charCurrentP1CharTbl = 0xBD8844 + Main.memoryDif;
+                int P1Offset = Util.ReadProcessMemoryInt32(charCurrentP1CharTbl) + 0xCC;
 
                 int skipAnms = selectedAnm * 0x4C;
-
-                int P1AnmPointer = BitConverter.ToInt32(buffer, 0) + skipAnms;
-
-                IntPtr P1AnmOffset = (IntPtr)(Main.baseOffset + (ulong)P1AnmPointer);
-
-                Main.WriteProcessMemory(processHandle, P1AnmOffset, resultBytes, (uint)resultBytes.Length, out var none2);
+                int P1AnmPointer = Util.ReadProcessMemoryInt32(P1Offset) + skipAnms;
+                Util.WriteProcessMemoryBytes(P1AnmPointer, resultBytes);
 
                 //Write Normal in Memory
                 byte[] anmNormalMemoryOffset = PlGen.CharGenPrm[charID].AnmListOffset;
                 P1AnmPointer = BitConverter.ToInt32(anmNormalMemoryOffset, 0) + skipAnms;
-                P1AnmOffset = (IntPtr)(Main.baseOffset + (ulong)P1AnmPointer);
-                Main.WriteProcessMemory(processHandle, P1AnmOffset, resultBytes, (uint)resultBytes.Length, out var none3);
+                Util.WriteProcessMemoryBytes(P1AnmPointer, resultBytes);
 
                 Main.CloseHandle(processHandle);
             }
@@ -255,7 +207,7 @@ namespace UN5CharPrmEditor
             Array.Copy(charAnm.AnmObjAtk, 0x0, anmObjectAtk, 0, 4);
             int anmObjectAtkPointer = BitConverter.ToInt32(anmObjectAtk, 0);
             string anmObjectAtkString = Util.ReadStringWithOffset(anmObjectAtkPointer, false);
-            var commonBonnesList = Main.isNA2 == true ? charAnm.NA2CommonBonnesList : charAnm.CommonBonnesList;
+            var commonBonnesList = charAnm.CommonBonnesList;
             movForm.cmbAnmObjectAtk.Items.Clear();
             if (commonBonnesList.ContainsKey(anmObjectAtkString))
             {
@@ -349,7 +301,7 @@ namespace UN5CharPrmEditor
             anmBlockBytes.AddRange(BitConverter.GetBytes(Convert.ToSingle(movForm.txtHitBoxScale.Text)));
             ninjaCharsAnm.AnmHitBoxScale = Convert.ToSingle(movForm.txtHitBoxScale.Text);
             int selectedIndexcmbAnmObjectAtk = movForm.cmbAnmObjectAtk.SelectedIndex;
-            var commonBonnesList = Main.isNA2 == true ? ninjaCharsAnm.NA2CommonBonnesList : ninjaCharsAnm.CommonBonnesList;
+            var commonBonnesList = ninjaCharsAnm.CommonBonnesList;
             if (commonBonnesList.TryGetValue(movForm.cmbAnmObjectAtk.Items[selectedIndexcmbAnmObjectAtk].ToString(), out byte[] anmObjAtkPointerBytes))
             {
                 anmBlockBytes.AddRange(anmObjAtkPointerBytes);
@@ -439,7 +391,7 @@ namespace UN5CharPrmEditor
                 {
                     byte[] charAnmAreaOffsetBytes = PlGen.CharGenPrm[charID].AnmListOffset;
                     charAnmAreaOffsetBytes[3] = 0x0;
-                    int subValue = Main.isNA2 == true ? 0xFFF00 : 0xFFE80;
+                    int subValue = 0xFFE80;
                     int charAnmAreaOffset = BitConverter.ToInt32(charAnmAreaOffsetBytes, 0) - subValue;
 
                     fs.Seek(charAnmAreaOffset, SeekOrigin.Begin);

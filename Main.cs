@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
-using System.Text;
 using System.Windows.Forms;
 using UN5CharPrmEditor;
 using UN5CharPrmEditor.Properties;
-using System.Configuration;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Linq;
+using System.IO;
+using static UN5CharPrmEditor.Config;
 
 namespace WindowsFormsApp1
 {
@@ -28,15 +24,14 @@ namespace WindowsFormsApp1
         private AwakeningParameters awakeningParameters;
         private MovesetParameters movesetParameters;
         private GeneralParameters generalParameters;
-        public static ulong baseOffset;
+        public static ulong eeAddress;
         public static int P1ID { get; set; }
-        public static bool isNA2;
         public static bool isUN6;
         IntPtr bytesRead;
         public static List<int> charMainAreaOffsets = new List<int>();
         public static List<byte[]> charMainAreaList = new List<byte[]>();
-        public static List<string> charName = new List<string>();
-        public static List<string> charCCS = new List<string>();
+        public static List<string> charNameList = new List<string>();
+        public static List<string> charCCSList = new List<string>();
         public static List<string> mapNameList = new List<string>();
         #endregion
         #region MemoryProcessFunctions
@@ -85,11 +80,12 @@ namespace WindowsFormsApp1
         public Main()
         {
             InitializeComponent();
-            lstChar.SelectedIndexChanged += lstChar_AfterSelect;
+            lstChar.SelectedIndexChanged += LstChar_AfterSelect;
             awakeningParameters = new AwakeningParameters();
             movesetParameters = new MovesetParameters();
             generalParameters = new GeneralParameters();
 
+            ReadConfigFile(this);
             if (Settings.Default.EnglishChecked == true)
             {
                 englishToolStripMenuItem.Checked = true;
@@ -99,6 +95,7 @@ namespace WindowsFormsApp1
                 portuguêsToolStripMenuItem.Checked = true;
             }
         }
+
         public void SelectedProcess(int idDoProcessoSelecionado)
         {
             currentProcessID = idDoProcessoSelecionado;
@@ -131,22 +128,22 @@ namespace WindowsFormsApp1
             return;
         }
 
-        private void lstChar_AfterSelect(object sender, EventArgs e)
+        private void LstChar_AfterSelect(object sender, EventArgs e)
         {
             btnEditGeneralParameters.Visible = true;
             btnEditMovesetParameters.Visible = true;
             btnEditAwekeningParameters.Visible = true;
-            btnEditJutsusParameters.Visible = true;
+            btnEditJutsusParameters.Visible = false;
 
             string selectedString = lstChar.SelectedItem.ToString();
 
             string[] splitString = selectedString.Split(':');
             if (splitString.Length > 1)
             {
-                charCCS.Clear();
+                charCCSList.Clear();
                 string charIDString = splitString[0].Trim();
                 int charID = Convert.ToInt32(charIDString);
-                txtcharName.Text = charID > 94 ? "???" : $"{charName[charID]}";
+                txtcharName.Text = charID > 94 ? "???" : $"{charNameList[charID]}";
                 lblcharName.Visible = true;
                 txtcharName.Visible = true;
                 txtCCSName.Text = GetCharCCSName(charID);
@@ -251,8 +248,8 @@ namespace WindowsFormsApp1
             lstChar.Items.Clear();
             charMainAreaOffsets.Clear();
             charMainAreaList.Clear();
-            charName.Clear();
-            charCCS.Clear();
+            charNameList.Clear();
+            charCCSList.Clear();
             mapNameList.Clear();
 
             PlGen.CharGenPrm.Clear();
@@ -280,62 +277,34 @@ namespace WindowsFormsApp1
             if (processHandle != IntPtr.Zero)
             {
                 int currentMemoryStart = Util.ReadProcessMemoryInt32(0x617EF4);
-
-                isNA2 = currentMemoryStart == 0 ? true : false;
-
                 int originalMemoryStart = 0xBD4560;
 
                 memoryDif = currentMemoryStart - originalMemoryStart;
 
-                byte[] buffer = new byte[2];
-                if(isNA2 == true)
+                charCount = Util.ReadProcessMemoryInt16(0x1EDA20);
+                if(Util.ReadStringWithOffset(0x417CD0, false) == "2nrtbod1.ccs")
                 {
-                    if (ReadProcessMemory(processHandle, (IntPtr)(baseOffset + 0x1F5450), buffer, buffer.Length, out var none1))
+                    ClearAllList();
+                    picMainBackground.Visible = false;
+
+
+                    int charStringTblOffset = 0x5BA570;
+                    if (charCount != 94) //Verifica se é o UN6 usando quantidade de personagens presentes originalmente no jogo como base.
                     {
-                        ClearAllList();
-                        picMainBackground.Visible = false;
-
-                        charCount = BitConverter.ToInt16(buffer, 0);
-                        int charStringTblOffset = 0x401AD0;
-
-                        ReadCharProgDataTbl(processHandle, 0x5A2900);
-
-                        NA2ReadCharNameTbl(processHandle, charCount, charStringTblOffset);
+                        isUN6 = true;
                     }
-                    else
-                    {
-                        MessageBox.Show("Error reading process memory, check if the game has already started or if the PCSX2 version is 1.6 or earlier and try again.");
-                        return;
-                    }
-                    CloseHandle(processHandle);
+                    int charProgTblOffset = 0x5AC8C0;
+
+                    ReadCharProgDataTbl(processHandle, charProgTblOffset);
+
+                    ReadCharNameTbl(processHandle, charStringTblOffset);
                 }
                 else
                 {
-                    if (ReadProcessMemory(processHandle, (IntPtr)(baseOffset + 0x1EDA20), buffer, buffer.Length, out var none1))
-                    {
-                        ClearAllList();
-                        picMainBackground.Visible = false;
-
-                        charCount = BitConverter.ToInt16(buffer, 0);
-                        int charStringTblOffset = 0x5BA570;
-
-                        if (charCount != 94) //Verifica se é o UN6 usando quantidade de personagens presentes originalmente no jogo como base.
-                        {
-                            isUN6 = true;
-                        }
-                        int charProgTblOffset = 0x5AC8C0;
-
-                        ReadCharProgDataTbl(processHandle, charProgTblOffset);
-
-                        ReadCharNameTbl(processHandle, charCount, charStringTblOffset);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Error reading process memory, check if the game has already started or if the PCSX2 version is 1.6 or earlier and try again.");
-                        return;
-                    }
-                    CloseHandle(processHandle);
+                    MessageBox.Show("Error reading process memory, check if the game has already started or if the PCSX2 version is 1.6 or earlier and try again.");
+                    return;
                 }
+                CloseHandle(processHandle);
             }
             else
             {
@@ -343,72 +312,26 @@ namespace WindowsFormsApp1
             }
             lstChar.SelectedIndex = 0;
         }
-        public void NA2ReadCharNameTbl(IntPtr processHandle, int charNumber, int charStringTblOffset)
+        public void ReadCharNameTbl(IntPtr processHandle, int charStringTblOffset)
         {
-            IntPtr NewcharOffset = (IntPtr)(baseOffset + (ulong)charStringTblOffset);
-
-            byte[] buffer2 = new byte[charNumber * 0x4];
-            ReadProcessMemory(processHandle, NewcharOffset, buffer2, buffer2.Length, out var none1);
-
-            for (int i = 0; i < buffer2.Length; i += 4)
+            int charNameTblOffs = Util.ReadProcessMemoryInt32(charStringTblOffset);
+            for (int i = 0; i < charCount; i++)
             {
-                byte[] bytesToRead = new byte[4];
-                Array.Copy(buffer2, i, bytesToRead, 0, 4);
+                int charNameOffs = Util.ReadProcessMemoryInt32(charNameTblOffs + i * 8);
+                string charName = Util.ReadStringWithOffset(charNameOffs, false);
 
-                int offset = BitConverter.ToInt32(bytesToRead, 0);
+                int charFullNameOffs = Util.ReadProcessMemoryInt32(charNameTblOffs + i * 8 + 4);
+                string charFullName = Util.ReadStringWithOffset(charFullNameOffs, false);
+                charNameList.Add(charFullName);
 
-                string decodedString = Util.ReadStringWithOffset(offset, true);
-
-                var i3 = i / 4;
-
-                charName.Add(decodedString);
-
-                if (!charInvalid.Contains(i3))
+                if (!charInvalid.Contains(i))
                 {
-                    if (i3 <= 93)
+                    if (i <= 93)
                     {
-                        string charValue = i3.ToString();
+                        string charValue = i.ToString();
 
-                        decodedString = charValue + ": " + decodedString;
-                        lstChar.Items.Add(decodedString);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                lstChar.Visible = true;
-            }
-        }
-        public void ReadCharNameTbl(IntPtr processHandle, int charNumber, int charStringTblOffset)
-        {
-            int charOffset = Util.ReadProcessMemoryInt32(charStringTblOffset);
-            byte[] charNameTblBuffer = Util.ReadProcessMemoryBytes(charOffset, charNumber * 0x8);
-
-            for (int i = 0; i < charNameTblBuffer.Length; i += 8)
-            {
-                byte[] subArray = new byte[8];
-                Array.Copy(charNameTblBuffer, i, subArray, 0, 8);
-
-                byte[] bytesToRead = new byte[4];
-                Array.Copy(subArray, 4, bytesToRead, 0, 4);
-
-                int offset = BitConverter.ToInt32(bytesToRead, 0);
-
-                string decodedString = Util.ReadStringWithOffset(offset, false);
-
-                var i3 = i / 8;
-
-                charName.Add(decodedString);
-
-                if (!charInvalid.Contains(i3))
-                {
-                    if (i3 <= 93)
-                    {
-                        string charValue = i3.ToString();
-
-                        decodedString = charValue + ": " + decodedString;
-                        lstChar.Items.Add(decodedString);
+                        charFullName = charValue + ": " + charFullName;
+                        lstChar.Items.Add(charFullName);
                     }
                     else
                     {
@@ -416,11 +339,9 @@ namespace WindowsFormsApp1
                     }
                 }
             }
-            int count = 0;
-            for (int j = 94; j < charCount; j++)
+            for (int j = 0; j < charCount - 94; j++)
             {
-                count ++;
-                lstChar.Items.Add($"{94 + count}: {GetCharCCSName(94 + count)}");
+                lstChar.Items.Add($"{94 + j}: {GetCharCCSName(94 + j)}");
             }
             lstChar.Visible = true;
         }
@@ -471,19 +392,19 @@ namespace WindowsFormsApp1
 
         public static string GetCharCCSName(int selectedIndex)
         {
-            while (charCCS.Count <= charCount)
+            while (charCCSList.Count <= charCount)
             {
-                charCCS.Add("");
+                charCCSList.Add("");
             }
-            if (charCCS[selectedIndex] == "")
+            if (charCCSList[selectedIndex] == "")
             {   
                 byte[] ccsOffsetBytes = PlGen.CharGenPrm[selectedIndex].CCSOffset;
                 int ccsPointer = BitConverter.ToInt32(ccsOffsetBytes, 0);
 
-                charCCS[selectedIndex] = Util.ReadStringWithOffset(ccsPointer, false);
+                charCCSList[selectedIndex] = Util.ReadStringWithOffset(ccsPointer, false);
             }
 
-            return charCCS[selectedIndex];
+            return charCCSList[selectedIndex];
         }
 
         public static string GetMapName(int mapIndex)
@@ -495,10 +416,10 @@ namespace WindowsFormsApp1
             if (mapNameList[mapIndex] == "")
             {
                 IntPtr processHandle = OpenProcess(PROCESS_VM_READ, false, currentProcessID);
-                int mapNameAreaPointer = isNA2 == true ? 0x5C04C0 : 0x5C7970;
+                int mapNameAreaPointer = 0x5C7970;
 
                 int mapNameOffs = Util.ReadProcessMemoryInt32(mapNameAreaPointer + (mapIndex * 4));
-                string decodedMapName = isNA2 == true ? Util.ReadStringWithOffset(mapNameOffs, true) : Util.ReadStringWithOffset(mapNameOffs, false);
+                string decodedMapName = Util.ReadStringWithOffset(mapNameOffs, false);
                 mapNameList[mapIndex] = decodedMapName;
             }
 
@@ -570,13 +491,6 @@ namespace WindowsFormsApp1
                 string txtCharNameForm = txtcharName.Text;
 
                 movForm.timer1.Enabled = true;
-                if (isNA2 == true)
-                {
-                    for (int i = 0; i < PlGen.CharGenPrm[charID].AtkCount; i++)
-                    {
-                        PlAtk.SendTextAtk(movForm, PlAtk.GetCharAtk(charID, i));
-                    }
-                }
                 PlAtk.AddCharComboList(movForm, charID, txtCharNameForm);
                 movForm.UpdateLabels(txtCharNameForm, charIDString);
                 movForm.Show();
@@ -585,7 +499,7 @@ namespace WindowsFormsApp1
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("UN5CharPrmEditor, version 1.3. \n\nMade by zMath3usMSF.");
+            MessageBox.Show("UN5CharPrmEditor, version 1.4. \n\nMade by zMath3usMSF.");
         }
 
         public void UpdateMatch(bool isP1, int PlayerID, int MapID)
@@ -595,30 +509,23 @@ namespace WindowsFormsApp1
             {
                 byte[] Unk3 = new byte[1];
                 Unk3[0] = 0x2;
-
-                WriteProcessMemory(processHandle, isNA2 == true ? (IntPtr)(baseOffset + 0x60767C) : (IntPtr)(baseOffset + 0x617D7C), Unk3, (uint)Unk3.Length, out var none3);
+                Util.WriteProcessMemoryBytes(0x617D7C, Unk3);
 
                 byte[] Unk2 = new byte[1];
                 Unk2[0] = 0x1;
-
-                WriteProcessMemory(processHandle, isNA2 == true ? (IntPtr)(baseOffset + 0x607678) : (IntPtr)(baseOffset + 0x617D78), Unk2, (uint)Unk2.Length, out var none2);
+                Util.WriteProcessMemoryBytes(0x617D78, Unk2);
 
                 byte[] Unk1 = new byte[1];
                 Unk1[0] = 0x8;
-
-                WriteProcessMemory(processHandle, isNA2 == true ? (IntPtr)(baseOffset + 0x607670) : (IntPtr)0x617D70, Unk1, (uint)Unk1.Length, out var none1);
+                Util.WriteProcessMemoryBytes(0x617D70, Unk1);
 
                 byte[] PlayerIDByte = new byte[1];
                 PlayerIDByte[0] = (byte)PlayerID;
-
-                IntPtr PlayerOffset = (IntPtr)(baseOffset + (ulong)(isP1 == true ? isNA2 == true ? 0xC41700 : 0xBD7AB0  + Main.memoryDif : Main.isNA2 == true ? 0xC41724 : 0xBD7AD8  + Main.memoryDif));
-
-                WriteProcessMemory(processHandle, PlayerOffset, PlayerIDByte, (uint)PlayerIDByte.Length, out var none4);
+                Util.WriteProcessMemoryBytes(isP1 == true ? 0xBD7AB0 + Main.memoryDif : 0xBD7AD8 + Main.memoryDif, PlayerIDByte);
 
                 byte[] MapIDByte = new byte[1];
                 MapIDByte[0] = (byte)MapID;
-
-                WriteProcessMemory(processHandle, isNA2 == true ? (IntPtr)(baseOffset + 0xC4174A) : (IntPtr)0xBD7AFA + Main.memoryDif, MapIDByte, (uint)MapIDByte.Length, out var none5);
+                Util.WriteProcessMemoryBytes(0xBD7AFA + Main.memoryDif, MapIDByte);
 
                 CloseHandle(processHandle);
             }
@@ -693,6 +600,16 @@ namespace WindowsFormsApp1
                 jtsForm.AddToListBox(int.Parse(charID));
                 jtsForm.Show();
             }
+        }
+
+        private void defaultToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangedTheme(this, "default");
+        }
+
+        private void blackToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangedTheme(this, "black");
         }
     }
 }

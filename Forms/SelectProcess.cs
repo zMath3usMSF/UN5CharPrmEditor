@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using UN5CharPrmEditor;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static WindowsFormsApp1.Main;
 
@@ -24,34 +25,44 @@ namespace WindowsFormsApp1
             ListBox1.SelectedIndexChanged += ListBox1_SelectedIndexChanged;
         }
 
-        // Manipulador de eventos para o clique em um item da ListBox
         private void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Verifique se um item está selecionado
             if (ListBox1.SelectedItem != null)
             {
-                // Obtenha o processo selecionado na ListBox
                 ProcessDetails selectedProcess = (ProcessDetails)ListBox1.SelectedItem;
+                var pcsx2Process = Process.GetProcessById(selectedProcess.Id);
+                eeAddress = (ulong)pcsx2Process.MainModule.BaseAddress;
+                
+                string path = @"pcsx2_offsetreader.exe";
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = path,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using (Process process = new Process { StartInfo = psi })
+                {
+                    process.Start();
+                    while (!process.StandardOutput.EndOfStream)
+                    {
+                        string line = process.StandardOutput.ReadLine();
+                        if(line.Contains("EEmem"))
+                        {
+                            string eeOffsStr = line.Split(new string[] { "->" }, StringSplitOptions.None)[1];
+                            eeAddress = ulong.Parse(eeOffsStr, System.Globalization.NumberStyles.HexNumber);
+                        }
+                    }
+                    process.WaitForExit();
+                }         
 
-                var processes = Process.GetProcessById(selectedProcess.Id);
-                baseOffset = (ulong)processes.MainModule.BaseAddress + 0x31EC0000;
-
-                // Obtenha o ID do processo selecionado
-                int selectedProcessId = selectedProcess.Id;
-
-                // Faça o que você precisa com o ID do processo, como armazená-lo em uma variável
-                // Por exemplo:
-                int selectedProcessID = selectedProcessId;
-
-                form1Instance.SelectedProcess(selectedProcessID);
-
+                form1Instance.SelectedProcess(selectedProcess.Id);
                 this.Close();
             }
         }
 
         public void AdicionarItemListBox(object item)
         {
-            // Adicione o item à ListBox
             listBox1.Items.Add(item);
         }
     }

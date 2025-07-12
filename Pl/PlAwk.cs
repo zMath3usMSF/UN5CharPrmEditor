@@ -142,48 +142,38 @@ namespace UN5CharPrmEditor
             IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
             if (processHandle != IntPtr.Zero)
             {
-                int charAwkIDListOffset = Main.isNA2 == true ? 0x205C1D30 : Main.isUN6 == true ? 0x20962170 : 0x205C91B0;
-                int charAwkCountOffset = Main.isNA2 == true ? 0x203047D0 : 0x2030EFD0;
-                byte[] awkCountBytes = new byte[2];
-                Main.ReadProcessMemory(processHandle, (IntPtr)charAwkCountOffset, awkCountBytes, awkCountBytes.Length, out var none6);
-                awkCount = BitConverter.ToInt16(awkCountBytes, 0);
+                int charAwkIDListOffset = Main.isUN6 == true ? 0x962170 : 0x5C91B0;
+                int charAwkCountOffset = 0x30EFD0;
+                awkCount = Util.ReadProcessMemoryInt16(charAwkCountOffset);
 
                 byte[] awkIDBytes = new byte[4];
                 for(int i = 0; i <= 93; i++)
                 {
-                    byte[] buffer = new byte[4];
                     int skipBytes = i * 8;
-                    Main.ReadProcessMemory(processHandle, (IntPtr)charAwkIDListOffset + skipBytes + 4, buffer, 0x4, out var none);
-                    int awkCount = BitConverter.ToInt32(buffer, 0);
+                    int awkCount = Util.ReadProcessMemoryInt32(charAwkIDListOffset + skipBytes + 4);
 
-                    if(awkCount > 1)
+                    if (awkCount > 1)
                     {
-                        Main.ReadProcessMemory(processHandle, (IntPtr)charAwkIDListOffset + skipBytes, buffer, 0x4, out var none1);
-                        buffer[3] = 0x20;
-                        IntPtr awkIDAreaOffset = (IntPtr)BitConverter.ToInt32(buffer, 0);
+                        int awkIDAreaOffset = Util.ReadProcessMemoryInt32(charAwkIDListOffset + skipBytes);
 
                         for (int j = 0; j < awkCount; j++) 
                         {
-                            Main.ReadProcessMemory(processHandle, awkIDAreaOffset + j * 2, awkIDBytes, awkIDBytes.Length, out var none2);
-                            int awkID = BitConverter.ToInt16(awkIDBytes, 0);
+                            int awkID = Util.ReadProcessMemoryInt16(awkIDAreaOffset + j * 2);
                             CharAwkIDList[i].Add(awkID);
                         }
                     }
                     else
                     {
-                        Main.ReadProcessMemory(processHandle, (IntPtr)charAwkIDListOffset + i * 8, awkIDBytes, awkIDBytes.Length, out var none3);
-                        int awkID = BitConverter.ToInt32(awkIDBytes, 0);
+                        int awkID = Util.ReadProcessMemoryInt32(charAwkIDListOffset + i * 8);
                         CharAwkIDList[i].Add(awkID);
                     }
 
                     int skipActBytes = i * 4;
-                    int charAwkActOffset = Main.isNA2 == true ? 0x205C1B50 : 0x205C8FD0;
-                    Main.ReadProcessMemory(processHandle, (IntPtr)charAwkActOffset + skipActBytes, buffer, 0x2, out var none4);
-                    int charAwkActSound = BitConverter.ToInt16(buffer, 0);
+                    int charAwkActOffset = 0x5C8FD0;
+                    int charAwkActSound = Util.ReadProcessMemoryInt16(charAwkActOffset + skipActBytes);
                     CharAwkActivationSound.Add(charAwkActSound);
 
-                    Main.ReadProcessMemory(processHandle, (IntPtr)charAwkActOffset + skipActBytes + 2, buffer, 0x2, out var none5);
-                    int charAwkActType = BitConverter.ToInt16(buffer, 0);
+                    int charAwkActType = Util.ReadProcessMemoryInt16(charAwkActOffset + skipActBytes + 2);
                     CharAwkActivationType.Add(charAwkActType);
                 }
 
@@ -202,17 +192,14 @@ namespace UN5CharPrmEditor
                 IntPtr processHandle = Main.OpenProcess(Main.PROCESS_ALL_ACCESS, false, Main.currentProcessID);
                 if (processHandle != IntPtr.Zero)
                 {
-                    int awkAreaOffset = Main.isNA2 == true ? 0x2059E2A0 : Main.isUN6 == true ? 0x2094A000 : 0x205A8260;
-                    byte[] currentAwkBlock = new byte[0x64];
+                    int awkAreaOffset = Main.isUN6 == true ? 0x94A000 : 0x5A8260;
                     int skipAwk = selectedAwk * 0x64;
+                    byte[] currentAwkBlock = Util.ReadProcessMemoryBytes(awkAreaOffset + skipAwk, 0x64);
 
-                    if(Main.ReadProcessMemory(processHandle, (IntPtr)awkAreaOffset + skipAwk, currentAwkBlock, currentAwkBlock.Length, out var none))
-                    {
-                        var ninja = ReadAwkGenPrm(currentAwkBlock);
-                        var clone = (PlAwk)ninja.Clone();
-                        CharAwkPrm[selectedAwk] = ninja;
-                        CharAwkPrmBkp[selectedAwk] = clone;
-                    }
+                    var ninja = ReadAwkGenPrm(currentAwkBlock);
+                    var clone = (PlAwk)ninja.Clone();
+                    CharAwkPrm[selectedAwk] = ninja;
+                    CharAwkPrmBkp[selectedAwk] = clone;
 
                     Main.CloseHandle(processHandle);
                 }
@@ -262,10 +249,10 @@ namespace UN5CharPrmEditor
             awkForm.txtAwkHPDrainLimit.Text = Convert.ToString(charAwkPrm.AwkHPDrainLimit);
             awkForm.txtAwkCkrDrain.Text = Convert.ToString(charAwkPrm.AwkCkrDrain);
             awkForm.txtAwkCkrDrainLimit.Text = Convert.ToString(charAwkPrm.AwkCkrDrainLimit);
-            var AwkColorDictionary = Main.isNA2 == true ? charAwkPrm.NA2AwkCharColorEffsDict : charAwkPrm.NA2AwkCharColorEffsDict;
+            var AwkColorDictionary = charAwkPrm.NA2AwkCharColorEffsDict;
             if (awkForm.cmbAwkCharColorEff.Items.Count == 0)
             {
-                awkForm.cmbAwkCharColorEff.Items.AddRange(Main.isNA2 == true ? AwkColorDictionary.Keys.ToArray() : AwkColorDictionary.Keys.ToArray());
+                awkForm.cmbAwkCharColorEff.Items.AddRange(AwkColorDictionary.Keys.ToArray());
                 awkForm.cmbAwkCharColorEff.Items.Add("(None)");
             }
             List<byte[]> dicToList = AwkColorDictionary.Values.ToList();
@@ -359,7 +346,7 @@ namespace UN5CharPrmEditor
             charAwkPrmBlock.AddRange(BitConverter.GetBytes(Convert.ToSingle(awkForm.txtAwkCkrDrainLimit.Text)));
             awkPrm.AwkCkrDrainLimit = Convert.ToSingle(awkForm.txtAwkCkrDrainLimit.Text);
             string currentItemString = awkForm.cmbAwkCharColorEff.SelectedItem.ToString();
-            byte[] awkCharColorEffOffset = currentItemString != "(None)" ? Main.isNA2 == true ? awkPrm.NA2AwkCharColorEffsDict[currentItemString] : awkPrm.AwkCharColorEffsDict[currentItemString] : new byte[]{00, 00, 00, 00};
+            byte[] awkCharColorEffOffset = currentItemString != "(None)" ? awkPrm.AwkCharColorEffsDict[currentItemString] : new byte[]{00, 00, 00, 00};
             charAwkPrmBlock.AddRange(awkCharColorEffOffset);
             awkPrm.AwkColorEffect = awkCharColorEffOffset;
             charAwkPrmBlock.AddRange(BitConverter.GetBytes(Convert.ToInt32(awkForm.cmbAwkAuraColor.SelectedIndex)));
@@ -404,34 +391,30 @@ namespace UN5CharPrmEditor
             if (processHandle != IntPtr.Zero)
             {
                 int skipAwks = selectedAwk * 0x64;
-                int awkAreaOffset = Main.isNA2 == true ? 0x2059E2A0 + skipAwks : Main.isUN6 == true ? 0x2094A000  + skipAwks : 0x205A8260 + skipAwks;
+                int awkAreaOffset = Main.isUN6 == true ? 0x94A000  + skipAwks : 0x5A8260 + skipAwks;
                 int skipChars = charID * 8;
-                int charAwkIDListOffset = Main.isNA2 == true ? 0x205C1D30 + skipChars : Main.isUN6 == true ? 0x20962170 + skipChars : 0x205C91B0 + skipChars;
+                int charAwkIDListOffset = Main.isUN6 == true ? 0x962170 + skipChars : 0x5C91B0 + skipChars;
                 byte[] awkID = BitConverter.GetBytes(Convert.ToInt16(selectedAwk));
 
-                Main.WriteProcessMemory(processHandle, (IntPtr)awkAreaOffset, resultBytes, (uint)resultBytes.Length, out var none2);
+                Util.WriteProcessMemoryBytes(awkAreaOffset, resultBytes);
                 if(CharAwkIDList[charID].Count == 1)
                 {
                     byte[] count = BitConverter.GetBytes(1);
-                    Main.WriteProcessMemory(processHandle, (IntPtr)charAwkIDListOffset + 4, count, (uint)awkID.Length, out var none5);
+                    Util.WriteProcessMemoryBytes(charAwkIDListOffset + 4, count);
                     CharAwkIDList[charID][0] = selectedAwk;
-                    Main.WriteProcessMemory(processHandle, (IntPtr)charAwkIDListOffset, awkID, (uint)awkID.Length, out var none3);
+                    Util.WriteProcessMemoryBytes(charAwkIDListOffset, awkID);
                 }
                 else
                 {
-                    byte[] buffer = new byte[4];
-                    Main.ReadProcessMemory(processHandle, (IntPtr)charAwkIDListOffset, buffer, buffer.Length, out var none5);
-                    buffer[3] = 0x20;
                     int skipAwk = awkPos * 2;
-                    int charAwkArea = BitConverter.ToInt32(buffer, 0);
-                    Main.WriteProcessMemory(processHandle, (IntPtr)charAwkArea + skipAwk, awkID, (uint)awkID.Length, out var none6);
+                    int charAwkArea = Util.ReadProcessMemoryInt32(charAwkIDListOffset);
+                    Util.WriteProcessMemoryBytes(charAwkArea + skipAwk, awkID);
                     CharAwkIDList[charID][awkPos] = selectedAwk;
                 }
 
                 int skipActs = charID * 4;
-                int actOffset = Main.isNA2 == true ? 0x205C1B50 + skipActs : 0x205C8FD0 + skipActs;
-                Main.WriteProcessMemory(processHandle, (IntPtr)actOffset, resultBytes2, (uint)resultBytes2.Length, out var none4);
-
+                int actOffset = 0x5C8FD0 + skipActs;
+                Util.WriteProcessMemoryBytes(actOffset, resultBytes2);
                 Main.CloseHandle(processHandle);
             }
         }
@@ -452,16 +435,16 @@ namespace UN5CharPrmEditor
                     using (FileStream fs = new FileStream(Main.caminhoELF, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                     {
                         int skipAwks = selectedAwk * 0x64;
-                        int awkAreaOffset = Main.isNA2 == true ? 0x59E2A0 + skipAwks : 0x5A8260 + skipAwks;
+                        int awkAreaOffset = 0x5A8260 + skipAwks;
                         fs.Seek(awkAreaOffset + skipAwks, SeekOrigin.Begin);
-                        int subValue = Main.isNA2 == true ? 0xFFF00 : 0xFFE80;
+                        int subValue = 0xFFE80;
                         awkAreaOffset = Main.isUN6 == true ? 0xA000 : awkAreaOffset - subValue;
 
                         fs.Seek(awkAreaOffset, SeekOrigin.Begin);
                         fs.Write(resultBytes, 0, resultBytes.Length);
 
                         int skipChars = charID * 8;
-                        int charAwkOffset = Main.isNA2 == true ? 0x5C1D30 + skipChars : 0x5C91B0 + skipChars;
+                        int charAwkOffset = 0x5C91B0 + skipChars;
                         charAwkOffset = Main.isUN6 == true ? 0x22170 : charAwkOffset - subValue;
                         fs.Seek(charAwkOffset + 4, SeekOrigin.Begin);
                         byte[] awkID = BitConverter.GetBytes(Convert.ToInt16(selectedAwk));
@@ -486,7 +469,7 @@ namespace UN5CharPrmEditor
                         }
 
                         int skipActs = charID * 4;
-                        int actOffset = Main.isNA2 == true ? 0x5C1B50 + skipActs : 0x5C8FD0 + skipActs;
+                        int actOffset = 0x5C8FD0 + skipActs;
                         actOffset = actOffset - subValue;
                         fs.Seek(actOffset, SeekOrigin.Begin);
                         fs.Write(resultBytes2, 0, resultBytes2.Length);
