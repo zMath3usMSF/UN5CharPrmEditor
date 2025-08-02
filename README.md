@@ -1,7 +1,5 @@
 ![MainBackground](Resources/MainBackground.png)
 # About
-This tool aims to edit the fight parameters of the characters in the game Naruto Shippuden: Ultimate Ninja 5. It supports the European and Japanese version.
-<br>
-<br>
-You can obtain it by going to the release section of this page. If you encounter any bugs, please remember to report them in the issues section.
-
+This tool is designed to edit the battle parameters of characters from the game *Naruto Shippuden: Ultimate Ninja 5*. It is only compatible with the European version.
+<br><br>
+You can download it by accessing the **Releases** section of this page. If you find any bugs, please make sure to report them in the **Issues** section.
