@@ -1,13 +1,18 @@
-﻿using System;
+﻿using CCSFileExplorerWV;
+using DiscUtils.Iso9660;
+using ICSharpCode.SharpZipLib.GZip;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using UN5CharPrmEditor;
 using UN5CharPrmEditor.Properties;
-using System.Linq;
-using System.IO;
+using static CCSFileExplorerWV.CCSFile;
 using static UN5CharPrmEditor.Config;
 
 namespace WindowsFormsApp1
@@ -33,6 +38,7 @@ namespace WindowsFormsApp1
         public static List<string> charNameList = new List<string>();
         public static List<string> charCCSList = new List<string>();
         public static List<string> mapNameList = new List<string>();
+        string gamePath = "C:\\Users\\zMath3usMSF\\Desktop\\UN6A30\\";
         #endregion
         #region MemoryProcessFunctions
         [DllImport("kernel32.dll")]
@@ -94,8 +100,10 @@ namespace WindowsFormsApp1
             {
                 portuguêsToolStripMenuItem.Checked = true;
             }
-        }
 
+            txtGamePath.Text = gamePath;
+            CharSel.Create(this, gamePath);
+        }
         public void SelectedProcess(int idDoProcessoSelecionado)
         {
             currentProcessID = idDoProcessoSelecionado;
@@ -610,6 +618,129 @@ namespace WindowsFormsApp1
         private void blackToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ChangedTheme(this, "black");
+        }
+
+        private void addNewCharacterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NewChar ok = new NewChar();
+            ok.Show();
+        }
+
+        private void btnSelectGamePath_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if(fbd.ShowDialog() == DialogResult.OK)
+            {
+                string ok = fbd.SelectedPath;
+                txtGamePath.Text = ok;
+            }
+        }
+
+        private void txtGamePath_TextChanged(object sender, EventArgs e)
+        {
+        
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void extractCVMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                lblProgress.Text = "Extracting ISO...";
+                string gameFile = ofd.FileName;
+                string gamePath = Path.Combine(Path.GetDirectoryName(gameFile), "GAME");
+                using (FileStream isoStream = File.OpenRead(gameFile))
+                {
+                    CDReader cd = new CDReader(isoStream, true);
+                    ExtrairArquivos(cd, @"\", gamePath);
+                }
+
+                lblProgress.Text = "Extracting CVM data...";
+                string path = @"CVM Tool\cvm_tool.exe";
+                string cvm = Path.Combine(gamePath, "DATA\\DATA.CVM");
+                string iso = Path.Combine(gamePath, "DATA\\data.iso");
+                string rofs = Path.Combine(gamePath, "DATA\\ROFS");
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = path,
+                    Arguments = $"split \"{cvm}\" \"{iso}\" data.hdr",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                Process process = Process.Start(psi);
+                process.WaitForExit();
+
+                using (FileStream isoStream = File.OpenRead(iso))
+                {
+                    CDReader cd = new CDReader(isoStream, true);
+                    ExtrairArquivos(cd, @"\", rofs);
+                }
+
+                File.Delete(cvm);
+                File.Delete(iso);
+
+                foreach (string file in Directory.GetFiles(rofs, "*.ccs", SearchOption.AllDirectories))
+                {
+                    try
+                    {
+                        // Verifica se o arquivo começa com cabeçalho GZip (0x1F 0x8B)
+                        using (FileStream fs = File.OpenRead(file))
+                        {
+                            byte[] header = new byte[2];
+                            fs.Read(header, 0, 2);
+                            if (header[0] != 0x1F || header[1] != 0x8B)
+                            {
+                                Console.WriteLine($"Ignorado (não é GZip): {file}");
+                                continue;
+                            }
+                        }
+
+                        MemoryStream ms = new MemoryStream();
+                        GZipStream gzipStream = new GZipStream(new MemoryStream(File.ReadAllBytes(file)), CompressionMode.Decompress);
+                        gzipStream.CopyTo(ms);
+                        File.WriteAllBytes(file, ms.ToArray());
+
+                        lblProgress.Text = $"Decompressing CVM files: {file}";
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Erro ao processar {file}: {ex.Message}");
+                    }
+                }
+
+                MessageBox.Show("Game successfully extracted!");
+            }
+        }
+        
+        void ExtrairArquivos(CDReader cd, string cdPath, string destinoBase)
+        {
+            foreach (var dir in cd.GetDirectories(cdPath))
+            {
+                ExtrairArquivos(cd, dir, destinoBase);
+            }
+
+            foreach (var file in cd.GetFiles(cdPath))
+            {
+                string relativePath = file.TrimStart('\\');
+                if (relativePath.EndsWith(";1"))
+                    relativePath = relativePath.Substring(0, relativePath.Length - 2);
+                string destino = Path.Combine(destinoBase, relativePath);
+
+                Console.WriteLine("Extraindo: " + destino);
+                Directory.CreateDirectory(Path.GetDirectoryName(destino));
+
+                using (var source = cd.OpenFile(file, FileMode.Open))
+                using (var dest = File.Create(destino))
+                {
+                    source.CopyTo(dest);
+                }
+            }
         }
     }
 }

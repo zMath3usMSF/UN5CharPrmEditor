@@ -1,564 +1,313 @@
-﻿//#define DEBUGX
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Text;
-using System.ComponentModel;
 using System.Windows.Forms;
-using System.Drawing.Design;
-public class CustomTypeConverter : TypeConverter
+
+namespace CCSFileExplorerWV
 {
-    public static string[] Names = null;
-    public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-    {
-        return true;
-    }
-    public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
-    {
-        return true;
-    }
-    public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-    { 
-        return new StandardValuesCollection(Names);
-    }
-}
-public class Block
-{
-    public uint Type;//0xCC type
-    public uint ObjectID;
-    public byte[] Data;
-    public uint Size;
-
-    public bool ErrorSizeLogic = false;
-
-    private uint BlockOffset;
-    public Header _ccsHeader;
-    public Index _ccsToc;
-    public CCSF _ccsf;
-
-    [DisplayName("Block Type")]
-    [Description("Define the block type.")]
-    [Category("Base Block")]
-    public string BlockType { get => this.GetBlockType();}
-
-    [DisplayName("Object Index")]
-    [Description("Define the block's Object linked index.")]
-    [Category("Base Block")]
-    public uint Object
-    {
-        get => ObjectID;
-        set => ObjectID = value;
-    }
-    [DisplayName("Object Name")]
-    [Description("The Object Name of the linked object;")]
-    [Category("Base Block")]
-    public string ObjectName
-    {
-        get => GetObjectName();
-    }
-    [Description("Get the data modified from property to property.")]
-    [Category("Base Block")]
-    public virtual byte[] DataArray 
-    {
-        get
+	// Token: 0x02000005 RID: 5
+	public abstract class Block
+	{
+        public virtual Block Clone()
         {
-            //var m = new BinaryWriter(new MemoryStream(this.Data));
-            //m.BaseStream.Position = 0x8;
-            //m.Write(ObjectID);
-            return this.Data;
+            return (Block)this.MemberwiseClone();
         }
-            
-    }
-    
-    public byte[] BlockData(Stream Input, long offst)
-    {
-        var writer = new BinaryWriter(new MemoryStream(Data));
-        long oldof = Input.Position;
-        Input.Position = offst;
-        Input.Write(Data, 0, (int)Size + 8);
-        Input.Position = oldof;
-        return Data;
-    }
 
-    #region TIPOS DE BLOCO
-    //Useful defines
-    //Higher level sections
-    public const int SECTION_HEADER = 0x0001;
-    public const int SECTION_INDEX = 0x0002;
-    public const int SECTION_SETUP = 0x0003;
-    public const int SECTION_STREAM = 0x0005;
+        public virtual byte[] FullBlockData
+		{
+			get
+			{
+				MemoryStream memoryStream = new MemoryStream();
+				memoryStream.Write(BitConverter.GetBytes(this.BlockID), 0, 4);
+				memoryStream.Write(BitConverter.GetBytes(this.Size), 0, 4);
+				memoryStream.Write(BitConverter.GetBytes(this.ID), 0, 4);
+				memoryStream.Write(this.Data, 0, this.Data.Length);
+				return memoryStream.ToArray();
+			}
+		}
+        public static Dictionary<string, uint> blocksTypes = new Dictionary<string, uint>()
+		{
+			{ "Header", 0x0001 },
+			{ "IndexTable", 0x0002 },
+			{ "Setup", 0x0003 },
+			{ "Stream", 0x0005 },
+			{ "Object", 0x0100 },
+			{ "ObjectFrame", 0x0101 },
+			{ "ObjectController", 0x0102 },
+			{ "NoteFrame", 0x0108 },
+			{ "Material", 0x0200 },
+			{ "MaterialFrame", 0x0201 },
+			{ "MaterialController", 0x0202 },
+			{ "Texture", 0x0300 },
+			{ "Clut", 0x0400 },
+			{ "Camera", 0x0500 },
+			{ "CameraFrame", 0x0502 },
+			{ "CameraController", 0x0503 },
+			{ "Light", 0x0600 },
+			{ "AmbientFrame", 0x0601 },
+			{ "DistantLightFrame", 0x0602 },
+			{ "DistantLightController", 0x0603 },
+			{ "DirectLightFrame", 0x0604 },
+			{ "DirectLightController", 0x0605 },
+			{ "SpotLightFrame", 0x0606 },
+			{ "SpotLightController", 0x0607 },
+			{ "OmniLightFrame", 0x0608 },
+			{ "OmniLightController", 0x0609 },
+			{ "Animation", 0x0700 },
+			{ "Model", 0x0800 },
+			{ "ModelVertexFrame", 0x0802 },
+			{ "ModelNormalFrame", 0x0803 },
+			{ "Clump", 0x0900 },
+			{ "ExternalObject", 0x0a00 },
+			{ "HitModel", 0x0b00 },
+			{ "BoundingBox", 0x0c00 },
+			{ "Effect", 0x0e00 },
+			{ "Particle", 0x0d00 },
+			{ "ParticleAnmCtrl", 0x0d80 },
+			{ "ParticleGenerator", 0x0d90 },
+			{ "Blit_Group", 0x1000 },
+			{ "FrameBuffer_Page", 0x1100 },
+			{ "FrameBuffer_Rect", 0x1200 },
+			{ "DummyPosition", 0x1300 },
+			{ "DummyPositionRotation", 0x1400 },
+			{ "Layer", 0x1700 },
+			{ "Shadow", 0x1800 },
+			{ "ShadowFrame", 0x1801 },
+			{ "Morph", 0x1900 },
+			{ "MorphFrame", 0x1901 },
+			{ "MorphController", 0x1902 },
+			{ "StreamOutlineParam", 0x1a00 },
+			{ "OutlineFrame", 0x1a01 },
+			{ "StreamCelShadeParam", 0x1b00 },
+			{ "CelShadeFrame", 0x1b01 },
+			{ "StreamToneShadeParam", 0x1c00 },
+			{ "ToneShadeFrame", 0x1c01 },
+			{ "StreamFBSBlurParam", 0x1d00 },
+			{ "FBSBlurFrame", 0x1d01 },
+			{ "Sprite2Tbl", 0x1f00 },
+			{ "AnimationObject", 0x2000 },
+			{ "PCM_Audio", 0x2200 },
+			{ "PCMFrame", 0x2201 },
+			{ "Dynamics", 0x2300 },
+			{ "Binary_Blob", 0x2400 },
+			{ "SPD", 0x2700 },
+			{ "Frame", 0xff01 }
+		};
+		public static bool issValidBlockType(byte[] buffer)
+		{
+			bool isValidBlockType = false;
+			uint type = BitConverter.ToUInt16(buffer, 0);
+			uint magic = BitConverter.ToUInt16(buffer, 2);
+			if(blocksTypes.ContainsValue(type) == true && magic == 0xCCCC)
+			{
+				isValidBlockType = true;
+			}
 
-    //Lower level sections
-    public const int SECTION_OBJECT = 0x0100;
-    public const int SECTION_OBJECT_KEYFRAME = 0x0101;
-    public const int SECTION_OBJECT_CONTROLLER = 0x0102;
-    public const int SECTION_MATERIAL = 0x0200;
-    public const int SECTION_MATERIAL_KEYFRAME = 0x0201;
-    public const int SECTION_MATERIAL_CONTROLLER = 0x0202;
-    public const int SECTION_TEXTURE = 0x0300;
-    public const int SECTION_CLUT = 0x0400;
-    public const int SECTION_CAMERA = 0x0500;
-    public const int SECTION_CAMERA_KEYFRAME = 0x0502;
-    public const int SECTION_LIGHT_AMBIENT = 0x0600;
-    public const int SECTION_LIGHT_AMBIENT_KEYFRAME = 0x0601;
-    public const int SECTION_LIGHT_DIRECTIONAL_CONTROLLER = 0x0603;
-    public const int SECTION_LIGHT_OMNI_CONTROLLER = 0x0609;
-    //public const int SECTION_LIGHT_DIRECTIONAL_KEYFRAME = 0x0602;
-    public const int SECTION_ANIMATION_CONTAINER = 0x0700;
-    public const int SECTION_MODEL_CONTAINER = 0x0800;
-    public const int SECTION_CLUMP = 0x0900;
-    public const int SECTION_EXTERNAL = 0x0a00;
-    public const int SECTION_HITMESH = 0x0b00;
-    public const int SECTION_BBOX = 0x0c00;
-    public const int SECTION_PARTICLE = 0x0d00;
-    public const int SECTION_PGE = 0x0d80;
-    public const int SECTION_PAC = 0x0d90;
-    public const int SECTION_EFFECT = 0x0e00;
-    public const int SECTION_BLTGROUP = 0x1000;
-    public const int SECTION_FBPAGE = 0x1100;
-    public const int SECTION_FBRECT = 0x1200;
-    public const int SECTION_DUMMYPOS = 0x1300;
-    public const int SECTION_DUMMYPOSROT = 0x1400;
-    public const int SECTION_LAYER = 0x1700;
-    public const int SECTION_SHADOW = 0x1800;
-    public const int SECTION_MORPHER = 0x1900;
-    public const int SECTION_MORPHER_KEYFRAME = 0x1901;
-    public const int SECTION_LYR = 0x1A00;
-    public const int SECTION_LYR_KEYFRAME = 0x1A01;
-    public const int SECTION_CSP = 0x1B00;
-    public const int SECTION_CSP_KEYFRAME = 0x1B01;
-    public const int SECTION_FBS = 0x1D00;
-    public const int SECTION_FBS_KEYFRAME = 0x1D01;
-    public const int SECTION_OBJECT2 = 0x2000;
-    public const int SECTION_PCM = 0x2200; 
-    public const int SECTION_BINARYBLOB = 0x2400;
-    public const int SECTION_FRAME = 0xFF01;
+			return isValidBlockType;
+		}
+        // Token: 0x0600000C RID: 12
+        public abstract TreeNode ToNode();
 
-    public static Dictionary<int, string> ObjectTypeNames = new Dictionary<int, string>()
+		// Token: 0x0600000D RID: 13
+		public abstract void WriteBlock(Stream s);
+
+		// Token: 0x0600000E RID: 14 RVA: 0x00002418 File Offset: 0x00000618
+		public static Block ReadBlock(Stream s)
+		{
+			uint type = Block.ReadUInt32(s) & 0xFFFF;
+			Block result;
+			switch (type)
+			{
+			case 0x0001:
+				result = new Block0001(s);
+				goto IL_6F;
+			case 0x0002:
+				result = new Block0002(s);
+				goto IL_6F;
+			case 0x0003:
+			case 0x0004:
+				break;
+			case 0x0005:
+				result = new Block0005(s);
+				goto IL_6F;
+            case 0x2400:
+                result = new Block2400(s);
+                goto IL_6F;
+            default:
+			if (type == 0x0300)
+			{
+				result = new Block0300(s);
+				goto IL_6F;
+			}
+			if (type == 0x0800)
+			{
+				result = new Block0800(s);
+				goto IL_6F;
+			}
+			break;
+			}
+			result = new BlockDefault(s);
+			IL_6F:
+			result.BlockID = (uint)((0xCCCC << 16) | type);
+            return result;
+		}
+        public static Block ReadBlockFile(Stream s)
         {
-            {SECTION_HEADER, "Header"},
-            {SECTION_INDEX, "Index"},
-            {SECTION_SETUP, "Setup"},
-            {SECTION_STREAM, "Stream"},
-            {SECTION_OBJECT, "Object"},
-            {SECTION_OBJECT_KEYFRAME, "Object[KEYFRAME]"},
-            {SECTION_OBJECT_CONTROLLER, "Object[CONTROLLER]"},
-            {SECTION_MATERIAL, "Material"},
-            {SECTION_MATERIAL_KEYFRAME, "Material[KEYFRAME]"},
-            {SECTION_MATERIAL_CONTROLLER, "Material[CONTROLLER]"},
-            {SECTION_TEXTURE, "Texture"},
-            {SECTION_CLUT, "CLUT"},
-            {SECTION_CSP, "CSP"},
-            {SECTION_CSP_KEYFRAME, "CSP[KEYFRAME]"},
-            {SECTION_CAMERA, "Camera"},
-            {SECTION_CAMERA_KEYFRAME, "Camera[KEYFRAME]"},
-            {SECTION_LIGHT_AMBIENT, "Ambient Light"},
-            {SECTION_LIGHT_AMBIENT_KEYFRAME, "Ambient Light[KEYFRAME]"},
-            {SECTION_LIGHT_DIRECTIONAL_CONTROLLER, "Directional Light Controller"},
-            {SECTION_LIGHT_OMNI_CONTROLLER, "Omni Light Controller"},
-            {SECTION_ANIMATION_CONTAINER, "Animation"},
-            {SECTION_MODEL_CONTAINER, "Model"},
-            {SECTION_CLUMP, "Clump"},
-            {SECTION_EXTERNAL, "External"},
-            {SECTION_HITMESH, "Hit Mesh"},
-            {SECTION_BBOX, "Bounding Box"},
-            {SECTION_PARTICLE, "Particle"},
-            {SECTION_PGE, "PGE"},
-            {SECTION_PAC, "PAC"},
-            {SECTION_EFFECT, "Effect"},
-            {SECTION_BLTGROUP, "Blit Group"},
-            {SECTION_FBPAGE, "FrameBuffer Page"},
-            {SECTION_FBRECT, "FrameBuffer Rect"},
-            {SECTION_DUMMYPOS, "Dummy(Position)"},
-            {SECTION_DUMMYPOSROT, "Dummy(Position & Rotation)"},
-            {SECTION_LAYER, "Layer"},
-            {SECTION_LYR, "LYR Something"},
-            {SECTION_LYR_KEYFRAME, "LYR Something[KEYFRAME]"},
-            {SECTION_FBS, "FBS"},
-            {SECTION_FBS_KEYFRAME, "FBS[KEYFRAME]"},
-            {SECTION_SHADOW, "Shadow"},
-            {SECTION_MORPHER, "Morpher"},
-            {SECTION_MORPHER_KEYFRAME, "Morpher[KEYFRAME]"},
-            {SECTION_OBJECT2, "Object 2"},
-            {SECTION_PCM, "PCM Audio"},
-            {SECTION_BINARYBLOB, "Binary Blob"},
-            {SECTION_FRAME, "Frame"}
-        };
-    #endregion
-    public Block() { }
-    public Block(uint type, uint ObjIndex , byte[] data=null)
-    {
-        Type = type;
-        ObjectID = ObjIndex;
-        Size = (uint)(4 + (data != null ? data.Length : 0));
-
-        Data = new byte[(int)Size + 8];
-        Array.Copy(Type.ToLEBE(32), 0, Data, 0, 4);
-        Array.Copy((Size/4).ToLEBE(32), 0, Data, 4, 4);
-        Array.Copy(ObjectID.ToLEBE(32), 0, Data, 8, 4);
-        if(data!=null)
-            Array.Copy(data, 0, Data, 0xC, data.Length);
-    }
-    public string GetObjectName()
-    {
-        if (this._ccsToc != null)
-        {
-            foreach (var file in this._ccsToc.Files)
-                foreach (var objectx in file.Objects)
-                    if (objectx.Index + 1 == this.ObjectID)
-                        return objectx.ObjectName;
-        }
-        return "NO OBJECT";
-    }
-    public virtual void SetIndexes(ObjectEntry Object, ObjectEntry[] AllObjects)
-    {
-        ObjectID = (uint)Object.Index;
-        var writer = new BinaryWriter(new MemoryStream(this.Data));
-        writer.BaseStream.Position = 0x8;
-        writer.Write((UInt32)ObjectID);
-        writer.Close();
-    }
-    public static void SetIndexes(byte[] block, Index.ObjectStream Object)
-    {
-        Array.Copy(BitConverter.GetBytes((UInt32)Object.ObjIndex),0,block,8,4);
-    }
-    public virtual byte[] ToArray()
-    {
-        var result = new List<byte>();
-        result.AddRange(Type.ToLEBE(32));
-        result.AddRange((Size / 4).ToLEBE(32));
-        result.AddRange(ObjectID.ToLEBE(32));
-        if(Data.Length>0xC)
-            result.AddRange(Data.ReadBytes(0xC, Data.Length - 0xC));
-        return result.ToArray();
-    }
-    public virtual Block ReadBlock(Stream Input) => new Block()
-    {
-        Type = Input.ReadUInt(0, 32),
-        ObjectID = Input.ReadUInt(8, 32),
-        Size = Input.ReadUInt(4, 32) * 4
-    }; 
-    public virtual Block ReadBlock(Stream Input,string typename) => new Block()
-    {
-        Type = Input.ReadUInt(0, 32),
-        ObjectID = Input.ReadUInt(8, 32),
-        Size = Input.ReadUInt(4, 32) * 4
-    };
-    public virtual Block ReadBlock(Stream Input, Header header) => new Block()
-    {
-        Type = Input.ReadUInt(0, 32),
-        ObjectID = Input.ReadUInt(8, 32),
-        Size = Input.ReadUInt(4, 32) * 4
-    };
-    public virtual Block ReadBlock(Stream Input, Header header, Animation anim) => new Block()
-    {
-        Type = Input.ReadUInt(0, 32),
-        ObjectID = Input.ReadUInt(8, 32),
-        Size = Input.ReadUInt(4, 32) * 4
-    };
-    public virtual Block ReadBlock(Stream Input, Header header, CCSF file) => new Block()
-    {
-        Type = Input.ReadUInt(0, 32),
-        ObjectID = Input.ReadUInt(8, 32),
-        Size = Input.ReadUInt(4, 32) * 4
-    };
-    public static List<Block> ReadAllBlocks(Stream Input, bool logAllBlocks = false, bool logExport = false, Header cch = null, bool readone = false, CCSF ccsfile = null, Animation anm = null)
-    {
-        Console.WriteLine("Iniciando leitura de dados...\r\n");
-
-        Block header, index;
-        Header CCSHeader = null;
-        Index CCSToc = null;
-        if (cch != null)
-            CCSHeader = cch;
-
-        var blocks = new List<Block>();
-        bool End = false;
-        while (End == false)
-        {
-            long oldOffset = Input.Position;
-
-            uint SizeBlock = Input.ReadUInt((int)((int)Input.Position + 4), 32) * 4;
-            SizeBlock += 8;
-
-            Input.Position = oldOffset;
-
-            byte[] BlockData = Input.ReadBytes((int)SizeBlock);
-
-            var mem = new MemoryStream(BlockData);
-            uint BlockType = mem.ReadUInt(0, 32);
-            mem.Position = 0;
-
-            string objName = "";
-            if (logAllBlocks)
+            uint type = Block.ReadUInt32(s);
+            Block result;
+            switch (type)
             {
-                ObjectTypeNames.TryGetValue((int)(BlockType & 0xFFFF), out objName);
-
-                Console.WriteLine($"Lendo bloco {objName} na posição 0x{oldOffset.ToString("X2")}...\r\n");
-
-            }
-
-            switch (BlockType & 0xFFFF)
-            {
-                #region Header Types
-                case SECTION_HEADER: //Header
-                    header = new Header().ReadBlock(mem);
-                    CCSHeader = header as Header;
-                    blocks.Add(header);
+                case 3435921409U:
+                    result = new Block0001(s);
+                    goto IL_6F;
+                case 3435921410U:
+                    result = new Block0002(s);
+                    goto IL_6F;
+                case 3435923456U:
+					result = new Block0800(s);
+                    goto IL_6F;
+                case 3435921411U:
+                case 3435921412U:
                     break;
-
-                case SECTION_INDEX: //Index
-                    //Fix Block padding 0x03000000 00000000
-                    Input.Position = oldOffset;
-
-                    SizeBlock += 8;
-
-                    BlockData = Input.ReadBytes((int)SizeBlock);
-                    mem = new MemoryStream(BlockData);
-
-                    index = new Index().ReadBlock(mem);
-                    CCSToc = index as Index;
-                    blocks.Add(index);
-                    break;
-                #endregion
-                #region 3D
-                #region Collisions
-                case SECTION_BBOX: //BOUNDARY BOX
-                    blocks.Add(new BoundingBox().ReadBlock(mem));
-                    break;
-                #endregion
-                #region Modelling
-                case SECTION_OBJECT: //BONE
-                    blocks.Add(new Object().ReadBlock(mem, CCSHeader));
-                    break;
-                case SECTION_MODEL_CONTAINER: //MODEL
-                    var blockModel = new Model().ReadBlock(mem, CCSHeader);
-                    Model mdl = blockModel as Model;
-
-                    if (mdl.MDLType == Model.ModelType.DEFORMABLE ||
-                    mdl.MDLType == Model.ModelType.DEFORMABLE_GEN2 ||
-                    mdl.MDLType == Model.ModelType.DEFORMABLE_GEN2_5_S)
-                    {
-                        //Fix Block size subtract with 3
-                        Input.Position = oldOffset;
-
-                        //Old try
-                        //SizeBlock = (SizeBlock / 4) - 0xF;
-                        //SizeBlock *= 4;
-
-                        SizeBlock = GetBlockSize(Input);
-                        Input.Position = oldOffset;
-
-                        BlockData = Input.ReadBytes((int)SizeBlock);
-                        mem = new MemoryStream(BlockData);
-                    }
-                    else if (mdl.MDLType == Model.ModelType.DEFORMABLE_GEN2_5
-                        && mdl.DrawFlags != 0)
-                    {
-                        //Fix Block strange size
-                        Input.Position = oldOffset;
-
-                        //Old try
-                        //if(mdl.DrawFlags==0x440)
-                        //    SizeBlock = (SizeBlock / 4) - 0xF;
-                        //else if(mdl.DrawFlags == 0x240)
-                        //    SizeBlock = (SizeBlock / 4) - 0x1e;
-
-                        SizeBlock = GetBlockSize(Input);
-                        Input.Position = oldOffset;
-
-                        BlockData = Input.ReadBytes((int)SizeBlock);
-                        mem = new MemoryStream(BlockData);
-                    }
-                    else
-                    {
-                        Input.Position = oldOffset;
-
-                        BlockData = Input.ReadBytes((int)SizeBlock);
-                        mem = new MemoryStream(BlockData);
-                    }
-
-                    Model Block = new Model();
-                    Block._ccsToc = CCSToc;
-                    if (mdl.MDLType == Model.ModelType.DEFORMABLE ||
-                    mdl.MDLType == Model.ModelType.DEFORMABLE_GEN2 ||
-                    mdl.MDLType == Model.ModelType.DEFORMABLE_GEN2_5 ||
-                    mdl.MDLType == Model.ModelType.DEFORMABLE_GEN2_5_S
-                        && mdl.DrawFlags != 0)
-                        Block.ErrorSizeLogic = true;
-                    blocks.Add(Block.ReadBlock(mem, CCSHeader));
-                    break;
-
-                case SECTION_CLUMP: //CLUMP
-                    var clump = new Clump();
-                    clump._ccsToc = CCSToc;
-                    blocks.Add(clump.ReadBlock(mem, CCSHeader, ccsfile));
-                    break;
-                #endregion
-                #region Light and Environment
-                case SECTION_LIGHT_AMBIENT:
-                    blocks.Add(new Light().ReadBlock(mem));
-                    break;
-                #endregion
-                #region Others
-                case SECTION_DUMMYPOS:
-                    blocks.Add(new Dummy().ReadBlock(mem,"Position"));
-                    break;
-                case SECTION_DUMMYPOSROT:
-                    blocks.Add(new Dummy().ReadBlock(mem, "Rotation"));
-                    break;
-                #endregion  
-                #endregion
-                #region 2D
-                case SECTION_TEXTURE: //TEXTURE
-                    //Fix Block size sum with 0x32
-                    Input.Position = oldOffset;
-
-                    SizeBlock = (SizeBlock / 4) - 0x32;
-                    SizeBlock *= 4;
-
-                    BlockData = Input.ReadBytes((int)SizeBlock);
-                    mem = new MemoryStream(BlockData);
-
-                    blocks.Add(new Texture().ReadBlock(mem));
-                    break;
-
-                case SECTION_CLUT: //CLUT
-                    blocks.Add(new CLUT().ReadBlock(mem));
-                    break;
-
-                case SECTION_MATERIAL: //MATERIAL
-                    if (CCSHeader.Version == Header.CCSFVersion.GEN2)
-                    {
-                        //Fix Block size subtract with 3
-                        Input.Position = oldOffset;
-
-                        SizeBlock = (SizeBlock / 4) + 3;
-                        SizeBlock *= 4;
-
-                        BlockData = Input.ReadBytes((int)SizeBlock);
-                        mem = new MemoryStream(BlockData);
-                    }
-
-                    blocks.Add(new Material().ReadBlock(mem, CCSHeader));
-                    break;
-
-                #endregion
-                #region Animation
-                #region Keyframe Types
-                case SECTION_OBJECT_KEYFRAME: //BONE_KEYFRAME
-                    blocks.Add(new Object_KF().ReadBlock(mem, CCSHeader));
-                    break;
-                case SECTION_CAMERA_KEYFRAME: //Camera KEYFRAME
-                    blocks.Add(new Camera_KF().ReadBlock(mem, CCSHeader));
-                    break;
-                #endregion
-                #region Controllers Types
-                case SECTION_OBJECT_CONTROLLER: //BONE_CONTROLLER
-                    blocks.Add(new Object_CT().ReadBlock(mem, CCSHeader, anm));
-                    break;
-                case SECTION_MATERIAL_CONTROLLER: //MATERIAL_CONTROLLER
-                    blocks.Add(new Material_CT().ReadBlock(mem, CCSHeader, anm));
-                    break;
-                #endregion
-
-                case SECTION_ANIMATION_CONTAINER:
-                    blocks.Add(new Animation().ReadBlock(mem));
-                    break;
-                case SECTION_FRAME: //FINAL MARK
-                    var final = new Frame().ReadBlock(mem);
-                    if (Input.Position == Input.Length)
-                        if (Convert.ToInt32((final as Frame).IndexOrFlag) < 0)
-                            End = true;
-                    blocks.Add(final);
-                    break;
-                #endregion
-                #region Scripting
-                case SECTION_MORPHER: //External Link
-                    blocks.Add(new Morpher().ReadBlock(mem, CCSHeader));
-                    break;
-                case SECTION_EXTERNAL: //External Link
-                    blocks.Add(new External().ReadBlock(mem, CCSHeader));
-                    break;
-                case SECTION_BINARYBLOB: //BINARY BLOB
-                    blocks.Add(new BinaryBlob().ReadBlock(mem));
-                    break;
-                #endregion
-
+                case 3435921413U:
+                    result = new Block0005(s);
+                    goto IL_6F;
                 default:
-                    blocks.Add(new Block().ReadBlock(mem));
+                    if (type == 3435922176U)
+                    {
+                        result = new Block0300(s);
+                        goto IL_6F;
+                    }
                     break;
             }
-
-            //Leitura de Dados de Blocos
-            blocks.Last()._ccsHeader = CCSHeader;
-            blocks.Last()._ccsToc = CCSToc;
-            blocks.Last()._ccsf = ccsfile;
-            blocks.Last().BlockOffset = (uint)oldOffset;
-            blocks.Last().Data = Input.ReadBytes((int)blocks.Last().BlockOffset, (int)(Input.Position - blocks.Last().BlockOffset));
-
-            if (readone)
-                End = true;
-
-            if (logAllBlocks)
-                Console.WriteLine($"Bloco tipo {objName} lido com sucesso na posição 0x{oldOffset.ToString("X2")}!\r\n");
-#if DEBUGX
-            Console.ReadLine();
-#endif
+            result = new BlockDefault(s);
+IL_6F:
+			result.BlockID = type;
+            return result;
         }
-        Console.WriteLine($"{blocks.Count()} blocos lidos com sucesso!\r\n");
-        return blocks;
-    }
+        // Token: 0x0600000F RID: 15 RVA: 0x0000249C File Offset: 0x0000069C
+        public static uint ReadUInt32(Stream s)
+		{
+			byte[] buff = new byte[4];
+			s.Read(buff, 0, 4);
+			return BitConverter.ToUInt32(buff, 0);
+		}
 
-    public static uint GetBlockSize(Stream Input, bool maintain = false, string breakerAlt = "")
-    {
-        uint oldoffs = (uint)Input.Position;
+		// Token: 0x06000010 RID: 16 RVA: 0x000024C4 File Offset: 0x000006C4
+		public static string ReadFixedLenString(BinaryReader br, int len, char t)
+		{
+            List<byte> fileStrBytes = new List<byte>();
+            while (fileStrBytes.Count != len)
+            {
+                byte b = br.ReadByte();
+                if (b == t || b == 0)
+				{
+					br.BaseStream.Position--;
+                    break;
+                }
+                fileStrBytes.Add(b);
+            }
+            if(len >= 0) br.BaseStream.Position += len - fileStrBytes.Count;
+            return Encoding.GetEncoding("shift-jis").GetString(fileStrBytes.ToArray());
+		}
 
-        Input.Position += 4;
+        // Token: 0x06000012 RID: 18 RVA: 0x00002532 File Offset: 0x00000732
+        public static void WriteUInt32(Stream s, uint u)
+		{
+			s.Write(BitConverter.GetBytes(u), 0, 4);
+		}
 
-        uint result = 4;
+		// Token: 0x06000013 RID: 19 RVA: 0x00002544 File Offset: 0x00000744
+		public static void WriteString(Stream s, string t, int minsize = -1)
+		{
+			MemoryStream i = new MemoryStream();
+			byte[] str = Encoding.GetEncoding("shift-jis").GetBytes(t);
+            i.Write(str, 0, str.Length);
 
-        for(; Input.Position <= Input.Length-4 && 
-            !ObjectTypeNames.ContainsKey(GetTypeNext(Input));
-             result += 4)
-        {
+            if (str.Length != minsize)
+			{
+                i.WriteByte(0);
+                if (minsize != -1)
+                {
+                    while (i.Length != (long)minsize)
+                    {
+                        i.WriteByte(0);
+                    }
+                }
+            }
+			s.Write(i.ToArray(), 0, (int)i.Length);
+		}
 
+		// Token: 0x06000014 RID: 20 RVA: 0x000025AC File Offset: 0x000007AC
+		public static bool isValidBlockType(uint u)
+		{
+			foreach (uint vu in Block.validBlockTypes)
+			{
+				if (u == vu)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 
-        }
-        if (maintain)
-            Input.Position = oldoffs;
+		// Token: 0x04000004 RID: 4
+		public uint BlockID;
 
-        
-        return result;
-    }
-    static int GetTypeNext(Stream Input)
-    {
-        byte[] Type = Input.ReadBytes(4);
-        if (Type.Skip(2).All(x => x == 0xCC))
-        {
-            return BitConverter.ToInt32(Type, 0) & 0xFFFF;
-        }
-        return 0;
-    }
-    public string GetBlockType() 
-    {
-        string valuex = "";
-        if (ObjectTypeNames.ContainsKey((int)(Type & 0xFFFF)))
-            ObjectTypeNames.TryGetValue((int)(Type & 0xFFFF), out valuex);
-        else
-            valuex = Type.ToString("X2");
-        return valuex;
-    }
-    public static string GetBlockType(uint type)
-    {
-        string valuex = "";
-        if (ObjectTypeNames.ContainsKey((int)(type & 0xFFFF)))
-            ObjectTypeNames.TryGetValue((int)(type & 0xFFFF), out valuex);
-        else
-            valuex = type.ToString("X2");
-        return valuex;
-    }
+		// Token: 0x04000005 RID: 5
+		public uint Size;
 
+		// Token: 0x04000006 RID: 6
+		public uint ID;
+
+		// Token: 0x04000007 RID: 7
+		public byte[] Data;
+
+		// Token: 0x04000008 RID: 8
+		public CCSFile CCSFile;
+
+		// Token: 0x04000009 RID: 9
+		public FileEntry FileEntry;
+
+		// Token: 0x0400000A RID: 10
+		public ObjectEntry ObjectEntry;
+
+		// Token: 0x0400000B RID: 11
+		public static uint[] validBlockTypes = new uint[]
+		{
+			3435921409U,
+			3435921410U,
+			3435921413U,
+			3435921664U,
+			3435921666U,
+			3435921672U,
+			3435921920U,
+			3435922176U,
+			3435922432U,
+			3435922688U,
+			3435922690U,
+			3435922944U,
+			3435922945U,
+			3435922947U,
+			3435922953U,
+			3435923200U,
+			3435923456U,
+			3435923712U,
+			3435923968U,
+			3435924224U,
+			3435924480U,
+			3435924992U,
+			3435925760U,
+			3435926016U,
+			3435926272U,
+			3435926528U,
+			3435927808U,
+			3435927809U,
+			3435929600U,
+			3435986689U,
+			3435921922U
+		};
+	}
 }
-

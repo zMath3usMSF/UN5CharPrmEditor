@@ -488,24 +488,7 @@ public static class IOextent
     #endregion
 
     #region Extra
-    public static Header.CCSFVersion GetVersion(this string str)
-    {
-        switch(str)
-        {
-            case "GEN1":
-                return Header.CCSFVersion.GEN1;
-            case "GEN1_5":
-                return Header.CCSFVersion.GEN1_5;
-            case "GEN2":
-                return Header.CCSFVersion.GEN2;
-            case "GEN2_5":
-                return Header.CCSFVersion.GEN2_5;
-            case "GEN3":
-                return Header.CCSFVersion.GEN3;
-            default:
-                return Header.CCSFVersion.Unknow;
-        }
-    }
+
     public static byte[] GetFilledString(this string str,int size, byte fillwith)
     {
         byte[] outbin = new byte[size];

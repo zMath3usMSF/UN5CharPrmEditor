@@ -23,9 +23,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -50,9 +51,133 @@
   <PropertyGroup>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>7CE3CF8B5AE1A20125382AA70627B2EE830E6AFB</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>UN5CharPrmEditor_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DiscUtils, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.0.16.13\lib\net45\DiscUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.BootConfig, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.BootConfig.0.16.13\lib\net45\DiscUtils.BootConfig.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Btrfs, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Btrfs.0.16.13\lib\net45\DiscUtils.Btrfs.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Core, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Core.0.16.13\lib\net45\DiscUtils.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Dmg, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Dmg.0.16.13\lib\net45\DiscUtils.Dmg.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Ext, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Ext.0.16.13\lib\net45\DiscUtils.Ext.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Fat, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Fat.0.16.13\lib\net45\DiscUtils.Fat.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.HfsPlus, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.HfsPlus.0.16.13\lib\net45\DiscUtils.HfsPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Iscsi, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Iscsi.0.16.13\lib\net45\DiscUtils.Iscsi.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Iso9660, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Iso9660.0.16.13\lib\net45\DiscUtils.Iso9660.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Lvm, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Lvm.0.16.13\lib\net45\DiscUtils.Lvm.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Net, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Net.0.16.13\lib\net45\DiscUtils.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Nfs, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Nfs.0.16.13\lib\net45\DiscUtils.Nfs.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Ntfs, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Ntfs.0.16.13\lib\net45\DiscUtils.Ntfs.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.OpticalDiscSharing, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.OpticalDiscSharing.0.16.13\lib\net45\DiscUtils.OpticalDiscSharing.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.OpticalDisk, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.OpticalDisk.0.16.13\lib\net45\DiscUtils.OpticalDisk.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Registry, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Registry.0.16.13\lib\net45\DiscUtils.Registry.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Sdi, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Sdi.0.16.13\lib\net45\DiscUtils.Sdi.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.SquashFs, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.SquashFs.0.16.13\lib\net45\DiscUtils.SquashFs.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Streams, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Streams.0.16.13\lib\net45\DiscUtils.Streams.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Swap, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Swap.0.16.13\lib\net45\DiscUtils.Swap.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Udf, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Udf.0.16.13\lib\net45\DiscUtils.Udf.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Vdi, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Vdi.0.16.13\lib\net45\DiscUtils.Vdi.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Vhd, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Vhd.0.16.13\lib\net45\DiscUtils.Vhd.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Vhdx, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Vhdx.0.16.13\lib\net45\DiscUtils.Vhdx.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Vmdk, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Vmdk.0.16.13\lib\net45\DiscUtils.Vmdk.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Wim, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Wim.0.16.13\lib\net45\DiscUtils.Wim.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Xfs, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Xfs.0.16.13\lib\net45\DiscUtils.Xfs.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscUtils.Xva, Version=0.16.0.0, Culture=neutral, PublicKeyToken=5fa5b410cc9c6289, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiscUtils.Xva.0.16.13\lib\net45\DiscUtils.Xva.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.4.2\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="lzfse-net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\lzfse-net.1.0.15\lib\net45\lzfse-net.dll</HintPath>
+    </Reference>
+    <Reference Include="lzo.net, Version=0.0.3.0, Culture=neutral, PublicKeyToken=7c3b11b873e0cbca, processorArchitecture=MSIL">
+      <HintPath>..\packages\lzo.net.0.0.3\lib\net45\lzo.net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -64,6 +189,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CharSel.cs" />
     <Compile Include="CharSkl.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Forms\AwakeningParameters.cs">
@@ -72,6 +198,65 @@
     <Compile Include="Forms\AwakeningParameters.Designer.cs">
       <DependentUpon>AwakeningParameters.cs</DependentUpon>
     </Compile>
+    <Compile Include="NewChar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewChar.Designer.cs">
+      <DependentUpon>NewChar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Others\CCS\BINHelper.cs" />
+    <Compile Include="Others\CCS\Block.cs" />
+    <Compile Include="Others\CCS\Block0001.cs" />
+    <Compile Include="Others\CCS\Block0002.cs" />
+    <Compile Include="Others\CCS\Block0005.cs" />
+    <Compile Include="Others\CCS\Block0300.cs" />
+    <Compile Include="Others\CCS\Block0400.cs" />
+    <Compile Include="Others\CCS\Block0800.cs" />
+    <Compile Include="Others\CCS\Block2400.cs" />
+    <Compile Include="Others\CCS\BlockDefault.cs" />
+    <Compile Include="Others\CCS\CCSFile.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0001.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0002.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0005.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0100.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0102.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0108.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0200.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0300.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0400.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0500.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0502.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0600.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0601.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0603.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0609.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0700.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0800.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0900.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0A00.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0B00.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0C00.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block0E00.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block1100.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block1200.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block1300.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block1400.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block1900.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block1901.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Block2000.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\BlockFF01.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\Color.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\ErrorBlock.cs" />
+    <Compile Include="Others\CCS\CCSF\Blocks\StreamHelper.cs" />
+    <Compile Include="Others\CCS\CCSF\Tristrip.cs" />
+    <Compile Include="Others\CCS\CCSF\Vector2f.cs" />
+    <Compile Include="Others\CCS\CCSF\Vector3f.cs" />
+    <Compile Include="Others\CCS\CCSF\VertexConnection.cs" />
+    <Compile Include="Others\CCS\ColorDef.cs" />
+    <Compile Include="Others\CCS\FileEntry.cs" />
+    <Compile Include="Others\CCS\FileHelper.cs" />
+    <Compile Include="Others\CCS\ObjectEntry.cs" />
     <Compile Include="Pl\PlAwk.cs" />
     <Compile Include="Pl\PlAnm.cs" />
     <Compile Include="Pl\PlAtk.cs" />
@@ -84,31 +269,6 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="Pl\Util.cs" />
-    <Compile Include="Others\CCS\2D\CLUT.cs" />
-    <Compile Include="Others\CCS\2D\Material.cs" />
-    <Compile Include="Others\CCS\2D\Texture.cs" />
-    <Compile Include="Others\CCS\3D\Camera.cs" />
-    <Compile Include="Others\CCS\3D\Collisions\BoundingBox.cs" />
-    <Compile Include="Others\CCS\3D\Collisions\HitGroups.cs" />
-    <Compile Include="Others\CCS\3D\Environment\Light.cs" />
-    <Compile Include="Others\CCS\3D\Modelling\Clump.cs" />
-    <Compile Include="Others\CCS\3D\Modelling\Model.cs" />
-    <Compile Include="Others\CCS\3D\Modelling\Object.cs" />
-    <Compile Include="Others\CCS\3D\Others\Dummy.cs" />
-    <Compile Include="Others\CCS\Animation\Animation.cs" />
-    <Compile Include="Others\CCS\Animation\Controllers\Material_CT.cs" />
-    <Compile Include="Others\CCS\Animation\Controllers\Object_CT .cs" />
-    <Compile Include="Others\CCS\Animation\Frame.cs" />
-    <Compile Include="Others\CCS\Animation\Keyframes\Camera_KF.cs" />
-    <Compile Include="Others\CCS\Animation\Keyframes\Object_KF .cs" />
-    <Compile Include="Others\CCS\Block.cs" />
-    <Compile Include="Others\CCS\CCSF.cs" />
-    <Compile Include="Others\CCS\CCSNode.cs" />
-    <Compile Include="Others\CCS\Header\Header.cs" />
-    <Compile Include="Others\CCS\Header\Index.cs" />
-    <Compile Include="Others\CCS\Scripting\BinaryBlob.cs" />
-    <Compile Include="Others\CCS\Scripting\External.cs" />
-    <Compile Include="Others\CCS\Scripting\Morpher.cs" />
     <Compile Include="Forms\UpdateMatch.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,80 +293,6 @@
     <Compile Include="Forms\MovesetParameters.Designer.cs">
       <DependentUpon>MovesetParameters.cs</DependentUpon>
     </Compile>
-    <Compile Include="Others\Helpers\FileHelper.cs" />
-    <Compile Include="Others\Helpers\Helper3D.cs" />
-    <Compile Include="Others\Helpers\Math.cs" />
-    <Compile Include="Others\ImgLib\Common\BinaryReaderExtensions.cs" />
-    <Compile Include="Others\ImgLib\Common\Endianness.cs" />
-    <Compile Include="Others\ImgLib\Common\GenericDictionary.cs" />
-    <Compile Include="Others\ImgLib\Common\ImageExtensions.cs" />
-    <Compile Include="Others\ImgLib\Common\ImageUtils.cs" />
-    <Compile Include="Others\ImgLib\Common\InteropUtils.cs" />
-    <Compile Include="Others\ImgLib\Encoding\ColorCodec.cs" />
-    <Compile Include="Others\ImgLib\Encoding\ColorCodecEndiannessDependent.cs" />
-    <Compile Include="Others\ImgLib\Encoding\ColorComparers\ARGBColorComparer.cs" />
-    <Compile Include="Others\ImgLib\Encoding\ImageDecoder.cs" />
-    <Compile Include="Others\ImgLib\Encoding\ImageDecoderDirectColor.cs" />
-    <Compile Include="Others\ImgLib\Encoding\ImageDecoderIndexed.cs" />
-    <Compile Include="Others\ImgLib\Encoding\ImageEncoder.cs" />
-    <Compile Include="Others\ImgLib\Encoding\ImageEncoderDirectColor.cs" />
-    <Compile Include="Others\ImgLib\Encoding\ImageEncoderIndexed.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec16BitLEABGR.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec24BitRGB.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec32BitABGR.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec32BitARGB.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec32BitBGRA.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodec32BitRGBA.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecDXT1.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecDXT1Gamecube.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecI4.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecI8.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecIA4.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecIA8.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecRGB565.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\ColorCodecRGB5A3.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\IndexCodec4Bpp.cs" />
-    <Compile Include="Others\ImgLib\Encoding\Implementation\IndexCodec8Bpp.cs" />
-    <Compile Include="Others\ImgLib\Encoding\IndexCodec.cs" />
-    <Compile Include="Others\ImgLib\Encoding\IndexCodecEndiannessDependent.cs" />
-    <Compile Include="Others\ImgLib\Filters\Filter.cs" />
-    <Compile Include="Others\ImgLib\Filters\FilterComposer.cs" />
-    <Compile Include="Others\ImgLib\Filters\GamecubePlanarFilter.cs" />
-    <Compile Include="Others\ImgLib\Filters\SwizzleFilter.cs" />
-    <Compile Include="Others\ImgLib\Filters\TileFilter.cs" />
-    <Compile Include="Others\ImgLib\Filters\TIM2PaletteFilter.cs" />
-    <Compile Include="Others\ImgLib\Formats\DummyTexture.cs" />
-    <Compile Include="Others\ImgLib\Formats\GenericTextureFormat.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\NamcoTexture.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\NamcoTexture.Serializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\NUTTexture.Serializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\PE3DATTexture.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\PE3DATTexture.Serializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\PE3SimpleDATTexture.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\PE3SimpleDATTexture.Serializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\TacticsOgreEFXTexture.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\TacticsOgreEFXTexture.Serializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\TIM2Texture.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\TIM2Texture.Segment.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\TIM2Texture.Serializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\TPLTexture.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\TPLTexture.Serializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\TX48Texture.cs" />
-    <Compile Include="Others\ImgLib\Formats\Implementation\TX48Texture.Serializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\PalettedTextureFormat.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\Exceptions\MetadataException.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\MetadataReader.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\MetadataReaderBase.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\MetadataWriter.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\MetadataWriterBase.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\XmlMetadataReader.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\Metadata\XmlMetadataWriter.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\SimpleTextureFormatSerializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\TextureFormatSerializer.cs" />
-    <Compile Include="Others\ImgLib\Formats\Serialization\TextureFormatSerializerProvider.cs" />
-    <Compile Include="Others\ImgLib\Formats\TextureContainer.cs" />
-    <Compile Include="Others\ImgLib\Formats\TextureFormat.cs" />
-    <Compile Include="Others\ImgLib\Formats\TextureFormatBase.cs" />
     <Compile Include="Others\IOextent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -215,6 +301,9 @@
     </Compile>
     <Compile Include="Forms\SelectProcess.Designer.cs">
       <DependentUpon>SelectProcess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TransparentOverlay.cs">
+      <SubType>Component</SubType>
     </Compile>
     <EmbeddedResource Include="Forms\AwakeningParameters.resx">
       <DependentUpon>AwakeningParameters.cs</DependentUpon>
@@ -234,6 +323,9 @@
     <EmbeddedResource Include="Forms\MovesetParameters.resx">
       <DependentUpon>MovesetParameters.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="NewChar.resx">
+      <DependentUpon>NewChar.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -247,6 +339,7 @@
     <EmbeddedResource Include="Forms\SelectProcess.resx">
       <DependentUpon>SelectProcess.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -256,6 +349,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="UN5CharPrmEditor_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
